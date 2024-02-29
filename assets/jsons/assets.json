@@ -1,0 +1,23 @@
+{
+    "textures": {
+        "earth": {
+            "file":	 "textures/earthtile.png",
+            "wrapU": "repeated",
+            "wrapV": "repeated"
+        },
+        "dude": "textures/dude.png",
+        "goal": "textures/goaldoor.png"
+    },
+    "fonts": {
+        "display": {
+            "file": 	"fonts/RetroGame.ttf",
+            "size": 	64
+        }
+    },
+	"soundfx": {
+  		"jump" : "sounds/jump.mp3"
+	},
+	"jsons" : {
+		"level1" : "jsons/level.json"
+	}
+}

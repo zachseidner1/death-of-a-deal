@@ -1,0 +1,175 @@
+{
+	"physicsSize":    [16.0,12.0],
+	"graphicSize":    [ 800, 600],
+    "gravity":  	  -9.8,
+    "avatar": {
+        "pos":           [ 2.5,  5.0],
+        "size":          [ 0.45, 0.61],
+        "bodytype":      "dynamic",
+        "density":        1.0,
+        "friction":       0.0,
+        "restitution":    0.0,
+      	"force": 		 10.0,
+      	"damping": 		 10.0,
+      	"maxspeed": 	  5.0,
+      	"jumppulse": 	  1.25,
+      	"jumplimit": 	 30,
+        "texture":       "dude",
+       	"debugcolor":    "white",
+       	"debugopacity":  192,
+      	"sensorsize": 	 [ 0.183, 0.05 ], 
+      	"sensorname": 	 "dudeGroundSensor",
+       	"sensorcolor":   "red",
+       	"sensoropacity": 192,
+    },
+    "exit": {
+        "pos":           [ 2.0, 10.0],
+        "size":          [ 1.92, 1.92],
+        "bodytype":      "static",
+        "density":        0.0,
+        "friction":       0.0,
+        "restitution":    0.0,
+        "texture":       "goal",
+       	"debugcolor":    "yellow",
+       	"debugopacity":  200
+    },
+    "walls": {
+        "wall1": {
+            "vertices": 12,
+            "boundary": [ 8.0, 12.0,  8.0, 11.5,  0.5, 11.5,
+			  			  0.5,  0.0,  0.0,  0.0,  0.0, 12.0],
+            "bodytype":      "static",
+            "density":        0.0,
+            "friction":       0.2,
+            "restitution":    0.1,
+            "texture":       "earth",
+            "debugcolor":    "yellow",
+            "debugopacity":  200
+        },
+        "wall2": {
+            "vertices": 12,
+            "boundary": [16.0, 12.0, 16.0,  0.0, 15.5,  0.0,
+			  			 15.5, 11.5,  8.0, 11.5,  8.0, 12.0],
+            "bodytype":      "static",
+            "density":        0.0,
+            "friction":       0.4,
+            "restitution":    0.1,
+            "texture":       "earth",
+            "debugcolor":    "yellow",
+            "debugopacity":  200
+        },
+    },
+  	"platforms": {
+  		"floor1": {
+        	"pos":           [ 2.25, 2.75],
+        	"size":          [  3.5,  0.5],
+        	"bodytype":      "static",
+            "density":        0.0,
+            "friction":       0.4,
+            "restitution":    0.1,
+        	"texture":       "earth",
+            "debugcolor":    "yellow",
+            "debugopacity":  200
+  		},
+  		"floor2": {
+        	"pos":           [ 5.0, 3.0],
+        	"size":          [ 2.0, 1.0],
+        	"bodytype":      "static",
+            "density":        0.0,
+            "friction":       0.4,
+            "restitution":    0.1,
+        	"texture":       "earth",
+            "debugcolor":    "yellow",
+            "debugopacity":  200
+  		},
+  		"floor3": {
+        	"pos":           [ 11.25, 2.75],
+        	"size":          [  3.5,  0.5],
+        	"bodytype":      "static",
+            "density":        0.0,
+            "friction":       0.4,
+            "restitution":    0.1,
+        	"texture":       "earth",
+            "debugcolor":    "yellow",
+            "debugopacity":  200
+  		},
+  		"floor4": {
+        	"pos":           [ 14.25, 3.0],
+        	"size":          [  2.5,  1.0],
+        	"bodytype":      "static",
+            "density":        0.0,
+            "friction":       0.4,
+            "restitution":    0.1,
+        	"texture":       "earth",
+            "debugcolor":    "yellow",
+            "debugopacity":  200
+  		},  
+  		"floor5": {
+        	"pos":           [ 14.75, 3.75],
+        	"size":          [  1.5,  0.5],
+        	"bodytype":      "static",
+            "density":        0.0,
+            "friction":       0.4,
+            "restitution":    0.1,
+        	"texture":       "earth",
+            "debugcolor":    "yellow",
+            "debugopacity":  200
+  		},  
+  		"floor6": {
+        	"pos":           [ 11.5, 4.75],
+        	"size":          [  2.0, 0.5],
+        	"bodytype":      "static",
+            "density":        0.0,
+            "friction":       0.4,
+            "restitution":    0.1,
+        	"texture":       "earth",
+            "debugcolor":    "yellow",
+            "debugopacity":  200
+  		},  
+  		"floor7": {
+        	"pos":           [ 14.75, 5.75],
+        	"size":          [  1.5,  0.5],
+        	"bodytype":      "static",
+            "density":        0.0,
+            "friction":       0.4,
+            "restitution":    0.1,
+        	"texture":       "earth",
+            "debugcolor":    "yellow",
+            "debugopacity":  200
+  		},   		
+  		"floor8": {
+        	"pos":           [ 11.5,  6.75],
+        	"size":          [  2.0,  0.5],
+        	"bodytype":      "static",
+            "density":        0.0,
+            "friction":       0.4,
+            "restitution":    0.1,
+        	"texture":       "earth",
+            "debugcolor":    "yellow",
+            "debugopacity":  200
+  		},   		
+  		"floor9": {
+        	"pos":           [ 7.5, 7.75],
+        	"size":          [ 2.0, 0.5],
+        	"bodytype":      "static",
+            "density":        0.0,
+            "friction":       0.4,
+            "restitution":    0.1,
+        	"texture":       "earth",
+            "debugcolor":    "yellow",
+            "debugopacity":  200
+  		},   	
+  		"floor10": {
+        	"pos":           [ 2.5,  8.75],
+        	"size":          [ 4.0,  0.5],
+        	"bodytype":      "static",
+            "density":        0.0,
+            "friction":       0.4,
+            "restitution":    0.1,
+        	"texture":       "earth",
+            "debugcolor":    "yellow",
+            "debugopacity":  200
+  		}
+  	}
+    
+}
