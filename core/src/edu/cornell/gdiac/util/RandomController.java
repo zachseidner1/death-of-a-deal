@@ -21,30 +21,31 @@ import java.util.Random;
  * Static class for producing random numbers.
  */
 public class RandomController {
-	/** Pseudo-random number generator */
-	private static Random generator = new Random(0); // Make it deterministic
 
-	/**
-	 * Returns a random int between min and max (inclusive).
-	 *
-	 * @param min Minimum value in random range
-	 * @param max Maximum value in random range
-	 *
-	 * @return a random int between min and max (inclusive).
-	 */
-	public static int rollInt(int min, int max) {
-		return generator.nextInt(max-min+1)+min;
-	}
+  /**
+   * Pseudo-random number generator
+   */
+  private static Random generator = new Random(0); // Make it deterministic
 
-	/**
-	 * Returns a random float between min and max (inclusive).
-	 *
-	 * @param min Minimum value in random range
-	 * @param max Maximum value in random range
-	 *
-	 * @return a random float between min and max (inclusive).
-	 */
-	public static float rollFloat(float min, float max) {
-		return generator.nextFloat() * (max - min) + min;
-	}
+  /**
+   * Returns a random int between min and max (inclusive).
+   *
+   * @param min Minimum value in random range
+   * @param max Maximum value in random range
+   * @return a random int between min and max (inclusive).
+   */
+  public static int rollInt(int min, int max) {
+    return generator.nextInt(max - min + 1) + min;
+  }
+
+  /**
+   * Returns a random float between min and max (inclusive).
+   *
+   * @param min Minimum value in random range
+   * @param max Maximum value in random range
+   * @return a random float between min and max (inclusive).
+   */
+  public static float rollFloat(float min, float max) {
+    return generator.nextFloat() * (max - min) + min;
+  }
 }
