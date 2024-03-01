@@ -3,7 +3,7 @@ package edu.cornell.gdiac.main;
 import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.assets.AssetDirectory;
 
-public class BouncePlatformModel {
+public class BouncePlatformModel extends PlatformModel {
   /* TODO P2 complete this class
    * Make sure the bounce model is visually different from the platform in some way
    * you can probably copy and paste lots of code from the platform model (make sure to understand
