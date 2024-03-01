@@ -131,7 +131,7 @@ public class PlayerModel extends CapsuleObstacle {
    * @param value left/right movement of this character.
    */
   public void setMovement(float value) {
-    // TODO make sure player cannot move when frozen
+    // TODO P3 make sure player cannot move when frozen
     movement = value;
     // Change facing if appropriate
     if (movement < 0) {
@@ -185,7 +185,7 @@ public class PlayerModel extends CapsuleObstacle {
    * Returns whether the player is frozen
    */
   public boolean isFrozen() {
-    // TODO check if the player is frozen
+    // TODO P3 check if the player is frozen
     return true;
   }
 
@@ -195,7 +195,8 @@ public class PlayerModel extends CapsuleObstacle {
    * @param value true if the player is frozen, false otherwise
    */
   public void setFrozen(boolean value) {
-    // TODO update frozen and apply physics, also visually change player in some way
+    // TODO P3 update frozen and apply physics, also visually change player in some way
+    // you should probably make an isFrozen field
   }
 
   /**

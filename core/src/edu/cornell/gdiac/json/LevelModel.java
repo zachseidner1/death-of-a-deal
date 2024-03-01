@@ -57,6 +57,10 @@ public class LevelModel {
    */
   private PlayerModel avatar;
   /**
+   * Reference to the bounce pad (for collision detection)
+   */
+  private BouncePlatformModel bouncePlatformModel;
+  /**
    * Reference to the goalDoor (for collision detection)
    */
   private ExitModel goalDoor;
@@ -75,6 +79,7 @@ public class LevelModel {
     world = null;
     bounds = new Rectangle(0, 0, 1, 1);
     scale = new Vector2(1, 1);
+    // TODO P3 initialize bounce model
     debug = false;
   }
 
@@ -188,6 +193,8 @@ public class LevelModel {
       activate(obj);
       floor = floor.next();
     }
+
+    // TODO P3 initialize bounce model
 
     // Create dude
     avatar = new PlayerModel();

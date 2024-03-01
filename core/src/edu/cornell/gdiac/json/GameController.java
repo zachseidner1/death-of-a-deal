@@ -332,6 +332,7 @@ public class GameController implements Screen, ContactListener {
     level.getWorld().step(WORLD_STEP, WORLD_VELOC, WORLD_POSIT);
 
     // TODO P1 update timer, check if the player should be frozen (and update player), update text for timer
+    // I recommend using the `dt` value to update said timer
   }
 
   /**
@@ -472,7 +473,7 @@ public class GameController implements Screen, ContactListener {
         sensorFixtures.add(avatar == bd1 ? fix2 : fix1); // Could have more than one ground
       }
 
-      // TODO check if we landed on a bounce pad and we are frozen
+      // TODO P2 check if we landed on a bounce pad and we are frozen, update player accordingly
 
       // Check for win condition
       if ((bd1 == avatar && bd2 == door) ||
