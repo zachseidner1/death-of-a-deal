@@ -79,7 +79,6 @@ public class LevelModel {
     world = null;
     bounds = new Rectangle(0, 0, 1, 1);
     scale = new Vector2(1, 1);
-    // TODO P3 initialize bounce model
     debug = false;
   }
 
@@ -194,7 +193,9 @@ public class LevelModel {
       floor = floor.next();
     }
 
-    // TODO P3 initialize bounce model
+    // TODO P4 initialize any sloped platforms
+
+    // TODO P2 initialize bounce model
 
     // Create dude
     avatar = new PlayerModel();

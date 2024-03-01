@@ -100,6 +100,10 @@ public class GameController implements Screen, ContactListener {
    */
   private ScreenListener listener;
   /**
+   * Collision controller
+   */
+  private CollisionController collisionController;
+  /**
    * Whether or not this is an active controller
    */
   private boolean active;
@@ -124,6 +128,7 @@ public class GameController implements Screen, ContactListener {
    */
   public GameController() {
     level = new LevelModel();
+    collisionController = new CollisionController(level);
     complete = false;
     failed = false;
     active = false;
@@ -331,8 +336,15 @@ public class GameController implements Screen, ContactListener {
     // Turn the physics engine crank.
     level.getWorld().step(WORLD_STEP, WORLD_VELOC, WORLD_POSIT);
 
-    // TODO P1 update timer, check if the player should be frozen (and update player), update text for timer
-    // I recommend using the `dt` value to update said timer
+    /* TODO P1 update timer, check if the player should be frozen (and update player), update text for timer
+      use setFrozen() (unimplemented) to freeze the player
+      I recommend using the `dt` value to update said timer (see optimization lab)
+      you are completely responsible for the working timer and freeze mechanic
+      TODO P1 check if the time is up and turn game to lose state if so
+      TODO P1 add a disabled and enabled state to the timer for testing purposes
+      Make it so the player can tap a key to toggle the timer on and off
+      Make the timer visually display whether it's enabled
+      See my task in input controller */
   }
 
   /**
@@ -441,15 +453,14 @@ public class GameController implements Screen, ContactListener {
   }
 
   /**
-   * Callback method for the start of a collision
    * <p>
-   * This method is called when we first get a collision between two objects.  We use this method to
-   * test if it is the "right" kind of collision.  In particular, we use it to test if we made it to
-   * the win door.
    *
    * @param contact The two bodies that collided
    */
   public void beginContact(Contact contact) {
+    collisionController.handleContact(contact);
+
+    // TODO P5 refactor code below, ideally we shouldn't have any of it in GameController
     Fixture fix1 = contact.getFixtureA();
     Fixture fix2 = contact.getFixtureB();
 
@@ -472,8 +483,6 @@ public class GameController implements Screen, ContactListener {
         avatar.setGrounded(true);
         sensorFixtures.add(avatar == bd1 ? fix2 : fix1); // Could have more than one ground
       }
-
-      // TODO P2 check if we landed on a bounce pad and we are frozen, update player accordingly
 
       // Check for win condition
       if ((bd1 == avatar && bd2 == door) ||

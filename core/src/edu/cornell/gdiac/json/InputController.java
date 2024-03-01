@@ -252,6 +252,11 @@ public class InputController {
     return exitPressed && !exitPrevious;
   }
 
+  public boolean didPause() {
+    // TODO P1 use input controller to check if they paused the timer
+    return true;
+  }
+
   /**
    * Reads the input for the player and converts the result into game logic.
    * <p>
