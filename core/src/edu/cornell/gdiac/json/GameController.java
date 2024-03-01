@@ -330,6 +330,8 @@ public class GameController implements Screen, ContactListener {
 
     // Turn the physics engine crank.
     level.getWorld().step(WORLD_STEP, WORLD_VELOC, WORLD_POSIT);
+
+    // TODO P1 update timer, check if the player should be frozen (and update player), update text for timer
   }
 
   /**

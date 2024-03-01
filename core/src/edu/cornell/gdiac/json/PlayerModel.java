@@ -195,7 +195,7 @@ public class PlayerModel extends CapsuleObstacle {
    * @param value true if the player is frozen, false otherwise
    */
   public void setFrozen(boolean value) {
-    // TODO update frozen and apply physics
+    // TODO update frozen and apply physics, also visually change player in some way
   }
 
   /**
