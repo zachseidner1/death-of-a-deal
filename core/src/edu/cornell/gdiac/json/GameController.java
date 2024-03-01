@@ -410,7 +410,6 @@ public class GameController implements Screen, ContactListener {
    * This is usually when it regains focus.
    */
   public void resume() {
-    // TODO Auto-generated method stub
   }
 
   /**
@@ -470,6 +469,8 @@ public class GameController implements Screen, ContactListener {
         avatar.setGrounded(true);
         sensorFixtures.add(avatar == bd1 ? fix2 : fix1); // Could have more than one ground
       }
+
+      // TODO check if we landed on a bounce pad and we are frozen
 
       // Check for win condition
       if ((bd1 == avatar && bd2 == door) ||
