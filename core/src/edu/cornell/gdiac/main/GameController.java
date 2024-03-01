@@ -461,37 +461,37 @@ public class GameController implements Screen, ContactListener {
     collisionController.handleContact(contact);
 
     // TODO P5 refactor code below, ideally we shouldn't have any of it in GameController
-    Fixture fix1 = contact.getFixtureA();
-    Fixture fix2 = contact.getFixtureB();
-
-    Body body1 = fix1.getBody();
-    Body body2 = fix2.getBody();
-
-    Object fd1 = fix1.getUserData();
-    Object fd2 = fix2.getUserData();
-
-    try {
-      Obstacle bd1 = (Obstacle) body1.getUserData();
-      Obstacle bd2 = (Obstacle) body2.getUserData();
-
-      PlayerModel avatar = level.getAvatar();
-      BoxObstacle door = level.getExit();
-
-      // See if we have landed on the ground.
-      if ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
-          (avatar.getSensorName().equals(fd1) && avatar != bd2)) {
-        avatar.setGrounded(true);
-        sensorFixtures.add(avatar == bd1 ? fix2 : fix1); // Could have more than one ground
-      }
-
-      // Check for win condition
-      if ((bd1 == avatar && bd2 == door) ||
-          (bd1 == door && bd2 == avatar)) {
-        setComplete(true);
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+//    Fixture fix1 = contact.getFixtureA();
+//    Fixture fix2 = contact.getFixtureB();
+//
+//    Body body1 = fix1.getBody();
+//    Body body2 = fix2.getBody();
+//
+//    Object fd1 = fix1.getUserData();
+//    Object fd2 = fix2.getUserData();
+//
+//    try {
+//      Obstacle bd1 = (Obstacle) body1.getUserData();
+//      Obstacle bd2 = (Obstacle) body2.getUserData();
+//
+//      PlayerModel avatar = level.getAvatar();
+//      BoxObstacle door = level.getExit();
+//
+//      // See if we have landed on the ground.
+//      if ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
+//          (avatar.getSensorName().equals(fd1) && avatar != bd2)) {
+//        avatar.setGrounded(true);
+//        sensorFixtures.add(avatar == bd1 ? fix2 : fix1); // Could have more than one ground
+//      }
+//
+//      // Check for win condition
+//      if ((bd1 == avatar && bd2 == door) ||
+//          (bd1 == door && bd2 == avatar)) {
+//        setComplete(true);
+//      }
+//    } catch (Exception e) {
+//      e.printStackTrace();
+//    }
 
   }
 
