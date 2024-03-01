@@ -24,7 +24,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.World;
-import edu.cornell.gdiac.json.GameCanvas;
+import edu.cornell.gdiac.main.GameCanvas;
 
 /**
  * Base model class to support collisions.

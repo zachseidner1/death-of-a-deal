@@ -20,7 +20,7 @@
  * Based on original PhysicsDemo Lab by Don Holden, 2007
  * Updated asset version, 2/6/2021
  */
-package edu.cornell.gdiac.json;
+package edu.cornell.gdiac.main;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;

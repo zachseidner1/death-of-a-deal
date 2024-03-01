@@ -1,4 +1,4 @@
-package edu.cornell.gdiac.json;
+package edu.cornell.gdiac.main;
 
 import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.assets.AssetDirectory;

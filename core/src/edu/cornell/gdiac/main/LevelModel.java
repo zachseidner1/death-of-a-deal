@@ -12,7 +12,7 @@
  * Based on original PhysicsDemo Lab by Don Holden, 2007
  * JSON version, 3/2/2016
  */
-package edu.cornell.gdiac.json;
+package edu.cornell.gdiac.main;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;

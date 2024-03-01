@@ -13,7 +13,7 @@
  * Author: Walker M. White
  * Version: 3/2/2016
  */
-package edu.cornell.gdiac.json;
+package edu.cornell.gdiac.main;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;

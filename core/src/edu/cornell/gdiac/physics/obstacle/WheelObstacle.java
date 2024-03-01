@@ -14,7 +14,7 @@ package edu.cornell.gdiac.physics.obstacle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
-import edu.cornell.gdiac.json.GameCanvas;
+import edu.cornell.gdiac.main.GameCanvas;
 
 /**
  * Circle-shaped model to support collisions.
