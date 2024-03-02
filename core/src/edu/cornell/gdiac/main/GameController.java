@@ -363,7 +363,7 @@ public class GameController implements Screen, ContactListener {
       Make the timer visually display whether it's enabled
       See my task in input controller */
 
-    if (!input.didPause()) {
+    if (!input.getMeterPaused()) {
       metercounter += dt;
 
       // If moving

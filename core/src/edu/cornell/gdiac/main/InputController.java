@@ -15,6 +15,7 @@ package edu.cornell.gdiac.main;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -108,9 +109,9 @@ public class InputController {
   private float momentum;
 
   /**
-   * Whe the pause button was pressed.
+   * The toggle representing whether the timer is paused
    */
-  private boolean pausePressed = false;
+  private boolean meterPaused = false;
 
 
   /**
@@ -267,7 +268,7 @@ public class InputController {
     Gdx.input.setInputProcessor(new InputAdapter() {
       public boolean keyDown(int keycode) {
         if (keycode == Input.Keys.X) {
-          pausePressed = !pausePressed;
+          meterPaused = !meterPaused;
           return true;
         }
         return false;
@@ -275,12 +276,8 @@ public class InputController {
     });
   }
 
-  public boolean didPause() {
-    // TODO P1 use input controller to check if they paused the timer
-    // Press X for Pause
-
-    InputController.getInstance().pauseInputProcessor();
-    return pausePressed;
+  public boolean getMeterPaused() {
+    return meterPaused;
   }
 
   /**
@@ -369,6 +366,9 @@ public class InputController {
     prevPressed = (secondary && prevPressed) || (Gdx.input.isKeyPressed(Input.Keys.P));
     nextPressed = (secondary && nextPressed) || (Gdx.input.isKeyPressed(Input.Keys.N));
     exitPressed = (secondary && exitPressed) || (Gdx.input.isKeyPressed(Input.Keys.ESCAPE));
+    if (Gdx.input.isKeyJustPressed(Keys.X)) {
+      meterPaused = !meterPaused;
+    }
 
     // Directional controls
     horizontal = (secondary ? horizontal : 0.0f);
