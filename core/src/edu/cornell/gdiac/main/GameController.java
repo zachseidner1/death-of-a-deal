@@ -345,6 +345,9 @@ public class GameController implements Screen, ContactListener {
       Make it so the player can tap a key to toggle the timer on and off
       Make the timer visually display whether it's enabled
       See my task in input controller */
+
+    // Get input to see if f is just pressed and if so set frozen of the avatar to true
+    avatar.setFrozen(InputController.getInstance().getFrozen());
   }
 
   /**

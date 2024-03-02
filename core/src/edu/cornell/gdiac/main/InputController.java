@@ -15,6 +15,7 @@ package edu.cornell.gdiac.main;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -105,6 +106,10 @@ public class InputController {
    * For the gamepad crosshair control
    */
   private float momentum;
+  /**
+   * Field to keep track of freezing mechanic input (F key)
+   */
+  private boolean isFrozen;
 
   /**
    * Creates a new input controller
@@ -257,6 +262,10 @@ public class InputController {
     return true;
   }
 
+  public boolean getFrozen() {
+    return isFrozen;
+  }
+
   /**
    * Reads the input for the player and converts the result into game logic.
    * <p>
@@ -343,6 +352,11 @@ public class InputController {
     prevPressed = (secondary && prevPressed) || (Gdx.input.isKeyPressed(Input.Keys.P));
     nextPressed = (secondary && nextPressed) || (Gdx.input.isKeyPressed(Input.Keys.N));
     exitPressed = (secondary && exitPressed) || (Gdx.input.isKeyPressed(Input.Keys.ESCAPE));
+
+    // If f is just pressed set isFrozen field
+    if (Gdx.input.isKeyJustPressed(Input.Keys.F)){
+      isFrozen = !isFrozen;
+    }
 
     // Directional controls
     horizontal = (secondary ? horizontal : 0.0f);
