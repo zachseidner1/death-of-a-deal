@@ -18,19 +18,13 @@ package edu.cornell.gdiac.main;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.Contact;
-import com.badlogic.gdx.physics.box2d.ContactImpulse;
-import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
-import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.ObjectSet;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.audio.SoundEffect;
-import edu.cornell.gdiac.physics.obstacle.BoxObstacle;
-import edu.cornell.gdiac.physics.obstacle.Obstacle;
 import edu.cornell.gdiac.util.ScreenListener;
+
 
 /**
  * Gameplay controller for the game.
@@ -42,7 +36,7 @@ import edu.cornell.gdiac.util.ScreenListener;
  * You will notice that asset loading is very different.  It relies on the singleton asset manager
  * to manage the various assets.
  */
-public class GameController implements Screen, ContactListener {
+public class GameController implements Screen {
   // ASSETS
   /**
    * Exit code for quitting the game
@@ -128,15 +122,18 @@ public class GameController implements Screen, ContactListener {
    */
   public GameController() {
     level = new LevelModel();
-    collisionController = new CollisionController(level);
     complete = false;
     failed = false;
     active = false;
     countdown = -1;
+    // create CollisionController, which is extended from ContactListener
+    collisionController = new CollisionController(level);
 
     setComplete(false);
     setFailure(false);
     sensorFixtures = new ObjectSet<Fixture>();
+
+
   }
 
   /**
@@ -162,6 +159,9 @@ public class GameController implements Screen, ContactListener {
       countdown = EXIT_COUNT;
     }
     complete = value;
+
+    // Update the completion flag in the collisionController too
+    collisionController.setComplete(value);
   }
 
   /**
@@ -265,7 +265,7 @@ public class GameController implements Screen, ContactListener {
 
     // Reload the json each time
     level.populate(directory, levelFormat);
-    level.getWorld().setContactListener(this);
+    level.getWorld().setContactListener(collisionController);
   }
 
   /**
@@ -323,6 +323,9 @@ public class GameController implements Screen, ContactListener {
    * @param dt Number of seconds since last animation frame
    */
   public void update(float dt) {
+    // Check if the game has completed (if player touches the objective)
+    setComplete(collisionController.isComplete());
+
     // Process actions in object model
     PlayerModel avatar = level.getAvatar();
     avatar.setMovement(InputController.getInstance().getHorizontal() * avatar.getForce());
@@ -452,89 +455,6 @@ public class GameController implements Screen, ContactListener {
     this.listener = listener;
   }
 
-  /**
-   * <p>
-   *
-   * @param contact The two bodies that collided
-   */
-  public void beginContact(Contact contact) {
-    collisionController.handleContact(contact);
-
-    // TODO P5 refactor code below, ideally we shouldn't have any of it in GameController
-//    Fixture fix1 = contact.getFixtureA();
-//    Fixture fix2 = contact.getFixtureB();
-//
-//    Body body1 = fix1.getBody();
-//    Body body2 = fix2.getBody();
-//
-//    Object fd1 = fix1.getUserData();
-//    Object fd2 = fix2.getUserData();
-//
-//    try {
-//      Obstacle bd1 = (Obstacle) body1.getUserData();
-//      Obstacle bd2 = (Obstacle) body2.getUserData();
-//
-//      PlayerModel avatar = level.getAvatar();
-//      BoxObstacle door = level.getExit();
-//
-//      // See if we have landed on the ground.
-//      if ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
-//          (avatar.getSensorName().equals(fd1) && avatar != bd2)) {
-//        avatar.setGrounded(true);
-//        sensorFixtures.add(avatar == bd1 ? fix2 : fix1); // Could have more than one ground
-//      }
-//
-//      // Check for win condition
-//      if ((bd1 == avatar && bd2 == door) ||
-//          (bd1 == door && bd2 == avatar)) {
-//        setComplete(true);
-//      }
-//    } catch (Exception e) {
-//      e.printStackTrace();
-//    }
-
-  }
-
-  /**
-   * Callback method for the start of a collision
-   * <p>
-   * This method is called when two objects cease to touch.  The main use of this method is to
-   * determine when the characer is NOT on the ground.  This is how we prevent double jumping.
-   */
-  public void endContact(Contact contact) {
-    Fixture fix1 = contact.getFixtureA();
-    Fixture fix2 = contact.getFixtureB();
-
-    Body body1 = fix1.getBody();
-    Body body2 = fix2.getBody();
-
-    Object fd1 = fix1.getUserData();
-    Object fd2 = fix2.getUserData();
-
-    Object bd1 = body1.getUserData();
-    Object bd2 = body2.getUserData();
-
-    PlayerModel avatar = level.getAvatar();
-    if ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
-        (avatar.getSensorName().equals(fd1) && avatar != bd2)) {
-      sensorFixtures.remove(avatar == bd1 ? fix2 : fix1);
-      if (sensorFixtures.size == 0) {
-        avatar.setGrounded(false);
-      }
-    }
-  }
-
-  /**
-   * Unused ContactListener method
-   */
-  public void postSolve(Contact contact, ContactImpulse impulse) {
-  }
-
-  /**
-   * Unused ContactListener method
-   */
-  public void preSolve(Contact contact, Manifold oldManifold) {
-  }
 
   /**
    * Method to ensure that a sound asset is only played once.
