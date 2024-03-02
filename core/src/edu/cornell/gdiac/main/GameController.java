@@ -120,6 +120,22 @@ public class GameController implements Screen, ContactListener {
    */
   private int countdown;
 
+
+  /**
+   * Counter for keep track of meter
+   */
+  private float metercounter;
+
+  /**
+   * Constant for when stationary
+   */
+  private float stationaryconst = 0.25f;
+
+  /**
+   * Constant for freeze mechanic
+   */
+  private float freezeconst = 100;
+
   /**
    * Creates a new game world
    * <p>
@@ -324,6 +340,7 @@ public class GameController implements Screen, ContactListener {
    */
   public void update(float dt) {
     // Process actions in object model
+    InputController input = InputController.getInstance();
     PlayerModel avatar = level.getAvatar();
     avatar.setMovement(InputController.getInstance().getHorizontal() * avatar.getForce());
     avatar.setJumping(InputController.getInstance().didPrimary());
@@ -345,6 +362,26 @@ public class GameController implements Screen, ContactListener {
       Make it so the player can tap a key to toggle the timer on and off
       Make the timer visually display whether it's enabled
       See my task in input controller */
+
+    if (!input.didPause()) {
+      metercounter += dt;
+
+      // If moving
+      if (input.getHorizontal() != 0 || input.getVertical() != 0) {
+        metercounter += stationaryconst;
+      }
+
+      // Once meter reaches 100, freeze
+      if (metercounter >= freezeconst) {
+        metercounter = 0;
+        level.getAvatar().setFrozen(true);
+      }
+
+      if (complete || failed) {
+        metercounter = 0;
+      }
+    }
+
   }
 
   /**
@@ -361,6 +398,15 @@ public class GameController implements Screen, ContactListener {
     canvas.clear();
 
     level.draw(canvas);
+
+    // Display meter
+    if (!complete && !failed) {
+      displayFont.setColor(Color.BLACK);
+      canvas.begin();
+      String message = "Meter: " + (int) metercounter;
+      canvas.drawText(message, displayFont, canvas.getWidth() / 2f - 36, canvas.getHeight() - 36);
+      canvas.end();
+    }
 
     // Final message
     if (complete && !failed) {

@@ -15,6 +15,7 @@ package edu.cornell.gdiac.main;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -105,6 +106,12 @@ public class InputController {
    * For the gamepad crosshair control
    */
   private float momentum;
+
+  /**
+   * Whe the pause button was pressed.
+   */
+  private boolean pausePressed = false;
+
 
   /**
    * Creates a new input controller
@@ -243,6 +250,7 @@ public class InputController {
     return debugPressed && !debugPrevious;
   }
 
+
   /**
    * Returns true if the exit button was pressed.
    *
@@ -252,9 +260,27 @@ public class InputController {
     return exitPressed && !exitPrevious;
   }
 
+  /**
+   * Input processor to handle pause
+   */
+  private void pauseInputProcessor() {
+    Gdx.input.setInputProcessor(new InputAdapter() {
+      public boolean keyDown(int keycode) {
+        if (keycode == Input.Keys.X) {
+          pausePressed = !pausePressed;
+          return true;
+        }
+        return false;
+      }
+    });
+  }
+
   public boolean didPause() {
     // TODO P1 use input controller to check if they paused the timer
-    return true;
+    // Press X for Pause
+
+    InputController.getInstance().pauseInputProcessor();
+    return pausePressed;
   }
 
   /**
