@@ -140,7 +140,6 @@ public class PlayerModel extends CapsuleObstacle {
    * @param value left/right movement of this character.
    */
   public void setMovement(float value) {
-    // TODO P3 make sure player cannot move when frozen
     movement = value;
     if (isFrozen){
       movement = 0;
@@ -172,7 +171,7 @@ public class PlayerModel extends CapsuleObstacle {
    * @param value whether the player is actively jumping.
    */
   public void setJumping(boolean value) {
-    isJumping = value;
+    isJumping = value && !isFrozen;
   }
 
   /**
@@ -206,15 +205,11 @@ public class PlayerModel extends CapsuleObstacle {
    * @param value true if the player is frozen, false otherwise
    */
   public void setFrozen(boolean value) {
-    // TODO P3 update frozen and apply physics, also visually change player in some way
     isFrozen = value;
     if (isFrozen){
-      setDensity(getDensity() * 3);
-      setFixedRotation(true);
       color = Color.BLUE;
+      getBody().applyLinearImpulse(new Vector2(0f,-0.5f),getPosition(),true);
     } else {
-      setDensity(getDensity()/3);
-      setFixedRotation(false);
       color = Color.WHITE;
     }
     // you should probably make an isFrozen field
