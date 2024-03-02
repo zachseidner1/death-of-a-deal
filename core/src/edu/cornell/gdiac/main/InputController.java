@@ -16,7 +16,6 @@ package edu.cornell.gdiac.main;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -259,21 +258,6 @@ public class InputController {
    */
   public boolean didExit() {
     return exitPressed && !exitPrevious;
-  }
-
-  /**
-   * Input processor to handle pause
-   */
-  private void pauseInputProcessor() {
-    Gdx.input.setInputProcessor(new InputAdapter() {
-      public boolean keyDown(int keycode) {
-        if (keycode == Input.Keys.X) {
-          meterPaused = !meterPaused;
-          return true;
-        }
-        return false;
-      }
-    });
   }
 
   public boolean getMeterPaused() {
