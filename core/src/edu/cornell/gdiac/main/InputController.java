@@ -106,6 +106,10 @@ public class InputController {
    * For the gamepad crosshair control
    */
   private float momentum;
+  /**
+   * Field to keep track of freezing mechanic input (F key)
+   */
+  private boolean isFrozen;
 
   /**
    * The toggle representing whether the timer is paused
@@ -264,6 +268,10 @@ public class InputController {
     return meterPaused;
   }
 
+  public boolean getFrozen() {
+    return isFrozen;
+  }
+
   /**
    * Reads the input for the player and converts the result into game logic.
    * <p>
@@ -352,6 +360,11 @@ public class InputController {
     exitPressed = (secondary && exitPressed) || (Gdx.input.isKeyPressed(Input.Keys.ESCAPE));
     if (Gdx.input.isKeyJustPressed(Keys.X)) {
       meterPaused = !meterPaused;
+    }
+
+    // If f is just pressed set isFrozen field
+    if (Gdx.input.isKeyJustPressed(Input.Keys.F)){
+      isFrozen = !isFrozen;
     }
 
     // Directional controls
