@@ -41,46 +41,74 @@ import edu.cornell.gdiac.main.GameCanvas;
  */
 public abstract class Obstacle {
   /// Initialization structures to store body information
-  /** Stores the body information for this shape */
+  /**
+   * Stores the body information for this shape
+   */
   protected BodyDef bodyinfo;
 
-  /** Stores the fixture information for this shape */
+  /**
+   * Stores the fixture information for this shape
+   */
   protected FixtureDef fixture;
 
-  /** The mass data of this shape (which may override the fixture) */
+  /**
+   * The mass data of this shape (which may override the fixture)
+   */
   protected MassData massdata;
 
-  /** Whether or not to use the custom mass data */
+  /**
+   * Whether or not to use the custom mass data
+   */
   protected boolean masseffect;
 
-  /** Drawing scale to convert physics units to pixels */
+  /**
+   * Drawing scale to convert physics units to pixels
+   */
   protected Vector2 drawScale;
 
-  /** A cache value for when the user wants to access the body position */
+  /**
+   * A cache value for when the user wants to access the body position
+   */
   protected Vector2 positionCache = new Vector2();
 
   /// Track garbage collection status
-  /** A cache value for when the user wants to access the linear velocity */
+  /**
+   * A cache value for when the user wants to access the linear velocity
+   */
   protected Vector2 velocityCache = new Vector2();
 
-  /** A cache value for when the user wants to access the center of mass */
+  /**
+   * A cache value for when the user wants to access the center of mass
+   */
   protected Vector2 centroidCache = new Vector2();
 
   /// Caching objects
-  /** A cache value for when the user wants to access the drawing scale */
+  /**
+   * A cache value for when the user wants to access the drawing scale
+   */
   protected Vector2 scaleCache = new Vector2();
-  /** The color to show off the debug shape */
+  /**
+   * The color to show off the debug shape
+   */
   protected Color debugColor;
-  /** A tag for debugging purposes */
+  /**
+   * A tag for debugging purposes
+   */
   private String nametag;
-  /** Whether the object should be removed from the world on next pass */
+  /**
+   * Whether the object should be removed from the world on next pass
+   */
   private boolean toRemove;
-  /** Whether the object has changed shape and needs a new fixture */
+  /**
+   * Whether the object has changed shape and needs a new fixture
+   */
   private boolean isDirty;
 
   /// BodyDef Methods
 
-  /** Create a new physics object at the origin. */
+  /**
+   * Create a new physics object at the origin.
+   */
   protected Obstacle() {
     this(0, 0);
   }
@@ -337,9 +365,10 @@ public abstract class Obstacle {
   /**
    * Returns true if the body is active
    *
-   * <p>An inactive body not participate in collision or dynamics. This state is similar to sleeping
-   * except the body will not be woken by other bodies and the body's fixtures will not be placed in
-   * the broad-phase. This means the body will not participate in collisions, ray casts, etc.
+   * <p>An inactive body not participate in collision or dynamics. This state is similar to
+   * sleeping except the body will not be woken by other bodies and the body's fixtures will not be
+   * placed in the broad-phase. This means the body will not participate in collisions, ray casts,
+   * etc.
    *
    * @return true if the body is active
    */
@@ -350,9 +379,10 @@ public abstract class Obstacle {
   /**
    * Sets whether the body is active
    *
-   * <p>An inactive body not participate in collision or dynamics. This state is similar to sleeping
-   * except the body will not be woken by other bodies and the body's fixtures will not be placed in
-   * the broad-phase. This means the body will not participate in collisions, ray casts, etc.
+   * <p>An inactive body not participate in collision or dynamics. This state is similar to
+   * sleeping except the body will not be woken by other bodies and the body's fixtures will not be
+   * placed in the broad-phase. This means the body will not participate in collisions, ray casts,
+   * etc.
    *
    * @param value whether the body is active
    */
@@ -507,9 +537,9 @@ public abstract class Obstacle {
    * because friction only occurs with contact. Damping is not a replacement for friction and the
    * two effects should be used together.
    *
-   * <p>Damping parameters should be between 0 and infinity, with 0 meaning no damping, and infinity
-   * meaning full damping. Normally you will use a damping value between 0 and 0.1. Most people
-   * avoid linear damping because it makes bodies look floaty.
+   * <p>Damping parameters should be between 0 and infinity, with 0 meaning no damping, and
+   * infinity meaning full damping. Normally you will use a damping value between 0 and 0.1. Most
+   * people avoid linear damping because it makes bodies look floaty.
    *
    * @return the linear damping for this body.
    */
@@ -524,9 +554,9 @@ public abstract class Obstacle {
    * because friction only occurs with contact. Damping is not a replacement for friction and the
    * two effects should be used together.
    *
-   * <p>Damping parameters should be between 0 and infinity, with 0 meaning no damping, and infinity
-   * meaning full damping. Normally you will use a damping value between 0 and 0.1. Most people
-   * avoid linear damping because it makes bodies look floaty.
+   * <p>Damping parameters should be between 0 and infinity, with 0 meaning no damping, and
+   * infinity meaning full damping. Normally you will use a damping value between 0 and 0.1. Most
+   * people avoid linear damping because it makes bodies look floaty.
    *
    * @param value the linear damping for this body.
    */
@@ -541,8 +571,8 @@ public abstract class Obstacle {
    * because friction only occurs with contact. Damping is not a replacement for friction and the
    * two effects should be used together.
    *
-   * <p>Damping parameters should be between 0 and infinity, with 0 meaning no damping, and infinity
-   * meaning full damping. Normally you will use a damping value between 0 and 0.1.
+   * <p>Damping parameters should be between 0 and infinity, with 0 meaning no damping, and
+   * infinity meaning full damping. Normally you will use a damping value between 0 and 0.1.
    *
    * @return the angular damping for this body.
    */
@@ -559,8 +589,8 @@ public abstract class Obstacle {
    * because friction only occurs with contact. Damping is not a replacement for friction and the
    * two effects should be used together.
    *
-   * <p>Damping parameters should be between 0 and infinity, with 0 meaning no damping, and infinity
-   * meaning full damping. Normally you will use a damping value between 0 and 0.1.
+   * <p>Damping parameters should be between 0 and infinity, with 0 meaning no damping, and
+   * infinity meaning full damping. Normally you will use a damping value between 0 and 0.1.
    *
    * @param value the angular damping for this body.
    */
@@ -592,9 +622,9 @@ public abstract class Obstacle {
   /**
    * Returns the density of this body
    *
-   * <p>The density is typically measured in usually in kg/m^2. The density can be zero or positive.
-   * You should generally use similar densities for all your fixtures. This will improve stacking
-   * stability.
+   * <p>The density is typically measured in usually in kg/m^2. The density can be zero or
+   * positive. You should generally use similar densities for all your fixtures. This will improve
+   * stacking stability.
    *
    * @return the density of this body
    */
@@ -605,9 +635,9 @@ public abstract class Obstacle {
   /**
    * Sets the density of this body
    *
-   * <p>The density is typically measured in usually in kg/m^2. The density can be zero or positive.
-   * You should generally use similar densities for all your fixtures. This will improve stacking
-   * stability.
+   * <p>The density is typically measured in usually in kg/m^2. The density can be zero or
+   * positive. You should generally use similar densities for all your fixtures. This will improve
+   * stacking stability.
    *
    * @param value the density of this body
    */
@@ -826,7 +856,9 @@ public abstract class Obstacle {
     massdata.mass = value;
   }
 
-  /** Resets this body to use the mass computed from the its shape and density */
+  /**
+   * Resets this body to use the mass computed from the its shape and density
+   */
   public void resetMass() {
     masseffect = false;
   }
@@ -991,13 +1023,14 @@ public abstract class Obstacle {
   /**
    * Updates the object's physics state (NOT GAME LOGIC).
    *
-   * <p>This method is called AFTER the collision resolution state. Therefore, it should not be used
-   * to process actions or any other gameplay information. Its primary purpose is to adjust changes
-   * to the fixture, which have to take place after collision.
+   * <p>This method is called AFTER the collision resolution state. Therefore, it should not be
+   * used to process actions or any other gameplay information. Its primary purpose is to adjust
+   * changes to the fixture, which have to take place after collision.
    *
    * @param dt Timing values from parent loop
    */
-  public void update(float delta) {}
+  public void update(float delta) {
+  }
 
   /**
    * Draws the texture physics object.

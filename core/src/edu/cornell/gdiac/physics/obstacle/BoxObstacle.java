@@ -24,19 +24,29 @@ import edu.cornell.gdiac.main.GameCanvas;
  */
 public class BoxObstacle extends SimpleObstacle {
 
-  /** Shape information for this box */
+  /**
+   * Shape information for this box
+   */
   protected PolygonShape shape;
 
-  /** Cache of the polygon vertices (for resizing) */
+  /**
+   * Cache of the polygon vertices (for resizing)
+   */
   protected float[] vertices;
 
-  /** The width and height of the box */
+  /**
+   * The width and height of the box
+   */
   private Vector2 dimension;
 
-  /** A cache value for when the user wants to access the dimensions */
+  /**
+   * A cache value for when the user wants to access the dimensions
+   */
   private Vector2 sizeCache;
 
-  /** A cache value for the fixture (for resizing) */
+  /**
+   * A cache value for the fixture (for resizing)
+   */
   private Fixture geometry;
 
   /**
@@ -45,7 +55,7 @@ public class BoxObstacle extends SimpleObstacle {
    * <p>The size is expressed in physics units NOT pixels. In order for drawing to work properly,
    * you MUST set the drawScale. The drawScale converts the physics units to pixels.
    *
-   * @param width The object width in physics units
+   * @param width  The object width in physics units
    * @param height The object width in physics units
    */
   public BoxObstacle(float width, float height) {
@@ -58,9 +68,9 @@ public class BoxObstacle extends SimpleObstacle {
    * <p>The size is expressed in physics units NOT pixels. In order for drawing to work properly,
    * you MUST set the drawScale. The drawScale converts the physics units to pixels.
    *
-   * @param x Initial x position of the box center
-   * @param y Initial y position of the box center
-   * @param width The object width in physics units
+   * @param x      Initial x position of the box center
+   * @param y      Initial y position of the box center
+   * @param width  The object width in physics units
    * @param height The object width in physics units
    */
   public BoxObstacle(float x, float y, float width, float height) {
@@ -80,8 +90,8 @@ public class BoxObstacle extends SimpleObstacle {
   /**
    * Returns the dimensions of this box
    *
-   * <p>This method does NOT return a reference to the dimension vector. Changes to this vector will
-   * not affect the shape. However, it returns the same vector each time its is called, and so
+   * <p>This method does NOT return a reference to the dimension vector. Changes to this vector
+   * will not affect the shape. However, it returns the same vector each time its is called, and so
    * cannot be used as an allocator.
    *
    * @return the dimensions of this box
@@ -104,7 +114,7 @@ public class BoxObstacle extends SimpleObstacle {
   /**
    * Sets the dimensions of this box
    *
-   * @param width The width of this box
+   * @param width  The width of this box
    * @param height The height of this box
    */
   public void setDimension(float width, float height) {
@@ -151,7 +161,9 @@ public class BoxObstacle extends SimpleObstacle {
     setDimension(sizeCache);
   }
 
-  /** Reset the polygon vertices in the shape to match the dimension. */
+  /**
+   * Reset the polygon vertices in the shape to match the dimension.
+   */
   protected void resize(float width, float height) {
     // Make the box with the center in the center
     vertices[0] = -width / 2.0f;

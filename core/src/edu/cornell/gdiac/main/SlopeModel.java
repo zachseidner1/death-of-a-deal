@@ -9,7 +9,7 @@ public class SlopeModel extends PolygonObstacle {
 
   public SlopeModel() {
     // Since we do not know points yet, initialize to box
-    super(new float[] {0, 0, 1, 0, 1, 1, 0, 1}, 0, 0);
+    super(new float[]{0, 0, 1, 0, 1, 1, 0, 1}, 0, 0);
   }
 
   /**
@@ -19,7 +19,7 @@ public class SlopeModel extends PolygonObstacle {
    * is limited to the platform subtree
    *
    * @param directory the asset manager
-   * @param json the JSON subtree defining the platform
+   * @param json      the JSON subtree defining the platform
    */
   public void initialize(AssetDirectory directory, JsonValue json) {
     setName(json.name());

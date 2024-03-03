@@ -28,37 +28,55 @@ import edu.cornell.gdiac.main.GameCanvas;
 /**
  * Arbitrary polygonal-shaped model to support collisions.
  *
- * <p>The polygon coordinates are all in local space, relative to the object center. In addition the
- * texture coordinates are computed automatically from the texture size, using the same policy as
- * PolygonSpriteBatch.
+ * <p>The polygon coordinates are all in local space, relative to the object center. In addition
+ * the texture coordinates are computed automatically from the texture size, using the same policy
+ * as PolygonSpriteBatch.
  */
 public class PolygonObstacle extends SimpleObstacle {
 
-  /** An earclipping triangular to make sure we work with convex shapes */
+  /**
+   * An earclipping triangular to make sure we work with convex shapes
+   */
   protected static final EarClippingTriangulator TRIANGULATOR = new EarClippingTriangulator();
 
-  /** Shape information for this physics object */
+  /**
+   * Shape information for this physics object
+   */
   protected PolygonShape[] shapes;
 
-  /** Texture information for this object */
+  /**
+   * Texture information for this object
+   */
   protected PolygonRegion region;
 
-  /** The polygon vertices, scaled for drawing */
+  /**
+   * The polygon vertices, scaled for drawing
+   */
   protected float[] scaled;
 
-  /** The triangle indices, used for drawing */
+  /**
+   * The triangle indices, used for drawing
+   */
   protected short[] tridx;
 
-  /** A cache value for the fixtures (for resizing) */
+  /**
+   * A cache value for the fixtures (for resizing)
+   */
   protected Fixture[] geoms;
 
-  /** Cache of the polygon vertices (for resizing) */
+  /**
+   * Cache of the polygon vertices (for resizing)
+   */
   protected float[] vertices;
 
-  /** The polygon bounding box (for resizing purposes) */
+  /**
+   * The polygon bounding box (for resizing purposes)
+   */
   private Vector2 dimension;
 
-  /** A cache value for when the user wants to access the dimensions */
+  /**
+   * A cache value for when the user wants to access the dimensions
+   */
   private Vector2 sizeCache;
 
   /**
@@ -82,8 +100,8 @@ public class PolygonObstacle extends SimpleObstacle {
    * properly).
    *
    * @param points The polygon vertices
-   * @param x Initial x position of the polygon center
-   * @param y Initial y position of the polygon center
+   * @param x      Initial x position of the polygon center
+   * @param y      Initial y position of the polygon center
    */
   public PolygonObstacle(float[] points, float x, float y) {
     super(x, y);
@@ -97,8 +115,8 @@ public class PolygonObstacle extends SimpleObstacle {
   /**
    * Returns the dimensions of this box
    *
-   * <p>This method does NOT return a reference to the dimension vector. Changes to this vector will
-   * not affect the shape. However, it returns the same vector each time its is called, and so
+   * <p>This method does NOT return a reference to the dimension vector. Changes to this vector
+   * will not affect the shape. However, it returns the same vector each time its is called, and so
    * cannot be used as an allocator.
    *
    * @return the dimensions of this box
@@ -121,7 +139,7 @@ public class PolygonObstacle extends SimpleObstacle {
   /**
    * Sets the dimensions of this box
    *
-   * @param width The width of this box
+   * @param width  The width of this box
    * @param height The height of this box
    */
   public void setDimension(float width, float height) {
@@ -167,7 +185,9 @@ public class PolygonObstacle extends SimpleObstacle {
     setDimension(sizeCache);
   }
 
-  /** Initializes the bounding box (and drawing scale) for this polygon */
+  /**
+   * Initializes the bounding box (and drawing scale) for this polygon
+   */
   protected void initBounds() {
     float minx = vertices[0];
     float maxx = vertices[0];
@@ -238,7 +258,7 @@ public class PolygonObstacle extends SimpleObstacle {
    *
    * <p>For some reason, the LibGDX triangulator will occasionally return colinear vertices.
    *
-   * @param points The polygon vertices
+   * @param points  The polygon vertices
    * @param indices The triangulation indices
    */
   protected void trimColinear(float[] points, ShortArray indices) {
@@ -247,7 +267,7 @@ public class PolygonObstacle extends SimpleObstacle {
       float t1 =
           points[2 * indices.items[3 * ii]]
               * (points[2 * indices.items[3 * ii + 1] + 1]
-                  - points[2 * indices.items[3 * ii + 2] + 1]);
+              - points[2 * indices.items[3 * ii + 2] + 1]);
       float t2 =
           points[2 * indices.items[3 * ii + 1]]
               * (points[2 * indices.items[3 * ii + 2] + 1] - points[2 * indices.items[3 * ii] + 1]);
@@ -268,7 +288,7 @@ public class PolygonObstacle extends SimpleObstacle {
   /**
    * Resize this polygon (stretching uniformly out from origin)
    *
-   * @param width The new width
+   * @param width  The new width
    * @param height The new height
    */
   protected void resize(float width, float height) {

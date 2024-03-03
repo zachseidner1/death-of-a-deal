@@ -34,13 +34,19 @@ import edu.cornell.gdiac.util.SimpleObstacleJsonParser;
  */
 public class PlatformModel extends BoxObstacle {
 
-  /** Texture information for this object */
+  /**
+   * Texture information for this object
+   */
   protected PolygonRegion region;
 
-  /** The texture anchor upon region initialization */
+  /**
+   * The texture anchor upon region initialization
+   */
   protected Vector2 anchor;
 
-  /** Create a new PlatformModel with degenerate settings */
+  /**
+   * Create a new PlatformModel with degenerate settings
+   */
   public PlatformModel() {
     super(0, 0, 1, 1);
     region = null;
@@ -71,7 +77,9 @@ public class PlatformModel extends BoxObstacle {
     region = new PolygonRegion(texture, scaled, tris);
   }
 
-  /** Reset the polygon vertices in the shape to match the dimension. */
+  /**
+   * Reset the polygon vertices in the shape to match the dimension.
+   */
   @Override
   protected void resize(float width, float height) {
     super.resize(width, height);
@@ -175,7 +183,7 @@ public class PlatformModel extends BoxObstacle {
    * is limited to the platform subtree
    *
    * @param directory the asset manager
-   * @param json the JSON subtree defining the platform
+   * @param json      the JSON subtree defining the platform
    */
   public void initialize(AssetDirectory directory, JsonValue json) {
     setName(json.name());

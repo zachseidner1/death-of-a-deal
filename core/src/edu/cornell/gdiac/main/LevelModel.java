@@ -34,32 +34,50 @@ import edu.cornell.gdiac.util.PooledList;
  */
 public class LevelModel {
 
-  /** The Box2D world */
+  /**
+   * The Box2D world
+   */
   protected World world;
 
-  /** The boundary of the world */
+  /**
+   * The boundary of the world
+   */
   protected Rectangle bounds;
 
-  /** The world scale */
+  /**
+   * The world scale
+   */
   protected Vector2 scale;
 
   // Physics objects for the game
-  /** All the objects in the world. */
+  /**
+   * All the objects in the world.
+   */
   protected PooledList<Obstacle> objects = new PooledList<Obstacle>();
 
-  /** Reference to the character avatar */
+  /**
+   * Reference to the character avatar
+   */
   private PlayerModel avatar;
 
-  /** Reference to the bounce pad (for collision detection) */
+  /**
+   * Reference to the bounce pad (for collision detection)
+   */
   private BouncePlatformModel bouncePlatformModel;
 
-  /** Reference to the goalDoor (for collision detection) */
+  /**
+   * Reference to the goalDoor (for collision detection)
+   */
   private ExitModel goalDoor;
 
-  /** Whether or not the level is in debug more (showing off physics) */
+  /**
+   * Whether or not the level is in debug more (showing off physics)
+   */
   private boolean debug;
 
-  /** Whether or not the level is completed */
+  /**
+   * Whether or not the level is completed
+   */
   private boolean complete;
 
   /**
@@ -167,7 +185,7 @@ public class LevelModel {
   /**
    * Lays out the game geography from the given JSON file
    *
-   * @param directory the asset manager
+   * @param directory   the asset manager
    * @param levelFormat the JSON file defining the level
    */
   public void populate(AssetDirectory directory, JsonValue levelFormat) {

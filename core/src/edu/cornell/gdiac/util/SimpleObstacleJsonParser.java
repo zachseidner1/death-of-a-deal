@@ -9,15 +9,17 @@ import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.physics.obstacle.SimpleObstacle;
 import java.lang.reflect.Field;
 
-/** Class that provides utility functions for parsing json and populating obstacles */
+/**
+ * Class that provides utility functions for parsing json and populating obstacles
+ */
 public class SimpleObstacleJsonParser {
 
   /**
    * Parses json and initializes the obstacle's properties
    *
-   * @param obstacle The obstacle to be initiated
+   * @param obstacle  The obstacle to be initiated
    * @param directory Asset directory to fetch textures
-   * @param json Json to be parsed
+   * @param json      Json to be parsed
    */
   public static void initPlatformFromJson(
       SimpleObstacle obstacle, AssetDirectory directory, JsonValue json) {
