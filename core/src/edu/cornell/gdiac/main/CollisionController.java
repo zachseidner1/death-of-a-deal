@@ -13,14 +13,14 @@ import edu.cornell.gdiac.physics.obstacle.Obstacle;
 public class CollisionController implements ContactListener {
 
   /**
+   * Arbitrary bounce impulse that are used for bouncing up
+   */
+  private final float BOUNCE_FORCE = 10f;
+  /**
    * Mark set to handle more sophisticated collision callbacks
    */
   protected ObjectSet<Fixture> sensorFixtures;
   private LevelModel level;
-  /**
-   * Arbitrary bounce impulse that are used for bouncing up
-   */
-  private float bounceForce = 10f;
 
   /**
    * Set up the collision model based on Level Model & Create sensorFixtures to track active bodies
@@ -149,7 +149,7 @@ public class CollisionController implements ContactListener {
     // Check if the player is above the bounce platform
     if (player.getPosition().y > bouncePlatform.getPosition().y) {
       // Apply the bounce force to the player
-      player.setBounce(bounceForce);
+      player.setBounce(BOUNCE_FORCE);
     }
   }
 }

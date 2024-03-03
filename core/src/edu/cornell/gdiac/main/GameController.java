@@ -160,7 +160,6 @@ public class GameController implements Screen {
     }
     complete = value;
 
-    // Update the completion flag in the collisionController too
     level.setComplete(value);
   }
 
