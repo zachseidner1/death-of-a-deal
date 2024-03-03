@@ -373,9 +373,11 @@ public class GameController implements Screen {
       if (complete || failed) {
         meterCounter = 0;
       }
+    } else {
+      // Get input to see if f is just pressed and if so set frozen of the avatar to true
+      // This method only works when the game is paused!
+      avatar.setFrozen(InputController.getInstance().getFrozen());
     }
-    // Get input to see if f is just pressed and if so set frozen of the avatar to true
-    avatar.setFrozen(InputController.getInstance().getFrozen());
   }
 
   /**
