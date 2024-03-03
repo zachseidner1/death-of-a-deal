@@ -44,7 +44,6 @@ public class PlatformModel extends BoxObstacle {
    * The texture anchor upon region initialization
    */
   protected Vector2 anchor;
-
   /**
    * Create a new PlatformModel with degenerate settings
    */

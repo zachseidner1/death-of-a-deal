@@ -275,5 +275,25 @@
       "debugcolor": "yellow",
       "debugopacity": 200
     }
+  },
+  "bounceplatforms": {
+    "bouncefloor1": {
+      "pos": [
+        8,
+        3
+      ],
+      "size": [
+        2.0,
+        0.5
+      ],
+      "bodytype": "static",
+      "density": 0.0,
+      "friction": 0.4,
+      "restitution": 0.1,
+      "texture": "earth",
+      "debugcolor": "red",
+      "debugopacity": 200,
+      "coefficient": 2.0
+    }
   }
 }
