@@ -219,18 +219,6 @@ public class PlayerModel extends CapsuleObstacle {
     // you should probably make an isFrozen field
   }
 
-  public void setBounce(float bounceImpulse) {
-    if (!isActive()) {
-      return;
-    }
-    // Ensure the player is only bounced when grounded to prevent continuous bouncing
-    if (isGrounded) {
-      Vector2 impulse = new Vector2(0, bounceImpulse);
-      body.applyLinearImpulse(impulse, body.getWorldCenter(), true);
-    }
-  }
-
-
   /**
    * Returns how much force to apply to get the player moving
    * <p>
@@ -388,7 +376,6 @@ public class PlayerModel extends CapsuleObstacle {
     setMaxSpeed(json.get("maxspeed").asFloat());
     setJumpPulse(json.get("jumppulse").asFloat());
     setJumpLimit(json.get("jumplimit").asInt());
-
     // Reflection is best way to convert name to color
     Color debugColor;
     try {
