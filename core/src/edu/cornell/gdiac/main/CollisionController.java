@@ -33,16 +33,17 @@ public class CollisionController {
     if(levelModel.getAvatar().equals(fixture1.getUserData())){
       if (fixture2.getUserData().getClass()==BouncePlatformModel.class){
         BouncePlatformModel bplt=(BouncePlatformModel) fixture2.getUserData();
-        handleBounce(contact,bplt);
+        contact=handleBounce(contact,bplt);
       }
     }
 
     // There is a potential error of colliding with oneself here. Be careful not to trigger such situation.
   }
 
-  public void handleBounce(Contact contact,BouncePlatformModel bouncePlatform) {
+  public Contact handleBounce(Contact contact,BouncePlatformModel bouncePlatform) {
     // TODO P2 implement and call this function
    float c= bouncePlatform.getCoefficient();
    contact.setRestitution(c);
+   return contact;
   }
 }
