@@ -374,7 +374,8 @@ public class GameController implements Screen {
         meterCounter = 0;
       }
     }
-
+    // Get input to see if f is just pressed and if so set frozen of the avatar to true
+    avatar.setFrozen(InputController.getInstance().getFrozen());
   }
 
   /**
