@@ -232,7 +232,14 @@ public class LevelModel {
     }
 
     // TODO P2 initialize bounce model
-
+    JsonValue bounceFloor = levelFormat.get("bounceplatforms").child();
+    while (bounceFloor != null) {
+      BouncePlatformModel obj = new BouncePlatformModel();
+      obj.initialize(directory, bounceFloor);
+      obj.setDrawScale(scale);
+      activate(obj);
+      bounceFloor = bounceFloor.next();
+    }
     // Create dude
     avatar = new PlayerModel();
     avatar.initialize(directory, levelFormat.get("avatar"));
