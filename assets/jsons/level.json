@@ -209,57 +209,6 @@
     },
     "floor7": {
       "pos": [
-        14.75,
-        5.75
-      ],
-      "size": [
-        1.5,
-        0.5
-      ],
-      "bodytype": "static",
-      "density": 0.0,
-      "friction": 0.4,
-      "restitution": 0.1,
-      "texture": "earth",
-      "debugcolor": "yellow",
-      "debugopacity": 200
-    },
-    "floor8": {
-      "pos": [
-        11.5,
-        6.75
-      ],
-      "size": [
-        2.0,
-        0.5
-      ],
-      "bodytype": "static",
-      "density": 0.0,
-      "friction": 0.4,
-      "restitution": 0.1,
-      "texture": "earth",
-      "debugcolor": "yellow",
-      "debugopacity": 200
-    },
-    "floor9": {
-      "pos": [
-        7.5,
-        7.75
-      ],
-      "size": [
-        2.0,
-        0.5
-      ],
-      "bodytype": "static",
-      "density": 0.0,
-      "friction": 0.4,
-      "restitution": 0.1,
-      "texture": "earth",
-      "debugcolor": "yellow",
-      "debugopacity": 200
-    },
-    "floor10": {
-      "pos": [
         2.5,
         8.75
       ],
@@ -270,6 +219,59 @@
       "bodytype": "static",
       "density": 0.0,
       "friction": 0.4,
+      "restitution": 0.1,
+      "texture": "earth",
+      "debugcolor": "yellow",
+      "debugopacity": 200
+    }
+  },
+  "slopeplatforms": {
+    "slope1": {
+      "points": [
+        14,
+        6,
+        16,
+        6,
+        16,
+        7.5
+      ],
+      "bodytype": "static",
+      "density": 0.0,
+      "friction": 0.2,
+      "restitution": 0.1,
+      "texture": "earth",
+      "debugcolor": "yellow",
+      "debugopacity": 200
+    },
+    "slope2": {
+      "points": [
+        11,
+        7,
+        12,
+        7,
+        11,
+        7.5
+      ],
+      "bodytype": "static",
+      "density": 0.0,
+      "friction": 0.2,
+      "restitution": 0.1,
+      "texture": "earth",
+      "debugcolor": "yellow",
+      "debugopacity": 200
+    },
+    "slope3": {
+      "points": [
+        7,
+        7.5,
+        8,
+        7.5,
+        7,
+        8
+      ],
+      "bodytype": "static",
+      "density": 0.0,
+      "friction": 0.2,
       "restitution": 0.1,
       "texture": "earth",
       "debugcolor": "yellow",
