@@ -161,7 +161,7 @@ public class GameController implements Screen {
     complete = value;
 
     // Update the completion flag in the collisionController too
-    collisionController.setComplete(value);
+    level.setComplete(value);
   }
 
   /**
@@ -324,7 +324,7 @@ public class GameController implements Screen {
    */
   public void update(float dt) {
     // Check if the game has completed (if player touches the objective)
-    setComplete(collisionController.isComplete());
+    setComplete(level.getComplete());
 
     // Process actions in object model
     PlayerModel avatar = level.getAvatar();
