@@ -65,6 +65,16 @@ public class GameController implements Screen, ContactListener {
    */
   public static final int WORLD_POSIT = 2;
   /**
+   * Constant for when stationary
+   */
+  private final float STATIONARY_RATE = 0.25f;
+  /**
+   * Constant for freeze mechanic
+   */
+  private final float FREEZE_SUSPICION_THRESHOLD = 100;
+
+  // THESE ARE CONSTANTS BECAUSE WE NEED THEM BEFORE THE LEVEL IS LOADED
+  /**
    * Need an ongoing reference to the asset directory
    */
   protected AssetDirectory directory;
@@ -72,8 +82,6 @@ public class GameController implements Screen, ContactListener {
    * The font for giving messages to the player
    */
   protected BitmapFont displayFont;
-
-  // THESE ARE CONSTANTS BECAUSE WE NEED THEM BEFORE THE LEVEL IS LOADED
   /**
    * Reference to the game canvas
    */
@@ -119,22 +127,10 @@ public class GameController implements Screen, ContactListener {
    * Countdown active for winning or losing
    */
   private int countdown;
-
-
   /**
    * Counter for keep track of meter
    */
-  private float metercounter;
-
-  /**
-   * Constant for when stationary
-   */
-  private float stationaryconst = 0.25f;
-
-  /**
-   * Constant for freeze mechanic
-   */
-  private float freezeconst = 100;
+  private float meterCounter;
 
   /**
    * Creates a new game world
@@ -364,21 +360,24 @@ public class GameController implements Screen, ContactListener {
       See my task in input controller */
 
     if (!input.getMeterPaused()) {
-      metercounter += dt;
+      meterCounter += dt;
 
       // If moving
       if (input.getHorizontal() != 0 || input.getVertical() != 0) {
-        metercounter += stationaryconst;
+        meterCounter += STATIONARY_RATE;
       }
 
       // Once meter reaches 100, freeze
-      if (metercounter >= freezeconst) {
-        metercounter = 0;
+      if (meterCounter >= FREEZE_SUSPICION_THRESHOLD) {
         level.getAvatar().setFrozen(true);
+        if (meterCounter >= FREEZE_SUSPICION_THRESHOLD + 5) {
+          meterCounter = 0;
+          level.getAvatar().setFrozen(false);
+        }
       }
 
       if (complete || failed) {
-        metercounter = 0;
+        meterCounter = 0;
       }
     }
 
@@ -396,16 +395,22 @@ public class GameController implements Screen, ContactListener {
    */
   public void draw(float delta) {
     canvas.clear();
-
+    InputController input = InputController.getInstance();
     level.draw(canvas);
 
     // Display meter
     if (!complete && !failed) {
       displayFont.setColor(Color.BLACK);
       canvas.begin();
-      String message = "Meter: " + (int) metercounter;
-      canvas.drawText(message, displayFont, canvas.getWidth() / 2f - 36, canvas.getHeight() - 36);
+      String message = "Meter: " + (int) meterCounter;
+
+      if (input.getMeterPaused()) {
+        message += "p";
+      }
+
+      canvas.drawText(message, displayFont, canvas.getWidth() / 2f - 92, canvas.getHeight() - 36);
       canvas.end();
+
     }
 
     // Final message
