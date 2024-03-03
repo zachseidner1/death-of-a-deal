@@ -74,6 +74,10 @@ public class PlayerModel extends CapsuleObstacle {
    * Whether we are actively jumping
    */
   private boolean isJumping;
+  /**
+   * Whether we are currently frozen
+   */
+  private boolean isFrozen;
 
   /**
    * Whether we are actively bouncing
@@ -98,7 +102,10 @@ public class PlayerModel extends CapsuleObstacle {
    * Cache for internal force calculations
    */
   private Vector2 forceCache = new Vector2();
-
+  /**
+   * Tint for drawing the color (blue if isFrozen)
+   */
+  private Color color;
   /**
    * Creates a new player with degenerate settings
    * <p>
@@ -111,7 +118,9 @@ public class PlayerModel extends CapsuleObstacle {
     // Gameplay attributes
     isGrounded = false;
     isJumping = false;
+    isFrozen = false;
     faceRight = true;
+    color = Color.WHITE;
 
     jumpCooldown = 0;
   }
@@ -135,8 +144,10 @@ public class PlayerModel extends CapsuleObstacle {
    * @param value left/right movement of this character.
    */
   public void setMovement(float value) {
-    // TODO P3 make sure player cannot move when frozen
     movement = value;
+    if (isFrozen){
+      movement = 0;
+    }
     // Change facing if appropriate
     if (movement < 0) {
       faceRight = false;
@@ -164,7 +175,7 @@ public class PlayerModel extends CapsuleObstacle {
    * @param value whether the player is actively jumping.
    */
   public void setJumping(boolean value) {
-    isJumping = value;
+    isJumping = value && !isFrozen;
   }
 
   /**
@@ -189,8 +200,7 @@ public class PlayerModel extends CapsuleObstacle {
    * Returns whether the player is frozen
    */
   public boolean isFrozen() {
-    // TODO P3 check if the player is frozen
-    return true;
+    return isFrozen;
   }
 
   /**
@@ -199,7 +209,13 @@ public class PlayerModel extends CapsuleObstacle {
    * @param value true if the player is frozen, false otherwise
    */
   public void setFrozen(boolean value) {
-    // TODO P3 update frozen and apply physics, also visually change player in some way
+    isFrozen = value;
+    if (isFrozen){
+      color = Color.BLUE;
+      getBody().applyLinearImpulse(new Vector2(0f,-0.5f),getPosition(),true);
+    } else {
+      color = Color.WHITE;
+    }
     // you should probably make an isFrozen field
   }
 
@@ -487,7 +503,7 @@ public class PlayerModel extends CapsuleObstacle {
   public void draw(GameCanvas canvas) {
     if (texture != null) {
       float effect = faceRight ? 1.0f : -1.0f;
-      canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x,
+      canvas.draw(texture, color, origin.x, origin.y, getX() * drawScale.x,
           getY() * drawScale.y, getAngle(), effect, 1.0f);
     }
   }
