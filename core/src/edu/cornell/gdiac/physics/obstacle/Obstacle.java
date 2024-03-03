@@ -17,6 +17,7 @@
  */
 package edu.cornell.gdiac.physics.obstacle;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -29,75 +30,57 @@ import edu.cornell.gdiac.main.GameCanvas;
 
 /**
  * Base model class to support collisions.
- * <p>
- * Instances represents a body and/or a group of bodies. There should be NO game controlling logic
- * code in a physics objects, that should reside in the Controllers.
- * <p>
- * This abstract class has no Body or Shape information and should never be instantiated directly.
- * Instead, you should instantiate either SimplePhysicsObject or ComplexPhysicsObject.  This class
- * only exists to unify common functionality. In particular, it wraps the body and and fixture
- * information into a single interface.
+ *
+ * <p>Instances represents a body and/or a group of bodies. There should be NO game controlling
+ * logic code in a physics objects, that should reside in the Controllers.
+ *
+ * <p>This abstract class has no Body or Shape information and should never be instantiated
+ * directly. Instead, you should instantiate either SimplePhysicsObject or ComplexPhysicsObject.
+ * This class only exists to unify common functionality. In particular, it wraps the body and and
+ * fixture information into a single interface.
  */
 public abstract class Obstacle {
   /// Initialization structures to store body information
-  /**
-   * Stores the body information for this shape
-   */
+  /** Stores the body information for this shape */
   protected BodyDef bodyinfo;
-  /**
-   * Stores the fixture information for this shape
-   */
+
+  /** Stores the fixture information for this shape */
   protected FixtureDef fixture;
-  /**
-   * The mass data of this shape (which may override the fixture)
-   */
+
+  /** The mass data of this shape (which may override the fixture) */
   protected MassData massdata;
-  /**
-   * Whether or not to use the custom mass data
-   */
+
+  /** Whether or not to use the custom mass data */
   protected boolean masseffect;
-  /**
-   * Drawing scale to convert physics units to pixels
-   */
+
+  /** Drawing scale to convert physics units to pixels */
   protected Vector2 drawScale;
-  /**
-   * A cache value for when the user wants to access the body position
-   */
+
+  /** A cache value for when the user wants to access the body position */
   protected Vector2 positionCache = new Vector2();
 
   /// Track garbage collection status
-  /**
-   * A cache value for when the user wants to access the linear velocity
-   */
+  /** A cache value for when the user wants to access the linear velocity */
   protected Vector2 velocityCache = new Vector2();
-  /**
-   * A cache value for when the user wants to access the center of mass
-   */
+
+  /** A cache value for when the user wants to access the center of mass */
   protected Vector2 centroidCache = new Vector2();
 
   /// Caching objects
-  /**
-   * A cache value for when the user wants to access the drawing scale
-   */
+  /** A cache value for when the user wants to access the drawing scale */
   protected Vector2 scaleCache = new Vector2();
-  /**
-   * A tag for debugging purposes
-   */
+  /** The color to show off the debug shape */
+  protected Color debugColor;
+  /** A tag for debugging purposes */
   private String nametag;
-  /**
-   * Whether the object should be removed from the world on next pass
-   */
+  /** Whether the object should be removed from the world on next pass */
   private boolean toRemove;
-  /**
-   * Whether the object has changed shape and needs a new fixture
-   */
+  /** Whether the object has changed shape and needs a new fixture */
   private boolean isDirty;
 
   /// BodyDef Methods
 
-  /**
-   * Create a new physics object at the origin.
-   */
+  /** Create a new physics object at the origin. */
   protected Obstacle() {
     this(0, 0);
   }
@@ -132,12 +115,15 @@ public abstract class Obstacle {
 
     // Set the default drawing scale
     drawScale = new Vector2(1, 1);
+
+    // Default debug color
+    debugColor = Color.WHITE;
   }
 
   /**
    * Returns the body type for Box2D physics
-   * <p>
-   * If you want to lock a body in place (e.g. a platform) set this value to STATIC. KINEMATIC
+   *
+   * <p>If you want to lock a body in place (e.g. a platform) set this value to STATIC. KINEMATIC
    * allows the object to move (and some limited collisions), but ignores external forces (e.g.
    * gravity). DYNAMIC makes this is a full-blown physics object.
    *
@@ -149,8 +135,8 @@ public abstract class Obstacle {
 
   /**
    * Returns the body type for Box2D physics
-   * <p>
-   * If you want to lock a body in place (e.g. a platform) set this value to STATIC. KINEMATIC
+   *
+   * <p>If you want to lock a body in place (e.g. a platform) set this value to STATIC. KINEMATIC
    * allows the object to move (and some limited collisions), but ignores external forces (e.g.
    * gravity). DYNAMIC makes this is a full-blown physics object.
    *
@@ -161,11 +147,29 @@ public abstract class Obstacle {
   }
 
   /**
+   * Returns the color to display the physics outline
+   *
+   * @return the color to display the physics outline
+   */
+  public Color getDebugColor() {
+    return debugColor;
+  }
+
+  /**
+   * Sets the color to display the physics outline
+   *
+   * @param value the color to display the physics outline
+   */
+  public void setDebugColor(Color value) {
+    debugColor = value;
+  }
+
+  /**
    * Returns the current position for this physics body
-   * <p>
-   * This method does NOT return a reference to the position vector. Changes to this vector will not
-   * affect the body.  However, it returns the same vector each time its is called, and so cannot be
-   * used as an allocator.
+   *
+   * <p>This method does NOT return a reference to the position vector. Changes to this vector will
+   * not affect the body. However, it returns the same vector each time its is called, and so cannot
+   * be used as an allocator.
    *
    * @return the current position for this physics body
    */
@@ -175,8 +179,8 @@ public abstract class Obstacle {
 
   /**
    * Sets the current position for this physics body
-   * <p>
-   * This method does not keep a reference to the parameter.
+   *
+   * <p>This method does not keep a reference to the parameter.
    *
    * @param value the current position for this physics body
    */
@@ -232,8 +236,8 @@ public abstract class Obstacle {
 
   /**
    * Returns the angle of rotation for this body (about the center).
-   * <p>
-   * The value returned is in radians
+   *
+   * <p>The value returned is in radians
    *
    * @return the angle of rotation for this body
    */
@@ -252,10 +256,10 @@ public abstract class Obstacle {
 
   /**
    * Returns the linear velocity for this physics body
-   * <p>
-   * This method does NOT return a reference to the velocity vector. Changes to this vector will not
-   * affect the body.  However, it returns the same vector each time its is called, and so cannot be
-   * used as an allocator.
+   *
+   * <p>This method does NOT return a reference to the velocity vector. Changes to this vector will
+   * not affect the body. However, it returns the same vector each time its is called, and so cannot
+   * be used as an allocator.
    *
    * @return the linear velocity for this physics body
    */
@@ -265,8 +269,8 @@ public abstract class Obstacle {
 
   /**
    * Sets the linear velocity for this physics body
-   * <p>
-   * This method does not keep a reference to the parameter.
+   *
+   * <p>This method does not keep a reference to the parameter.
    *
    * @param value the linear velocity for this physics body
    */
@@ -312,8 +316,8 @@ public abstract class Obstacle {
 
   /**
    * Returns the angular velocity for this physics body
-   * <p>
-   * The rate of change is measured in radians per step
+   *
+   * <p>The rate of change is measured in radians per step
    *
    * @return the angular velocity for this physics body
    */
@@ -332,8 +336,8 @@ public abstract class Obstacle {
 
   /**
    * Returns true if the body is active
-   * <p>
-   * An inactive body not participate in collision or dynamics. This state is similar to sleeping
+   *
+   * <p>An inactive body not participate in collision or dynamics. This state is similar to sleeping
    * except the body will not be woken by other bodies and the body's fixtures will not be placed in
    * the broad-phase. This means the body will not participate in collisions, ray casts, etc.
    *
@@ -345,8 +349,8 @@ public abstract class Obstacle {
 
   /**
    * Sets whether the body is active
-   * <p>
-   * An inactive body not participate in collision or dynamics. This state is similar to sleeping
+   *
+   * <p>An inactive body not participate in collision or dynamics. This state is similar to sleeping
    * except the body will not be woken by other bodies and the body's fixtures will not be placed in
    * the broad-phase. This means the body will not participate in collisions, ray casts, etc.
    *
@@ -358,11 +362,11 @@ public abstract class Obstacle {
 
   /**
    * Returns true if the body is awake
-   * <p>
-   * An sleeping body is one that has come to rest and the physics engine has decided to stop
+   *
+   * <p>An sleeping body is one that has come to rest and the physics engine has decided to stop
    * simulating it to save CPU cycles. If a body is awake and collides with a sleeping body, then
    * the sleeping body wakes up. Bodies will also wake up if a joint or contact attached to them is
-   * destroyed.  You can also wake a body manually.
+   * destroyed. You can also wake a body manually.
    *
    * @return true if the body is awake
    */
@@ -372,11 +376,11 @@ public abstract class Obstacle {
 
   /**
    * Sets whether the body is awake
-   * <p>
-   * An sleeping body is one that has come to rest and the physics engine has decided to stop
+   *
+   * <p>An sleeping body is one that has come to rest and the physics engine has decided to stop
    * simulating it to save CPU cycles. If a body is awake and collides with a sleeping body, then
    * the sleeping body wakes up. Bodies will also wake up if a joint or contact attached to them is
-   * destroyed.  You can also wake a body manually.
+   * destroyed. You can also wake a body manually.
    *
    * @param value whether the body is awake
    */
@@ -386,11 +390,11 @@ public abstract class Obstacle {
 
   /**
    * Returns false if this body should never fall asleep
-   * <p>
-   * An sleeping body is one that has come to rest and the physics engine has decided to stop
+   *
+   * <p>An sleeping body is one that has come to rest and the physics engine has decided to stop
    * simulating it to save CPU cycles. If a body is awake and collides with a sleeping body, then
    * the sleeping body wakes up. Bodies will also wake up if a joint or contact attached to them is
-   * destroyed.  You can also wake a body manually.
+   * destroyed. You can also wake a body manually.
    *
    * @return false if this body should never fall asleep
    */
@@ -400,11 +404,11 @@ public abstract class Obstacle {
 
   /**
    * Sets whether the body should ever fall asleep
-   * <p>
-   * An sleeping body is one that has come to rest and the physics engine has decided to stop
+   *
+   * <p>An sleeping body is one that has come to rest and the physics engine has decided to stop
    * simulating it to save CPU cycles. If a body is awake and collides with a sleeping body, then
    * the sleeping body wakes up. Bodies will also wake up if a joint or contact attached to them is
-   * destroyed.  You can also wake a body manually.
+   * destroyed. You can also wake a body manually.
    *
    * @param value whether the body should ever fall asleep
    */
@@ -414,14 +418,14 @@ public abstract class Obstacle {
 
   /**
    * Returns true if this body is a bullet
-   * <p>
-   * By default, Box2D uses continuous collision detection (CCD) to prevent dynamic bodies from
+   *
+   * <p>By default, Box2D uses continuous collision detection (CCD) to prevent dynamic bodies from
    * tunneling through static bodies. Normally CCD is not used between dynamic bodies. This is done
    * to keep performance reasonable. In some game scenarios you need dynamic bodies to use CCD. For
    * example, you may want to shoot a high speed bullet at a stack of dynamic bricks. Without CCD,
    * the bullet might tunnel through the bricks.
-   * <p>
-   * Fast moving objects in Box2D can be labeled as bullets. Bullets will perform CCD with both
+   *
+   * <p>Fast moving objects in Box2D can be labeled as bullets. Bullets will perform CCD with both
    * static and dynamic bodies. You should decide what bodies should be bullets based on your game
    * design.
    *
@@ -433,14 +437,14 @@ public abstract class Obstacle {
 
   /**
    * Sets whether this body is a bullet
-   * <p>
-   * By default, Box2D uses continuous collision detection (CCD) to prevent dynamic bodies from
+   *
+   * <p>By default, Box2D uses continuous collision detection (CCD) to prevent dynamic bodies from
    * tunneling through static bodies. Normally CCD is not used between dynamic bodies. This is done
    * to keep performance reasonable. In some game scenarios you need dynamic bodies to use CCD. For
    * example, you may want to shoot a high speed bullet at a stack of dynamic bricks. Without CCD,
    * the bullet might tunnel through the bricks.
-   * <p>
-   * Fast moving objects in Box2D can be labeled as bullets. Bullets will perform CCD with both
+   *
+   * <p>Fast moving objects in Box2D can be labeled as bullets. Bullets will perform CCD with both
    * static and dynamic bodies. You should decide what bodies should be bullets based on your game
    * design.
    *
@@ -452,8 +456,8 @@ public abstract class Obstacle {
 
   /**
    * Returns true if this body be prevented from rotating
-   * <p>
-   * This is very useful for characters that should remain upright.
+   *
+   * <p>This is very useful for characters that should remain upright.
    *
    * @return true if this body be prevented from rotating
    */
@@ -463,8 +467,8 @@ public abstract class Obstacle {
 
   /**
    * Sets whether this body be prevented from rotating
-   * <p>
-   * This is very useful for characters that should remain upright.
+   *
+   * <p>This is very useful for characters that should remain upright.
    *
    * @param value whether this body be prevented from rotating
    */
@@ -474,8 +478,8 @@ public abstract class Obstacle {
 
   /**
    * Returns the gravity scale to apply to this body
-   * <p>
-   * This allows isolated objects to float.  Be careful with this, since increased gravity can
+   *
+   * <p>This allows isolated objects to float. Be careful with this, since increased gravity can
    * decrease stability.
    *
    * @return the gravity scale to apply to this body
@@ -486,8 +490,8 @@ public abstract class Obstacle {
 
   /**
    * Sets the gravity scale to apply to this body
-   * <p>
-   * This allows isolated objects to float.  Be careful with this, since increased gravity can
+   *
+   * <p>This allows isolated objects to float. Be careful with this, since increased gravity can
    * decrease stability.
    *
    * @param value the gravity scale to apply to this body
@@ -498,12 +502,12 @@ public abstract class Obstacle {
 
   /**
    * Returns the linear damping for this body.
-   * <p>
-   * Linear damping is use to reduce the linear velocity. Damping is different than friction because
-   * friction only occurs with contact. Damping is not a replacement for friction and the two
-   * effects should be used together.
-   * <p>
-   * Damping parameters should be between 0 and infinity, with 0 meaning no damping, and infinity
+   *
+   * <p>Linear damping is use to reduce the linear velocity. Damping is different than friction
+   * because friction only occurs with contact. Damping is not a replacement for friction and the
+   * two effects should be used together.
+   *
+   * <p>Damping parameters should be between 0 and infinity, with 0 meaning no damping, and infinity
    * meaning full damping. Normally you will use a damping value between 0 and 0.1. Most people
    * avoid linear damping because it makes bodies look floaty.
    *
@@ -515,12 +519,12 @@ public abstract class Obstacle {
 
   /**
    * Sets the linear damping for this body.
-   * <p>
-   * Linear damping is use to reduce the linear velocity. Damping is different than friction because
-   * friction only occurs with contact. Damping is not a replacement for friction and the two
-   * effects should be used together.
-   * <p>
-   * Damping parameters should be between 0 and infinity, with 0 meaning no damping, and infinity
+   *
+   * <p>Linear damping is use to reduce the linear velocity. Damping is different than friction
+   * because friction only occurs with contact. Damping is not a replacement for friction and the
+   * two effects should be used together.
+   *
+   * <p>Damping parameters should be between 0 and infinity, with 0 meaning no damping, and infinity
    * meaning full damping. Normally you will use a damping value between 0 and 0.1. Most people
    * avoid linear damping because it makes bodies look floaty.
    *
@@ -532,12 +536,12 @@ public abstract class Obstacle {
 
   /**
    * Returns the angular damping for this body.
-   * <p>
-   * Angular damping is use to reduce the angular velocity. Damping is different than friction
+   *
+   * <p>Angular damping is use to reduce the angular velocity. Damping is different than friction
    * because friction only occurs with contact. Damping is not a replacement for friction and the
    * two effects should be used together.
-   * <p>
-   * Damping parameters should be between 0 and infinity, with 0 meaning no damping, and infinity
+   *
+   * <p>Damping parameters should be between 0 and infinity, with 0 meaning no damping, and infinity
    * meaning full damping. Normally you will use a damping value between 0 and 0.1.
    *
    * @return the angular damping for this body.
@@ -550,12 +554,12 @@ public abstract class Obstacle {
 
   /**
    * Sets the angular damping for this body.
-   * <p>
-   * Angular damping is use to reduce the angular velocity. Damping is different than friction
+   *
+   * <p>Angular damping is use to reduce the angular velocity. Damping is different than friction
    * because friction only occurs with contact. Damping is not a replacement for friction and the
    * two effects should be used together.
-   * <p>
-   * Damping parameters should be between 0 and infinity, with 0 meaning no damping, and infinity
+   *
+   * <p>Damping parameters should be between 0 and infinity, with 0 meaning no damping, and infinity
    * meaning full damping. Normally you will use a damping value between 0 and 0.1.
    *
    * @param value the angular damping for this body.
@@ -566,8 +570,9 @@ public abstract class Obstacle {
 
   /**
    * Copies the state from the given body to the body def.
-   * <p>
-   * This is important if you want to save the state of the body before removing it from the world.
+   *
+   * <p>This is important if you want to save the state of the body before removing it from the
+   * world.
    */
   protected void setBodyState(Body body) {
     bodyinfo.type = body.getType();
@@ -586,8 +591,8 @@ public abstract class Obstacle {
 
   /**
    * Returns the density of this body
-   * <p>
-   * The density is typically measured in usually in kg/m^2. The density can be zero or positive.
+   *
+   * <p>The density is typically measured in usually in kg/m^2. The density can be zero or positive.
    * You should generally use similar densities for all your fixtures. This will improve stacking
    * stability.
    *
@@ -599,8 +604,8 @@ public abstract class Obstacle {
 
   /**
    * Sets the density of this body
-   * <p>
-   * The density is typically measured in usually in kg/m^2. The density can be zero or positive.
+   *
+   * <p>The density is typically measured in usually in kg/m^2. The density can be zero or positive.
    * You should generally use similar densities for all your fixtures. This will improve stacking
    * stability.
    *
@@ -612,8 +617,8 @@ public abstract class Obstacle {
 
   /**
    * Returns the friction coefficient of this body
-   * <p>
-   * The friction parameter is usually set between 0 and 1, but can be any non-negative value. A
+   *
+   * <p>The friction parameter is usually set between 0 and 1, but can be any non-negative value. A
    * friction value of 0 turns off friction and a value of 1 makes the friction strong. When the
    * friction force is computed between two shapes, Box2D must combine the friction parameters of
    * the two parent fixtures. This is done with the geometric mean.
@@ -626,8 +631,8 @@ public abstract class Obstacle {
 
   /**
    * Sets the friction coefficient of this body
-   * <p>
-   * The friction parameter is usually set between 0 and 1, but can be any non-negative value. A
+   *
+   * <p>The friction parameter is usually set between 0 and 1, but can be any non-negative value. A
    * friction value of 0 turns off friction and a value of 1 makes the friction strong. When the
    * friction force is computed between two shapes, Box2D must combine the friction parameters of
    * the two parent fixtures. This is done with the geometric mean.
@@ -640,11 +645,11 @@ public abstract class Obstacle {
 
   /**
    * Returns the restitution of this body
-   * <p>
-   * Restitution is used to make objects bounce. The restitution value is usually set to be between
-   * 0 and 1. Consider dropping a ball on a table. A value of zero means the ball won't bounce. This
-   * is called an inelastic collision. A value of one means the ball's velocity will be exactly
-   * reflected. This is called a perfectly elastic collision.
+   *
+   * <p>Restitution is used to make objects bounce. The restitution value is usually set to be
+   * between 0 and 1. Consider dropping a ball on a table. A value of zero means the ball won't
+   * bounce. This is called an inelastic collision. A value of one means the ball's velocity will be
+   * exactly reflected. This is called a perfectly elastic collision.
    *
    * @return the restitution of this body
    */
@@ -654,11 +659,11 @@ public abstract class Obstacle {
 
   /**
    * Sets the restitution of this body
-   * <p>
-   * Restitution is used to make objects bounce. The restitution value is usually set to be between
-   * 0 and 1. Consider dropping a ball on a table. A value of zero means the ball won't bounce. This
-   * is called an inelastic collision. A value of one means the ball's velocity will be exactly
-   * reflected. This is called a perfectly elastic collision.
+   *
+   * <p>Restitution is used to make objects bounce. The restitution value is usually set to be
+   * between 0 and 1. Consider dropping a ball on a table. A value of zero means the ball won't
+   * bounce. This is called an inelastic collision. A value of one means the ball's velocity will be
+   * exactly reflected. This is called a perfectly elastic collision.
    *
    * @param value the restitution of this body
    */
@@ -668,10 +673,10 @@ public abstract class Obstacle {
 
   /**
    * Returns true if this object is a sensor.
-   * <p>
-   * Sometimes game logic needs to know when two entities overlap yet there should be no collision
-   * response. This is done by using sensors. A sensor is an entity that detects collision but does
-   * not produce a response.
+   *
+   * <p>Sometimes game logic needs to know when two entities overlap yet there should be no
+   * collision response. This is done by using sensors. A sensor is an entity that detects collision
+   * but does not produce a response.
    *
    * @return true if this object is a sensor.
    */
@@ -681,10 +686,10 @@ public abstract class Obstacle {
 
   /**
    * Sets whether this object is a sensor.
-   * <p>
-   * Sometimes game logic needs to know when two entities overlap yet there should be no collision
-   * response. This is done by using sensors. A sensor is an entity that detects collision but does
-   * not produce a response.
+   *
+   * <p>Sometimes game logic needs to know when two entities overlap yet there should be no
+   * collision response. This is done by using sensors. A sensor is an entity that detects collision
+   * but does not produce a response.
    *
    * @param value whether this object is a sensor.
    */
@@ -696,9 +701,9 @@ public abstract class Obstacle {
 
   /**
    * Returns the filter data for this object (or null if there is none)
-   * <p>
-   * Collision filtering allows you to prevent collision between fixtures. For example, say you make
-   * a character that rides a bicycle. You want the bicycle to collide with the terrain and the
+   *
+   * <p>Collision filtering allows you to prevent collision between fixtures. For example, say you
+   * make a character that rides a bicycle. You want the bicycle to collide with the terrain and the
    * character to collide with the terrain, but you don't want the character to collide with the
    * bicycle (because they must overlap). Box2D supports such collision filtering using categories
    * and groups.
@@ -711,14 +716,14 @@ public abstract class Obstacle {
 
   /**
    * Sets the filter data for this object
-   * <p>
-   * Collision filtering allows you to prevent collision between fixtures. For example, say you make
-   * a character that rides a bicycle. You want the bicycle to collide with the terrain and the
+   *
+   * <p>Collision filtering allows you to prevent collision between fixtures. For example, say you
+   * make a character that rides a bicycle. You want the bicycle to collide with the terrain and the
    * character to collide with the terrain, but you don't want the character to collide with the
    * bicycle (because they must overlap). Box2D supports such collision filtering using categories
    * and groups.
-   * <p>
-   * A value of null removes all collision filters.
+   *
+   * <p>A value of null removes all collision filters.
    *
    * @param value the filter data for this object
    */
@@ -736,9 +741,9 @@ public abstract class Obstacle {
 
   /**
    * Returns the center of mass of this body
-   * <p>
-   * This method does NOT return a reference to the centroid position. Changes to this vector will
-   * not affect the body.  However, it returns the same vector each time its is called, and so
+   *
+   * <p>This method does NOT return a reference to the centroid position. Changes to this vector
+   * will not affect the body. However, it returns the same vector each time its is called, and so
    * cannot be used as an allocator.
    *
    * @return the center of mass for this physics body
@@ -749,8 +754,8 @@ public abstract class Obstacle {
 
   /**
    * Sets the center of mass for this physics body
-   * <p>
-   * This method does not keep a reference to the parameter.
+   *
+   * <p>This method does not keep a reference to the parameter.
    *
    * @param value the center of mass for this physics body
    */
@@ -765,8 +770,8 @@ public abstract class Obstacle {
 
   /**
    * Returns the rotational inertia of this body
-   * <p>
-   * For static bodies, the mass and rotational inertia are set to zero. When a body has fixed
+   *
+   * <p>For static bodies, the mass and rotational inertia are set to zero. When a body has fixed
    * rotation, its rotational inertia is zero.
    *
    * @return the rotational inertia of this body
@@ -777,8 +782,8 @@ public abstract class Obstacle {
 
   /**
    * Sets the rotational inertia of this body
-   * <p>
-   * For static bodies, the mass and rotational inertia are set to zero. When a body has fixed
+   *
+   * <p>For static bodies, the mass and rotational inertia are set to zero. When a body has fixed
    * rotation, its rotational inertia is zero.
    *
    * @param value the rotational inertia of this body
@@ -794,8 +799,8 @@ public abstract class Obstacle {
 
   /**
    * Returns the mass of this body
-   * <p>
-   * The value is usually in kilograms.
+   *
+   * <p>The value is usually in kilograms.
    *
    * @return the mass of this body
    */
@@ -807,8 +812,8 @@ public abstract class Obstacle {
 
   /**
    * Sets the mass of this body
-   * <p>
-   * The value is usually in kilograms.
+   *
+   * <p>The value is usually in kilograms.
    *
    * @param value the mass of this body
    */
@@ -821,17 +826,15 @@ public abstract class Obstacle {
     massdata.mass = value;
   }
 
-  /**
-   * Resets this body to use the mass computed from the its shape and density
-   */
+  /** Resets this body to use the mass computed from the its shape and density */
   public void resetMass() {
     masseffect = false;
   }
 
   /**
    * Returns true if our object has been flagged for garbage collection
-   * <p>
-   * A garbage collected object will be removed from the physics world at the next time step.
+   *
+   * <p>A garbage collected object will be removed from the physics world at the next time step.
    *
    * @return true if our object has been flagged for garbage collection
    */
@@ -841,8 +844,8 @@ public abstract class Obstacle {
 
   /**
    * Sets whether our object has been flagged for garbage collection
-   * <p>
-   * A garbage collected object will be removed from the physics world at the next time step.
+   *
+   * <p>A garbage collected object will be removed from the physics world at the next time step.
    *
    * @param value whether our object has been flagged for garbage collection
    */
@@ -852,9 +855,9 @@ public abstract class Obstacle {
 
   /**
    * Returns true if the shape information must be updated.
-   * <p>
-   * Attributes tied to the geometry (and not just forces/position) must wait for collisions to
-   * complete before they are reset.  Shapes (and their properties) are reset in the update method.
+   *
+   * <p>Attributes tied to the geometry (and not just forces/position) must wait for collisions to
+   * complete before they are reset. Shapes (and their properties) are reset in the update method.
    *
    * @return true if the shape information must be updated.
    */
@@ -866,9 +869,9 @@ public abstract class Obstacle {
 
   /**
    * Sets whether the shape information must be updated.
-   * <p>
-   * Attributes tied to the geometry (and not just forces/position) must wait for collisions to
-   * complete before they are reset.  Shapes (and their properties) are reset in the update method.
+   *
+   * <p>Attributes tied to the geometry (and not just forces/position) must wait for collisions to
+   * complete before they are reset. Shapes (and their properties) are reset in the update method.
    *
    * @param value whether the shape information must be updated.
    */
@@ -878,8 +881,8 @@ public abstract class Obstacle {
 
   /**
    * Returns the Box2D body for this object.
-   * <p>
-   * You use this body to add joints and apply forces.
+   *
+   * <p>You use this body to add joints and apply forces.
    *
    * @return the Box2D body for this object.
    */
@@ -889,17 +892,17 @@ public abstract class Obstacle {
 
   /**
    * Returns the drawing scale for this physics object
-   * <p>
-   * The drawing scale is the number of pixels to draw before Box2D unit. Because mass is a function
-   * of area in Box2D, we typically want the physics objects to be small.  So we decouple that scale
-   * from the physics object.  However, we must track the scale difference to communicate with the
-   * scene graph.
-   * <p>
-   * This method does NOT return a reference to the drawing scale. Changes to this vector will not
-   * affect the body.  However, it returns the same vector each time its is called, and so cannot be
-   * used as an allocator.
-   * <p>
-   * We allow for the scaling factor to be non-uniform.
+   *
+   * <p>The drawing scale is the number of pixels to draw before Box2D unit. Because mass is a
+   * function of area in Box2D, we typically want the physics objects to be small. So we decouple
+   * that scale from the physics object. However, we must track the scale difference to communicate
+   * with the scene graph.
+   *
+   * <p>This method does NOT return a reference to the drawing scale. Changes to this vector will
+   * not affect the body. However, it returns the same vector each time its is called, and so cannot
+   * be used as an allocator.
+   *
+   * <p>We allow for the scaling factor to be non-uniform.
    *
    * @return the drawing scale for this physics object
    */
@@ -912,13 +915,13 @@ public abstract class Obstacle {
 
   /**
    * Sets the drawing scale for this physics object
-   * <p>
-   * The drawing scale is the number of pixels to draw before Box2D unit. Because mass is a function
-   * of area in Box2D, we typically want the physics objects to be small.  So we decouple that scale
-   * from the physics object.  However, we must track the scale difference to communicate with the
-   * scene graph.
-   * <p>
-   * We allow for the scaling factor to be non-uniform.
+   *
+   * <p>The drawing scale is the number of pixels to draw before Box2D unit. Because mass is a
+   * function of area in Box2D, we typically want the physics objects to be small. So we decouple
+   * that scale from the physics object. However, we must track the scale difference to communicate
+   * with the scene graph.
+   *
+   * <p>We allow for the scaling factor to be non-uniform.
    *
    * @param value the drawing scale for this physics object
    */
@@ -928,13 +931,13 @@ public abstract class Obstacle {
 
   /**
    * Sets the drawing scale for this physics object
-   * <p>
-   * The drawing scale is the number of pixels to draw before Box2D unit. Because mass is a function
-   * of area in Box2D, we typically want the physics objects to be small.  So we decouple that scale
-   * from the physics object.  However, we must track the scale difference to communicate with the
-   * scene graph.
-   * <p>
-   * We allow for the scaling factor to be non-uniform.
+   *
+   * <p>The drawing scale is the number of pixels to draw before Box2D unit. Because mass is a
+   * function of area in Box2D, we typically want the physics objects to be small. So we decouple
+   * that scale from the physics object. However, we must track the scale difference to communicate
+   * with the scene graph.
+   *
+   * <p>We allow for the scaling factor to be non-uniform.
    *
    * @param x the x-axis scale for this physics object
    * @param y the y-axis scale for this physics object
@@ -945,8 +948,8 @@ public abstract class Obstacle {
 
   /**
    * Returns the physics object tag.
-   * <p>
-   * A tag is a string attached to an object, in order to identify it in debugging.
+   *
+   * <p>A tag is a string attached to an object, in order to identify it in debugging.
    *
    * @return the physics object tag.
    */
@@ -956,8 +959,8 @@ public abstract class Obstacle {
 
   /**
    * Sets the physics object tag.
-   * <p>
-   * A tag is a string attached to an object, in order to identify it in debugging.
+   *
+   * <p>A tag is a string attached to an object, in order to identify it in debugging.
    *
    * @param value the physics object tag
    */
@@ -969,9 +972,9 @@ public abstract class Obstacle {
 
   /**
    * Creates the physics Body(s) for this object, adding them to the world.
-   * <p>
-   * Implementations of this method should NOT retain a reference to World. That is a tight coupling
-   * that we should avoid.
+   *
+   * <p>Implementations of this method should NOT retain a reference to World. That is a tight
+   * coupling that we should avoid.
    *
    * @param world Box2D world to store body
    * @return true if object allocation succeeded
@@ -987,15 +990,14 @@ public abstract class Obstacle {
 
   /**
    * Updates the object's physics state (NOT GAME LOGIC).
-   * <p>
-   * This method is called AFTER the collision resolution state. Therefore, it should not be used to
-   * process actions or any other gameplay information.  Its primary purpose is to adjust changes to
-   * the fixture, which have to take place after collision.
+   *
+   * <p>This method is called AFTER the collision resolution state. Therefore, it should not be used
+   * to process actions or any other gameplay information. Its primary purpose is to adjust changes
+   * to the fixture, which have to take place after collision.
    *
    * @param dt Timing values from parent loop
    */
-  public void update(float delta) {
-  }
+  public void update(float delta) {}
 
   /**
    * Draws the texture physics object.
@@ -1006,11 +1008,10 @@ public abstract class Obstacle {
 
   /**
    * Draws the outline of the physics body.
-   * <p>
-   * This method can be helpful for understanding issues with collisions.
+   *
+   * <p>This method can be helpful for understanding issues with collisions.
    *
    * @param canvas Drawing context
    */
   public abstract void drawDebug(GameCanvas canvas);
-
 }

@@ -25,64 +25,46 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.utils.ShortArray;
 import edu.cornell.gdiac.main.GameCanvas;
 
-
 /**
  * Arbitrary polygonal-shaped model to support collisions.
- * <p>
- * The polygon coordinates are all in local space, relative to the object center.  In addition the
+ *
+ * <p>The polygon coordinates are all in local space, relative to the object center. In addition the
  * texture coordinates are computed automatically from the texture size, using the same policy as
  * PolygonSpriteBatch.
  */
 public class PolygonObstacle extends SimpleObstacle {
 
-  /**
-   * An earclipping triangular to make sure we work with convex shapes
-   */
+  /** An earclipping triangular to make sure we work with convex shapes */
   protected static final EarClippingTriangulator TRIANGULATOR = new EarClippingTriangulator();
 
-  /**
-   * Shape information for this physics object
-   */
+  /** Shape information for this physics object */
   protected PolygonShape[] shapes;
-  /**
-   * Texture information for this object
-   */
+
+  /** Texture information for this object */
   protected PolygonRegion region;
 
-  /**
-   * The polygon vertices, scaled for drawing
-   */
+  /** The polygon vertices, scaled for drawing */
   protected float[] scaled;
-  /**
-   * The triangle indices, used for drawing
-   */
+
+  /** The triangle indices, used for drawing */
   protected short[] tridx;
 
-  /**
-   * A cache value for the fixtures (for resizing)
-   */
+  /** A cache value for the fixtures (for resizing) */
   protected Fixture[] geoms;
-  /**
-   * Cache of the polygon vertices (for resizing)
-   */
+
+  /** Cache of the polygon vertices (for resizing) */
   protected float[] vertices;
-  /**
-   * The polygon bounding box (for resizing purposes)
-   */
+
+  /** The polygon bounding box (for resizing purposes) */
   private Vector2 dimension;
-  /**
-   * A cache value for when the user wants to access the dimensions
-   */
+
+  /** A cache value for when the user wants to access the dimensions */
   private Vector2 sizeCache;
-  /**
-   * The color to show off the debug shape
-   */
-  private Color debugColor;
 
   /**
    * Creates a (not necessarily convex) polygon at the origin.
-   * <p>
-   * The points given are relative to the polygon's origin.  They are measured in physics units.
+   *
+   * <p>The points given are relative to the polygon's origin. They are measured in physics units.
    * They tile the image according to the drawScale (which must be set for drawing to work
    * properly).
    *
@@ -94,14 +76,14 @@ public class PolygonObstacle extends SimpleObstacle {
 
   /**
    * Creates a (not necessarily convex) polygon
-   * <p>
-   * The points given are relative to the polygon's origin.  They are measured in physics units.
+   *
+   * <p>The points given are relative to the polygon's origin. They are measured in physics units.
    * They tile the image according to the drawScale (which must be set for drawing to work
    * properly).
    *
    * @param points The polygon vertices
-   * @param x      Initial x position of the polygon center
-   * @param y      Initial y position of the polygon center
+   * @param x Initial x position of the polygon center
+   * @param y Initial y position of the polygon center
    */
   public PolygonObstacle(float[] points, float x, float y) {
     super(x, y);
@@ -114,9 +96,9 @@ public class PolygonObstacle extends SimpleObstacle {
 
   /**
    * Returns the dimensions of this box
-   * <p>
-   * This method does NOT return a reference to the dimension vector. Changes to this vector will
-   * not affect the shape.  However, it returns the same vector each time its is called, and so
+   *
+   * <p>This method does NOT return a reference to the dimension vector. Changes to this vector will
+   * not affect the shape. However, it returns the same vector each time its is called, and so
    * cannot be used as an allocator.
    *
    * @return the dimensions of this box
@@ -127,8 +109,8 @@ public class PolygonObstacle extends SimpleObstacle {
 
   /**
    * Sets the dimensions of this box
-   * <p>
-   * This method does not keep a reference to the parameter.
+   *
+   * <p>This method does not keep a reference to the parameter.
    *
    * @param value the dimensions of this box
    */
@@ -139,7 +121,7 @@ public class PolygonObstacle extends SimpleObstacle {
   /**
    * Sets the dimensions of this box
    *
-   * @param width  The width of this box
+   * @param width The width of this box
    * @param height The height of this box
    */
   public void setDimension(float width, float height) {
@@ -185,27 +167,7 @@ public class PolygonObstacle extends SimpleObstacle {
     setDimension(sizeCache);
   }
 
-  /**
-   * Returns the color to display the physics outline
-   *
-   * @return the color to display the physics outline
-   */
-  public Color getDebugColor() {
-    return debugColor;
-  }
-
-  /**
-   * Sets the color to display the physics outline
-   *
-   * @param value the color to display the physics outline
-   */
-  public void setDebugColor(Color value) {
-    debugColor = value;
-  }
-
-  /**
-   * Initializes the bounding box (and drawing scale) for this polygon
-   */
+  /** Initializes the bounding box (and drawing scale) for this polygon */
   protected void initBounds() {
     float minx = vertices[0];
     float maxx = vertices[0];
@@ -230,9 +192,9 @@ public class PolygonObstacle extends SimpleObstacle {
 
   /**
    * Initializes the Box2d shapes for this polygon
-   * <p>
-   * If the texture is not null, this method also allocates the PolygonRegion for drawing.  However,
-   * the points in the polygon region may be rescaled later.
+   *
+   * <p>If the texture is not null, this method also allocates the PolygonRegion for drawing.
+   * However, the points in the polygon region may be rescaled later.
    *
    * @param points The polygon vertices
    */
@@ -273,23 +235,25 @@ public class PolygonObstacle extends SimpleObstacle {
 
   /**
    * Removes colinear vertices from the given triangulation.
-   * <p>
-   * For some reason, the LibGDX triangulator will occasionally return colinear vertices.
    *
-   * @param points  The polygon vertices
+   * <p>For some reason, the LibGDX triangulator will occasionally return colinear vertices.
+   *
+   * @param points The polygon vertices
    * @param indices The triangulation indices
    */
   protected void trimColinear(float[] points, ShortArray indices) {
     int colinear = 0;
     for (int ii = 0; ii < indices.size / 3 - colinear; ii++) {
       float t1 =
-          points[2 * indices.items[3 * ii]] * (points[2 * indices.items[3 * ii + 1] + 1] - points[
-              2 * indices.items[3 * ii + 2] + 1]);
-      float t2 = points[2 * indices.items[3 * ii + 1]] * (points[2 * indices.items[3 * ii + 2] + 1]
-          - points[2 * indices.items[3 * ii] + 1]);
+          points[2 * indices.items[3 * ii]]
+              * (points[2 * indices.items[3 * ii + 1] + 1]
+                  - points[2 * indices.items[3 * ii + 2] + 1]);
+      float t2 =
+          points[2 * indices.items[3 * ii + 1]]
+              * (points[2 * indices.items[3 * ii + 2] + 1] - points[2 * indices.items[3 * ii] + 1]);
       float t3 =
-          points[2 * indices.items[3 * ii + 2]] * (points[2 * indices.items[3 * ii] + 1] - points[
-              2 * indices.items[3 * ii + 1] + 1]);
+          points[2 * indices.items[3 * ii + 2]]
+              * (points[2 * indices.items[3 * ii] + 1] - points[2 * indices.items[3 * ii + 1] + 1]);
       if (Math.abs(t1 + t2 + t3) < 0.0000001f) {
         indices.swap(3 * ii, indices.size - 3 * colinear - 3);
         indices.swap(3 * ii + 1, indices.size - 3 * colinear - 2);
@@ -304,7 +268,7 @@ public class PolygonObstacle extends SimpleObstacle {
   /**
    * Resize this polygon (stretching uniformly out from origin)
    *
-   * @param width  The new width
+   * @param width The new width
    * @param height The new height
    */
   protected void resize(float width, float height) {
@@ -330,8 +294,8 @@ public class PolygonObstacle extends SimpleObstacle {
 
   /**
    * Create new fixtures for this body, defining the shape
-   * <p>
-   * This is the primary method to override for custom physics objects
+   *
+   * <p>This is the primary method to override for custom physics objects
    */
   protected void createFixtures() {
     if (body == null) {
@@ -353,8 +317,8 @@ public class PolygonObstacle extends SimpleObstacle {
 
   /**
    * Release the fixtures for this body, reseting the shape
-   * <p>
-   * This is the primary method to override for custom physics objects
+   *
+   * <p>This is the primary method to override for custom physics objects
    */
   protected void releaseFixtures() {
     if (geoms[0] != null) {
@@ -366,9 +330,9 @@ public class PolygonObstacle extends SimpleObstacle {
 
   /**
    * Sets the object texture for drawing purposes.
-   * <p>
-   * In order for drawing to work properly, you MUST set the drawScale. The drawScale converts the
-   * physics units to pixels.
+   *
+   * <p>In order for drawing to work properly, you MUST set the drawScale. The drawScale converts
+   * the physics units to pixels.
    *
    * @param value the object texture for drawing purposes.
    */
@@ -379,13 +343,13 @@ public class PolygonObstacle extends SimpleObstacle {
 
   /**
    * Sets the drawing scale for this physics object
-   * <p>
-   * The drawing scale is the number of pixels to draw before Box2D unit. Because mass is a function
-   * of area in Box2D, we typically want the physics objects to be small.  So we decouple that scale
-   * from the physics object.  However, we must track the scale difference to communicate with the
-   * scene graph.
-   * <p>
-   * We allow for the scaling factor to be non-uniform.
+   *
+   * <p>The drawing scale is the number of pixels to draw before Box2D unit. Because mass is a
+   * function of area in Box2D, we typically want the physics objects to be small. So we decouple
+   * that scale from the physics object. However, we must track the scale difference to communicate
+   * with the scene graph.
+   *
+   * <p>We allow for the scaling factor to be non-uniform.
    *
    * @param x the x-axis scale for this physics object
    * @param y the y-axis scale for this physics object
@@ -412,15 +376,15 @@ public class PolygonObstacle extends SimpleObstacle {
    */
   public void draw(GameCanvas canvas) {
     if (region != null) {
-      canvas.draw(region, Color.WHITE, 0, 0, getX() * drawScale.x, getY() * drawScale.y, getAngle(),
-          1, 1);
+      canvas.draw(
+          region, Color.WHITE, 0, 0, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 1, 1);
     }
   }
 
   /**
    * Draws the outline of the physics body.
-   * <p>
-   * This method can be helpful for understanding issues with collisions.
+   *
+   * <p>This method can be helpful for understanding issues with collisions.
    *
    * @param canvas Drawing context
    */
@@ -431,5 +395,4 @@ public class PolygonObstacle extends SimpleObstacle {
       }
     }
   }
-
 }

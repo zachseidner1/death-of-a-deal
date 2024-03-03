@@ -19,43 +19,33 @@ import edu.cornell.gdiac.main.GameCanvas;
 
 /**
  * Box-shaped model to support collisions.
- * <p>
- * Unless otherwise specified, the center of mass is as the center.
+ *
+ * <p>Unless otherwise specified, the center of mass is as the center.
  */
 public class BoxObstacle extends SimpleObstacle {
 
-  /**
-   * Shape information for this box
-   */
+  /** Shape information for this box */
   protected PolygonShape shape;
-  /**
-   * Cache of the polygon vertices (for resizing)
-   */
+
+  /** Cache of the polygon vertices (for resizing) */
   protected float[] vertices;
-  /**
-   * The color to show off the debug shape
-   */
-  private Color debugColor;
-  /**
-   * The width and height of the box
-   */
+
+  /** The width and height of the box */
   private Vector2 dimension;
-  /**
-   * A cache value for when the user wants to access the dimensions
-   */
+
+  /** A cache value for when the user wants to access the dimensions */
   private Vector2 sizeCache;
-  /**
-   * A cache value for the fixture (for resizing)
-   */
+
+  /** A cache value for the fixture (for resizing) */
   private Fixture geometry;
 
   /**
    * Creates a new box at the origin.
-   * <p>
-   * The size is expressed in physics units NOT pixels.  In order for drawing to work properly, you
-   * MUST set the drawScale. The drawScale converts the physics units to pixels.
    *
-   * @param width  The object width in physics units
+   * <p>The size is expressed in physics units NOT pixels. In order for drawing to work properly,
+   * you MUST set the drawScale. The drawScale converts the physics units to pixels.
+   *
+   * @param width The object width in physics units
    * @param height The object width in physics units
    */
   public BoxObstacle(float width, float height) {
@@ -64,13 +54,13 @@ public class BoxObstacle extends SimpleObstacle {
 
   /**
    * Creates a new box object.
-   * <p>
-   * The size is expressed in physics units NOT pixels.  In order for drawing to work properly, you
-   * MUST set the drawScale. The drawScale converts the physics units to pixels.
    *
-   * @param x      Initial x position of the box center
-   * @param y      Initial y position of the box center
-   * @param width  The object width in physics units
+   * <p>The size is expressed in physics units NOT pixels. In order for drawing to work properly,
+   * you MUST set the drawScale. The drawScale converts the physics units to pixels.
+   *
+   * @param x Initial x position of the box center
+   * @param y Initial y position of the box center
+   * @param width The object width in physics units
    * @param height The object width in physics units
    */
   public BoxObstacle(float x, float y, float width, float height) {
@@ -89,9 +79,9 @@ public class BoxObstacle extends SimpleObstacle {
 
   /**
    * Returns the dimensions of this box
-   * <p>
-   * This method does NOT return a reference to the dimension vector. Changes to this vector will
-   * not affect the shape.  However, it returns the same vector each time its is called, and so
+   *
+   * <p>This method does NOT return a reference to the dimension vector. Changes to this vector will
+   * not affect the shape. However, it returns the same vector each time its is called, and so
    * cannot be used as an allocator.
    *
    * @return the dimensions of this box
@@ -102,8 +92,8 @@ public class BoxObstacle extends SimpleObstacle {
 
   /**
    * Sets the dimensions of this box
-   * <p>
-   * This method does not keep a reference to the parameter.
+   *
+   * <p>This method does not keep a reference to the parameter.
    *
    * @param value the dimensions of this box
    */
@@ -114,7 +104,7 @@ public class BoxObstacle extends SimpleObstacle {
   /**
    * Sets the dimensions of this box
    *
-   * @param width  The width of this box
+   * @param width The width of this box
    * @param height The height of this box
    */
   public void setDimension(float width, float height) {
@@ -161,27 +151,7 @@ public class BoxObstacle extends SimpleObstacle {
     setDimension(sizeCache);
   }
 
-  /**
-   * Returns the color to display the physics outline
-   *
-   * @return the color to display the physics outline
-   */
-  public Color getDebugColor() {
-    return debugColor;
-  }
-
-  /**
-   * Sets the color to display the physics outline
-   *
-   * @param value the color to display the physics outline
-   */
-  public void setDebugColor(Color value) {
-    debugColor = value;
-  }
-
-  /**
-   * Reset the polygon vertices in the shape to match the dimension.
-   */
+  /** Reset the polygon vertices in the shape to match the dimension. */
   protected void resize(float width, float height) {
     // Make the box with the center in the center
     vertices[0] = -width / 2.0f;
@@ -197,8 +167,8 @@ public class BoxObstacle extends SimpleObstacle {
 
   /**
    * Create new fixtures for this body, defining the shape
-   * <p>
-   * This is the primary method to override for custom physics objects
+   *
+   * <p>This is the primary method to override for custom physics objects
    */
   protected void createFixtures() {
     if (body == null) {
@@ -215,8 +185,8 @@ public class BoxObstacle extends SimpleObstacle {
 
   /**
    * Release the fixtures for this body, reseting the shape
-   * <p>
-   * This is the primary method to override for custom physics objects
+   *
+   * <p>This is the primary method to override for custom physics objects
    */
   protected void releaseFixtures() {
     if (geometry != null) {
@@ -227,8 +197,8 @@ public class BoxObstacle extends SimpleObstacle {
 
   /**
    * Draws the outline of the physics body.
-   * <p>
-   * This method can be helpful for understanding issues with collisions.
+   *
+   * <p>This method can be helpful for understanding issues with collisions.
    *
    * @param canvas Drawing context
    */
@@ -237,6 +207,4 @@ public class BoxObstacle extends SimpleObstacle {
       canvas.drawPhysics(shape, debugColor, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
     }
   }
-
-
 }
