@@ -70,6 +70,11 @@ public class LevelModel {
   private boolean debug;
 
   /**
+   * Whether or not the level is completed
+   */
+  private boolean complete;
+
+  /**
    * Creates a new LevelModel
    * <p>
    * The level is empty and there is no active physics world.  You must read the JSON file to
@@ -151,6 +156,24 @@ public class LevelModel {
    */
   public void setDebug(boolean value) {
     debug = value;
+  }
+
+  /**
+   * Return level completion state to caller
+   *
+   * @return
+   */
+  public boolean getComplete() {
+    return complete;
+  }
+
+  /**
+   * Set the level to complete state or non-complete state
+   *
+   * @param value
+   */
+  public void setComplete(boolean value) {
+    complete = value;
   }
 
   /**

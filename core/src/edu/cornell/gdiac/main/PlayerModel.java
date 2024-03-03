@@ -75,6 +75,10 @@ public class PlayerModel extends CapsuleObstacle {
    */
   private boolean isJumping;
 
+  /**
+   * Whether we are actively bouncing
+   */
+
   // SENSOR FIELDS
   /**
    * Ground sensor to represent our feet
@@ -356,7 +360,6 @@ public class PlayerModel extends CapsuleObstacle {
     setMaxSpeed(json.get("maxspeed").asFloat());
     setJumpPulse(json.get("jumppulse").asFloat());
     setJumpLimit(json.get("jumplimit").asInt());
-
     // Reflection is best way to convert name to color
     Color debugColor;
     try {
