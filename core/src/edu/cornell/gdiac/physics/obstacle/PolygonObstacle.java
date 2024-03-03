@@ -388,6 +388,7 @@ public class PolygonObstacle extends SimpleObstacle {
    *
    * @param canvas Drawing context
    */
+  @Override
   public void drawDebug(GameCanvas canvas) {
     if (debugColor != null) {
       for (PolygonShape tri : shapes) {

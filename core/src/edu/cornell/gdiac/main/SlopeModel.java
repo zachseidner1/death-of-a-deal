@@ -1,13 +1,9 @@
 package edu.cornell.gdiac.main;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.physics.obstacle.PolygonObstacle;
-import java.lang.reflect.Field;
+import edu.cornell.gdiac.util.SimpleObstacleJsonParser;
 
 public class SlopeModel extends PolygonObstacle {
 
@@ -40,33 +36,6 @@ public class SlopeModel extends PolygonObstacle {
     float[] points = json.get("points").asFloatArray();
     initShapes(points);
 
-    // TODO: Refactor similar json parsing logic as a static method
-    // Technically, we should do error checking here.
-    // A JSON field might accidentally be missing
-    setBodyType(
-        json.get("bodytype").asString().equals("static")
-            ? BodyDef.BodyType.StaticBody
-            : BodyDef.BodyType.DynamicBody);
-    setDensity(json.get("density").asFloat());
-    setFriction(json.get("friction").asFloat());
-    setRestitution(json.get("restitution").asFloat());
-
-    // Reflection is best way to convert name to color
-    Color debugColor;
-    try {
-      String cname = json.get("debugcolor").asString().toUpperCase();
-      Field field = Class.forName("com.badlogic.gdx.graphics.Color").getField(cname);
-      debugColor = new Color((Color) field.get(null));
-    } catch (Exception e) {
-      debugColor = null; // Not defined
-    }
-    int opacity = json.get("debugopacity").asInt();
-    debugColor.mul(opacity / 255.0f);
-    setDebugColor(debugColor);
-
-    // Now get the texture from the AssetManager singleton
-    String key = json.get("texture").asString();
-    TextureRegion texture = new TextureRegion(directory.getEntry(key, Texture.class));
-    setTexture(texture);
+    SimpleObstacleJsonParser.initPlatformFromJson(this, directory, json);
   }
 }
