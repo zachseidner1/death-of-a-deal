@@ -24,13 +24,13 @@ import edu.cornell.gdiac.util.PooledList;
 
 /**
  * Represents a single level in our game
- * <p>
- * Note that the constructor does very little.  The true initialization happens by reading the JSON
- * value.  To reset a level, dispose it and reread the JSON.
- * <p>
- * The level contains its own Box2d World, as the World settings are defined by the JSON file.
+ *
+ * <p>Note that the constructor does very little. The true initialization happens by reading the
+ * JSON value. To reset a level, dispose it and reread the JSON.
+ *
+ * <p>The level contains its own Box2d World, as the World settings are defined by the JSON file.
  * However, there is absolutely no controller code in this class, as the majority of the methods are
- * getters and setters.  The getters allow the GameController class to modify the level elements.
+ * getters and setters. The getters allow the GameController class to modify the level elements.
  */
 public class LevelModel {
 
@@ -38,10 +38,12 @@ public class LevelModel {
    * The Box2D world
    */
   protected World world;
+
   /**
    * The boundary of the world
    */
   protected Rectangle bounds;
+
   /**
    * The world scale
    */
@@ -52,27 +54,36 @@ public class LevelModel {
    * All the objects in the world.
    */
   protected PooledList<Obstacle> objects = new PooledList<Obstacle>();
+
   /**
    * Reference to the character avatar
    */
   private PlayerModel avatar;
+
   /**
    * Reference to the bounce pad (for collision detection)
    */
   private BouncePlatformModel bouncePlatformModel;
+
   /**
    * Reference to the goalDoor (for collision detection)
    */
   private ExitModel goalDoor;
+
   /**
    * Whether or not the level is in debug more (showing off physics)
    */
   private boolean debug;
 
   /**
+   * Whether or not the level is completed
+   */
+  private boolean complete;
+
+  /**
    * Creates a new LevelModel
-   * <p>
-   * The level is empty and there is no active physics world.  You must read the JSON file to
+   *
+   * <p>The level is empty and there is no active physics world. You must read the JSON file to
    * initialize the level
    */
   public LevelModel() {
@@ -84,8 +95,8 @@ public class LevelModel {
 
   /**
    * Returns the bounding rectangle for the physics world
-   * <p>
-   * The size of the rectangle is in physics, coordinates, not screen coordinates
+   *
+   * <p>The size of the rectangle is in physics, coordinates, not screen coordinates
    *
    * @return the bounding rectangle for the physics world
    */
@@ -131,8 +142,8 @@ public class LevelModel {
 
   /**
    * Returns whether this level is currently in debug node
-   * <p>
-   * If the level is in debug mode, then the physics bodies will all be drawn as wireframes
+   *
+   * <p>If the level is in debug mode, then the physics bodies will all be drawn as wireframes
    * onscreen
    *
    * @return whether this level is currently in debug node
@@ -143,14 +154,32 @@ public class LevelModel {
 
   /**
    * Sets whether this level is currently in debug node
-   * <p>
-   * If the level is in debug mode, then the physics bodies will all be drawn as wireframes
+   *
+   * <p>If the level is in debug mode, then the physics bodies will all be drawn as wireframes
    * onscreen
    *
    * @param value whether this level is currently in debug node
    */
   public void setDebug(boolean value) {
     debug = value;
+  }
+
+  /**
+   * Return level completion state to caller
+   *
+   * @return
+   */
+  public boolean getComplete() {
+    return complete;
+  }
+
+  /**
+   * Set the level to complete state or non-complete state
+   *
+   * @param value
+   */
+  public void setComplete(boolean value) {
+    complete = value;
   }
 
   /**
@@ -193,7 +222,14 @@ public class LevelModel {
       floor = floor.next();
     }
 
-    // TODO P4 initialize any sloped platforms
+    JsonValue slope = levelFormat.get("slopeplatforms").child();
+    while (slope != null) {
+      SlopeModel obj = new SlopeModel();
+      obj.initialize(directory, slope);
+      obj.setDrawScale(scale);
+      activate(obj);
+      slope = slope.next();
+    }
 
     // TODO P2 initialize bounce model
 
@@ -203,7 +239,6 @@ public class LevelModel {
     avatar.setDrawScale(scale);
     activate(avatar);
   }
-
 
   public void dispose() {
     for (Obstacle obj : objects) {
@@ -218,8 +253,8 @@ public class LevelModel {
 
   /**
    * Immediately adds the object to the physics world
-   * <p>
-   * param obj The object to add
+   *
+   * <p>param obj The object to add
    */
   protected void activate(Obstacle obj) {
     assert inBounds(obj) : "Object is not in bounds";
@@ -229,8 +264,8 @@ public class LevelModel {
 
   /**
    * Returns true if the object is in bounds.
-   * <p>
-   * This assertion is useful for debugging the physics.
+   *
+   * <p>This assertion is useful for debugging the physics.
    *
    * @param obj The object to check.
    * @return true if the object is in bounds.
@@ -243,9 +278,9 @@ public class LevelModel {
 
   /**
    * Draws the level to the given game canvas
-   * <p>
-   * If debug mode is true, it will outline all physics bodies as wireframes. Otherwise it will only
-   * draw the sprite representations.
+   *
+   * <p>If debug mode is true, it will outline all physics bodies as wireframes. Otherwise it will
+   * only draw the sprite representations.
    *
    * @param canvas the drawing context
    */

@@ -112,6 +112,12 @@ public class InputController {
   private boolean isFrozen;
 
   /**
+   * The toggle representing whether the timer is paused
+   */
+  private boolean meterPaused = false;
+
+
+  /**
    * Creates a new input controller
    * <p>
    * The input controller attempts to connect to the X-Box controller at device 0, if it exists.
@@ -248,6 +254,7 @@ public class InputController {
     return debugPressed && !debugPrevious;
   }
 
+
   /**
    * Returns true if the exit button was pressed.
    *
@@ -257,9 +264,8 @@ public class InputController {
     return exitPressed && !exitPrevious;
   }
 
-  public boolean didPause() {
-    // TODO P1 use input controller to check if they paused the timer
-    return true;
+  public boolean getMeterPaused() {
+    return meterPaused;
   }
 
   public boolean getFrozen() {
@@ -352,6 +358,9 @@ public class InputController {
     prevPressed = (secondary && prevPressed) || (Gdx.input.isKeyPressed(Input.Keys.P));
     nextPressed = (secondary && nextPressed) || (Gdx.input.isKeyPressed(Input.Keys.N));
     exitPressed = (secondary && exitPressed) || (Gdx.input.isKeyPressed(Input.Keys.ESCAPE));
+    if (Gdx.input.isKeyJustPressed(Keys.X)) {
+      meterPaused = !meterPaused;
+    }
 
     // If f is just pressed set isFrozen field
     if (Gdx.input.isKeyJustPressed(Input.Keys.F)){

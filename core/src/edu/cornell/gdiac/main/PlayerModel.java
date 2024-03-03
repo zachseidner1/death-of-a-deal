@@ -79,6 +79,10 @@ public class PlayerModel extends CapsuleObstacle {
    */
   private boolean isFrozen;
 
+  /**
+   * Whether we are actively bouncing
+   */
+
   // SENSOR FIELDS
   /**
    * Ground sensor to represent our feet
@@ -214,6 +218,18 @@ public class PlayerModel extends CapsuleObstacle {
     }
     // you should probably make an isFrozen field
   }
+
+  public void setBounce(float bounceImpulse) {
+    if (!isActive()) {
+      return;
+    }
+    // Ensure the player is only bounced when grounded to prevent continuous bouncing
+    if (isGrounded) {
+      Vector2 impulse = new Vector2(0, bounceImpulse);
+      body.applyLinearImpulse(impulse, body.getWorldCenter(), true);
+    }
+  }
+
 
   /**
    * Returns how much force to apply to get the player moving
