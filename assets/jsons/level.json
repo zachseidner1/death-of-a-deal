@@ -223,17 +223,34 @@
       "texture": "earth",
       "debugcolor": "yellow",
       "debugopacity": 200
+    },
+    "floor8": {
+      "pos": [
+        13.5,
+        8
+      ],
+      "size": [
+        1.5,
+        0.2
+      ],
+      "bodytype": "static",
+      "density": 0.0,
+      "friction": 0.4,
+      "restitution": 0.1,
+      "texture": "earth",
+      "debugcolor": "yellow",
+      "debugopacity": 200
     }
   },
   "slopeplatforms": {
     "slope1": {
       "points": [
-        14,
-        6,
-        16,
-        6,
-        16,
-        7.5
+        8,
+        7.5,
+        12,
+        7.5,
+        12,
+        9
       ],
       "bodytype": "static",
       "density": 0.0,
@@ -245,12 +262,12 @@
     },
     "slope2": {
       "points": [
-        11,
-        7,
-        12,
-        7,
-        11,
-        7.5
+        13,
+        6,
+        16,
+        6,
+        16,
+        7
       ],
       "bodytype": "static",
       "density": 0.0,
