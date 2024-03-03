@@ -18,7 +18,6 @@ public class CollisionController implements ContactListener {
   /**
    * Arbitrary bounce impulse that are used for bouncing up
    */
-  private final float BOUNCE_FORCE = 10f;
   /**
    * Mark set to handle more sophisticated collision callbacks
    */
@@ -137,7 +136,7 @@ public class CollisionController implements ContactListener {
       float c= bplt.getCoefficient();
       if (ply.isFrozen()){
         contact.setRestitution(c);
-      }
+        }
       }
     }
     } catch (Exception e) {
