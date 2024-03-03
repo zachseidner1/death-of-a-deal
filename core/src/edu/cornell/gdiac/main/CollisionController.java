@@ -1,32 +1,155 @@
 package edu.cornell.gdiac.main;
 
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.Manifold;
+import com.badlogic.gdx.utils.ObjectSet;
+import edu.cornell.gdiac.physics.obstacle.BoxObstacle;
+import edu.cornell.gdiac.physics.obstacle.Obstacle;
 
-public class CollisionController {
+public class CollisionController implements ContactListener {
 
-  /* TODO P5 add fields that you may need
-  This could include the level, avatar, bounce pad, etc..
-  If you notice that after adding these the gameplay controller doesn't need it, remove it from the
-  gameplay controller.
-
-  TODO P5 Also when you are handling collisions, make sure that you don't directly modify game controller values.
-  For example for detecting level completion, we could have an "is complete" flag in the level model,
-  updating this and then the GameController reads from that to avoid cyclic dependencies.
+  /**
+   * Mark set to handle more sophisticated collision callbacks
    */
-  private LevelModel levelModel;
+  protected ObjectSet<Fixture> sensorFixtures;
+  private LevelModel level;
+  /**
+   * Arbitrary bounce impulse that are used for bouncing up
+   */
+  private float bounceForce = 10f;
 
+  /**
+   * Set up the collision model based on Level Model & Create sensorFixtures to track active bodies
+   *
+   * @param levelModel The level model passed down from game controller
+   */
   public CollisionController(LevelModel levelModel) {
-    this.levelModel = levelModel;
+    this.level = levelModel;
+    this.sensorFixtures = new ObjectSet<Fixture>();
   }
 
-  public void handleContact(Contact contact) {
-    // TODO P5 this method should call other collision methods based on which two objects are colliding
-    // P5 should work on getting this the default collisions to work using this method.
+  /**
+   * Called when two fixtures begin to touch. This method is triggered during the simulation step at
+   * the start of a contact between two fixtures
+   *
+   * @param contact The contact point containing information about the two fixtures that have come
+   *                into contact
+   */
+  public void beginContact(Contact contact) {
+    Fixture fix1 = contact.getFixtureA();
+    Fixture fix2 = contact.getFixtureB();
 
-    // TODO P2 check if we landed on bounce pad, call and implement handleBounce
+    Body body1 = fix1.getBody();
+    Body body2 = fix2.getBody();
+
+    Object fd1 = fix1.getUserData();
+    Object fd2 = fix2.getUserData();
+
+    try {
+      Obstacle bd1 = (Obstacle) body1.getUserData();
+      Obstacle bd2 = (Obstacle) body2.getUserData();
+
+      PlayerModel avatar = level.getAvatar();
+      BoxObstacle door = level.getExit();
+
+      // Check if any fixture is a bounce platform
+      BouncePlatformModel bouncePlatform = null;
+      if (bd1 instanceof BouncePlatformModel) {
+        bouncePlatform = (BouncePlatformModel) bd1;
+      } else if (bd2 instanceof BouncePlatformModel) {
+        bouncePlatform = (BouncePlatformModel) bd2;
+      }
+
+      // See if we have landed on the ground
+      if ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
+          (avatar.getSensorName().equals(fd1) && avatar != bd2)) {
+        avatar.setGrounded(true);
+        sensorFixtures.add(avatar == bd1 ? fix2 : fix1); // Could have more than one ground
+
+        // If we landed on a bounce platform, handle the bounce
+        if (bouncePlatform != null) {
+          handleBounce(avatar, bouncePlatform);
+        }
+      }
+
+      // Check for win condition
+      if ((bd1 == avatar && bd2 == door) ||
+          (bd1 == door && bd2 == avatar)) {
+        level.setComplete(true);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
   }
 
+  /**
+   * Called when two fixtures cease to touch. This method is invoked during the simulation step when
+   * a contact between two fixtures ends. Useful for detecting when entities separate after a
+   * collision and can be used to reset states or properties
+   *
+   * @param contact The contact point that contains information about the two fixtures that have
+   *                ceased to be in contact
+   */
+  public void endContact(Contact contact) {
+    Fixture fix1 = contact.getFixtureA();
+    Fixture fix2 = contact.getFixtureB();
+
+    Body body1 = fix1.getBody();
+    Body body2 = fix2.getBody();
+
+    Object fd1 = fix1.getUserData();
+    Object fd2 = fix2.getUserData();
+
+    Object bd1 = body1.getUserData();
+    Object bd2 = body2.getUserData();
+
+    PlayerModel avatar = level.getAvatar();
+    if ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
+        (avatar.getSensorName().equals(fd1) && avatar != bd2)) {
+      sensorFixtures.remove(avatar == bd1 ? fix2 : fix1);
+      if (sensorFixtures.size == 0) {
+        avatar.setGrounded(false);
+      }
+    }
+  }
+
+  /**
+   * Called before the physics engine solves a contact
+   *
+   * @param contact     The contact about to be solved
+   * @param oldManifold The manifold for the contact before it is solved, containing information
+   *                    about how the two shapes are touching
+   */
+  public void preSolve(Contact contact, Manifold oldManifold) {
+    // Pre-solve collision handling
+  }
+
+  /**
+   * Called after the physics engine has solved a contact
+   *
+   * @param contact The contact that was solved
+   * @param impulse The impulse generated by the physics engine to resolve the contact
+   */
+  public void postSolve(Contact contact, ContactImpulse impulse) {
+    // Post-solve collision handling
+  }
+
+  /**
+   * Handles the interaction between the player and a bounce platform
+   *
+   * @param player         The player model that is interacting with the bounce platform
+   * @param bouncePlatform The bounce platform model that the player is interacting with
+   */
   public void handleBounce(PlayerModel player, BouncePlatformModel bouncePlatform) {
-    // TODO P2 implement and call this function
+    // Check if the player is above the bounce platform
+    if (player.getPosition().y > bouncePlatform.getPosition().y) {
+      // Apply the bounce force to the player
+      player.setBounce(bounceForce);
+    }
   }
 }
