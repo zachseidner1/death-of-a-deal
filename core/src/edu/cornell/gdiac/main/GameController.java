@@ -63,6 +63,10 @@ public class GameController implements Screen {
    */
   private final float STATIONARY_RATE = 0.25f;
   /**
+   * How much the meter goes up when you jump
+   */
+  private final float JUMP_METER_ADDITION = 10f;
+  /**
    * When the meter goes above this value, the player will freeze
    */
   private final float FREEZE_SUSPICION_THRESHOLD = 100;
@@ -357,11 +361,19 @@ public class GameController implements Screen {
       meterCounter += dt;
 
       // If moving
-      if ((input.getHorizontal() != 0 || input.getVertical() != 0)
+      if ((input.getHorizontal() != 0)
           && meterCounter < FREEZE_SUSPICION_THRESHOLD) {
         meterCounter += STATIONARY_RATE;
       }
-
+      // If jumping
+      if (input.getVertical() != 0 && level.getAvatar().isJumping()
+          && meterCounter < FREEZE_SUSPICION_THRESHOLD) {
+        meterCounter += JUMP_METER_ADDITION;
+        // check if we've passed the freeze suspicion threshold, we want full freeze time
+        if (meterCounter >= FREEZE_SUSPICION_THRESHOLD) {
+          meterCounter = FREEZE_SUSPICION_THRESHOLD;
+        }
+      }
       if (meterCounter >= FREEZE_SUSPICION_THRESHOLD) {
         level.getAvatar().setFrozen(true);
         if (meterCounter >= FREEZE_SUSPICION_THRESHOLD + FREEZE_TIME) {
