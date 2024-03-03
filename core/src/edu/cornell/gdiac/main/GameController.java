@@ -59,6 +59,18 @@ public class GameController implements Screen {
    */
   public static final int WORLD_POSIT = 2;
   /**
+   * How much the meter goes up when you're not moving
+   */
+  private final float STATIONARY_RATE = 0.25f;
+  /**
+   * When the meter goes above this value, the player will freeze
+   */
+  private final float FREEZE_SUSPICION_THRESHOLD = 100;
+  /**
+   * The time the player spends frozen in seconds
+   */
+  private final float FREEZE_TIME = 2;
+  /**
    * Need an ongoing reference to the asset directory
    */
   protected AssetDirectory directory;
@@ -66,8 +78,6 @@ public class GameController implements Screen {
    * The font for giving messages to the player
    */
   protected BitmapFont displayFont;
-
-  // THESE ARE CONSTANTS BECAUSE WE NEED THEM BEFORE THE LEVEL IS LOADED
   /**
    * Reference to the game canvas
    */
@@ -113,6 +123,10 @@ public class GameController implements Screen {
    * Countdown active for winning or losing
    */
   private int countdown;
+  /**
+   * Counter for keep track of meter
+   */
+  private float meterCounter;
 
   /**
    * Creates a new game world
@@ -326,6 +340,7 @@ public class GameController implements Screen {
     setComplete(level.getComplete());
 
     // Process actions in object model
+    InputController input = InputController.getInstance();
     PlayerModel avatar = level.getAvatar();
     avatar.setMovement(InputController.getInstance().getHorizontal() * avatar.getForce());
     avatar.setJumping(InputController.getInstance().didPrimary());
@@ -338,15 +353,28 @@ public class GameController implements Screen {
     // Turn the physics engine crank.
     level.getWorld().step(WORLD_STEP, WORLD_VELOC, WORLD_POSIT);
 
-    /* TODO P1 update timer, check if the player should be frozen (and update player), update text for timer
-      use setFrozen() (unimplemented) to freeze the player
-      I recommend using the `dt` value to update said timer (see optimization lab)
-      you are completely responsible for the working timer and freeze mechanic
-      TODO P1 check if the time is up and turn game to lose state if so
-      TODO P1 add a disabled and enabled state to the timer for testing purposes
-      Make it so the player can tap a key to toggle the timer on and off
-      Make the timer visually display whether it's enabled
-      See my task in input controller */
+    if (!input.getMeterPaused()) {
+      meterCounter += dt;
+
+      // If moving
+      if ((input.getHorizontal() != 0 || input.getVertical() != 0)
+          && meterCounter < FREEZE_SUSPICION_THRESHOLD) {
+        meterCounter += STATIONARY_RATE;
+      }
+
+      if (meterCounter >= FREEZE_SUSPICION_THRESHOLD) {
+        level.getAvatar().setFrozen(true);
+        if (meterCounter >= FREEZE_SUSPICION_THRESHOLD + FREEZE_TIME) {
+          meterCounter = 0;
+          level.getAvatar().setFrozen(false);
+        }
+      }
+
+      if (complete || failed) {
+        meterCounter = 0;
+      }
+    }
+
   }
 
   /**
@@ -361,8 +389,23 @@ public class GameController implements Screen {
    */
   public void draw(float delta) {
     canvas.clear();
-
+    InputController input = InputController.getInstance();
     level.draw(canvas);
+
+    // Display meter
+    if (!complete && !failed) {
+      displayFont.setColor(Color.BLACK);
+      canvas.begin();
+      String message = "Meter: " + (int) meterCounter;
+
+      if (input.getMeterPaused()) {
+        message += "p";
+      }
+
+      canvas.drawText(message, displayFont, canvas.getWidth() / 2f - 92, canvas.getHeight() - 36);
+      canvas.end();
+
+    }
 
     // Final message
     if (complete && !failed) {
