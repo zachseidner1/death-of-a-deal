@@ -22,18 +22,18 @@ public class BouncePlatformModel extends PlatformModel {
    * The vertical force to be applied to the player when the player bounces on the platform while
    * frozen.
    */
-  private float BounceCoefficient;
+  private float bounceCoefficient;
 
   public float getCoefficient() {
-    return BounceCoefficient;
+    return bounceCoefficient;
   }
   public void setCoefficient(float c){
-    BounceCoefficient=c;
+    bounceCoefficient=c;
   }
   public BouncePlatformModel() {
     super();
     region = null;
-    BounceCoefficient=0.0f;
+    bounceCoefficient=0.0f;
   }
   public void initialize(AssetDirectory directory, JsonValue json) {
     // TODO P2

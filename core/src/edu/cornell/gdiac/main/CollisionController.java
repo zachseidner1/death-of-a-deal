@@ -68,7 +68,6 @@ public class CollisionController implements ContactListener {
       // Check for win condition
       if ((bd1 == avatar && bd2 == door) ||
           (bd1 == door && bd2 == avatar)) {
-        System.out.println("Completed");
         level.setComplete(true);
       }
     } catch (Exception e) {
@@ -118,30 +117,8 @@ public class CollisionController implements ContactListener {
     Fixture fix2 = contact.getFixtureB();
     Body body1 = fix1.getBody();
     Body body2 = fix2.getBody();
-    PlayerModel ply=level.getAvatar();
-    try {
-      Obstacle bd1 = (Obstacle) body1.getUserData();
-      Obstacle bd2 = (Obstacle) body2.getUserData();
-    if (bd1.equals(ply)){
-      if( bd1 instanceof BouncePlatformModel){
-      BouncePlatformModel bplt=(BouncePlatformModel) bd2;
-      float c= bplt.getCoefficient();
-      if (ply.isFrozen()){
-        contact.setRestitution(c);
-      }}
-    }
-    if (bd2.equals(ply)){
-      if( bd1 instanceof BouncePlatformModel){
-      BouncePlatformModel bplt=(BouncePlatformModel) bd1;
-      float c= bplt.getCoefficient();
-      if (ply.isFrozen()){
-        contact.setRestitution(c);
-        }
-      }
-    }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+    PlayerModel plyr=level.getAvatar();
+    preSolveBounce(contact,plyr,body1,body2);
   }
 
 
@@ -155,11 +132,30 @@ public class CollisionController implements ContactListener {
     // Post-solve collision handling
   }
 
-  /**
-   * Handles the interaction between the player and a bounce platform
-   *
-   * @param player         The player model that is interacting with the bounce platform
-   * @param bouncePlatform The bounce platform model that the player is interacting with
-   */
+  public void preSolveBounce(Contact contact, PlayerModel plyr, Body body1, Body body2){
+    try {
+      Obstacle bd1 = (Obstacle) body1.getUserData();
+      Obstacle bd2 = (Obstacle) body2.getUserData();
+      if (bd1.equals(plyr)){
+        if( bd1 instanceof BouncePlatformModel){
+          BouncePlatformModel bplt=(BouncePlatformModel) bd2;
+          float c= bplt.getCoefficient();
+          if (plyr.isFrozen()){
+            contact.setRestitution(c);
+          }}
+      }
+      if (bd2.equals(plyr)){
+        if( bd1 instanceof BouncePlatformModel){
+          BouncePlatformModel bplt=(BouncePlatformModel) bd1;
+          float c= bplt.getCoefficient();
+          if (plyr.isFrozen()){
+            contact.setRestitution(c);
+          }
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
 
 }

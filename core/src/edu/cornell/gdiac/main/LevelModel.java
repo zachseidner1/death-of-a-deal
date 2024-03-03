@@ -219,13 +219,13 @@ public class LevelModel {
     // TODO P4 initialize any sloped platforms
 
     // TODO P2 initialize bounce model
-    JsonValue bouncefloor = levelFormat.get("bounceplatforms").child();
-    while (bouncefloor != null) {
+    JsonValue bounceFloor = levelFormat.get("bounceplatforms").child();
+    while (bounceFloor != null) {
       BouncePlatformModel obj = new BouncePlatformModel();
-      obj.initialize(directory, bouncefloor);
+      obj.initialize(directory, bounceFloor);
       obj.setDrawScale(scale);
       activate(obj);
-      bouncefloor = bouncefloor.next();
+      bounceFloor = bounceFloor.next();
     }
     // Create dude
     avatar = new PlayerModel();
