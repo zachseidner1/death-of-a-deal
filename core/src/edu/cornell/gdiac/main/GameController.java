@@ -65,15 +65,17 @@ public class GameController implements Screen, ContactListener {
    */
   public static final int WORLD_POSIT = 2;
   /**
-   * Constant for when stationary
+   * How much the meter goes up when you're not moving
    */
   private final float STATIONARY_RATE = 0.25f;
   /**
-   * Constant for freeze mechanic
+   * When the meter goes above this value, the player will freeze
    */
   private final float FREEZE_SUSPICION_THRESHOLD = 100;
-
-  // THESE ARE CONSTANTS BECAUSE WE NEED THEM BEFORE THE LEVEL IS LOADED
+  /**
+   * The time the player spends frozen in seconds
+   */
+  private final float FREEZE_TIME = 2;
   /**
    * Need an ongoing reference to the asset directory
    */
@@ -349,28 +351,18 @@ public class GameController implements Screen, ContactListener {
     // Turn the physics engine crank.
     level.getWorld().step(WORLD_STEP, WORLD_VELOC, WORLD_POSIT);
 
-    /* TODO P1 update timer, check if the player should be frozen (and update player), update text for timer
-      use setFrozen() (unimplemented) to freeze the player
-      I recommend using the `dt` value to update said timer (see optimization lab)
-      you are completely responsible for the working timer and freeze mechanic
-      TODO P1 check if the time is up and turn game to lose state if so
-      TODO P1 add a disabled and enabled state to the timer for testing purposes
-      Make it so the player can tap a key to toggle the timer on and off
-      Make the timer visually display whether it's enabled
-      See my task in input controller */
-
     if (!input.getMeterPaused()) {
       meterCounter += dt;
 
       // If moving
-      if (input.getHorizontal() != 0 || input.getVertical() != 0) {
+      if ((input.getHorizontal() != 0 || input.getVertical() != 0)
+          && meterCounter < FREEZE_SUSPICION_THRESHOLD) {
         meterCounter += STATIONARY_RATE;
       }
 
-      // Once meter reaches 100, freeze
       if (meterCounter >= FREEZE_SUSPICION_THRESHOLD) {
         level.getAvatar().setFrozen(true);
-        if (meterCounter >= FREEZE_SUSPICION_THRESHOLD + 5) {
+        if (meterCounter >= FREEZE_SUSPICION_THRESHOLD + FREEZE_TIME) {
           meterCounter = 0;
           level.getAvatar().setFrozen(false);
         }
