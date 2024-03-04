@@ -220,6 +220,7 @@ public class PlayerModel extends CapsuleObstacle {
     if (isFrozen) {
       color = Color.BLUE;
       setDensity(FROZEN_DENSITY);
+      body.applyLinearImpulse(0, -10, 0, 0, true);
     } else {
       color = Color.WHITE;
       setDensity(INITIAL_DENSITY);
