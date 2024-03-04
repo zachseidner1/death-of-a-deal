@@ -1,9 +1,6 @@
 package edu.cornell.gdiac.main;
 
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.Box2D;
-import com.badlogic.gdx.physics.box2d.Contact;
-import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
@@ -104,6 +101,7 @@ public class CollisionController implements ContactListener {
       }
     }
   }
+
   /**
    * Called before the physics engine solves a contact
    *
@@ -117,8 +115,8 @@ public class CollisionController implements ContactListener {
     Fixture fix2 = contact.getFixtureB();
     Body body1 = fix1.getBody();
     Body body2 = fix2.getBody();
-    PlayerModel plyr=level.getAvatar();
-    preSolveBounce(contact,plyr,body1,body2);
+    PlayerModel plyr = level.getAvatar();
+    preSolveBounce(contact, plyr, body1, body2);
   }
 
 
@@ -132,23 +130,24 @@ public class CollisionController implements ContactListener {
     // Post-solve collision handling
   }
 
-  public void preSolveBounce(Contact contact, PlayerModel plyr, Body body1, Body body2){
+  public void preSolveBounce(Contact contact, PlayerModel plyr, Body body1, Body body2) {
     try {
       Obstacle bd1 = (Obstacle) body1.getUserData();
       Obstacle bd2 = (Obstacle) body2.getUserData();
-      if (bd1.equals(plyr)){
-        if( bd1 instanceof BouncePlatformModel){
-          BouncePlatformModel bplt=(BouncePlatformModel) bd2;
-          float c= bplt.getCoefficient();
-          if (plyr.isFrozen()){
+      if (bd1.equals(plyr)) {
+        if (bd1 instanceof BouncePlatformModel) {
+          BouncePlatformModel bplt = (BouncePlatformModel) bd2;
+          float c = bplt.getCoefficient();
+          if (plyr.isFrozen()) {
             contact.setRestitution(c);
-          }}
+          }
+        }
       }
-      if (bd2.equals(plyr)){
-        if( bd1 instanceof BouncePlatformModel){
-          BouncePlatformModel bplt=(BouncePlatformModel) bd1;
-          float c= bplt.getCoefficient();
-          if (plyr.isFrozen()){
+      if (bd2.equals(plyr)) {
+        if (bd1 instanceof BouncePlatformModel) {
+          BouncePlatformModel bplt = (BouncePlatformModel) bd1;
+          float c = bplt.getCoefficient();
+          if (plyr.isFrozen()) {
             contact.setRestitution(c);
           }
         }
@@ -157,5 +156,4 @@ public class CollisionController implements ContactListener {
       e.printStackTrace();
     }
   }
-
 }
