@@ -34,6 +34,14 @@ import java.lang.reflect.Field;
 public class PlayerModel extends CapsuleObstacle {
   // Physics constants
   /**
+   * The initial density of the player configured from the JSON
+   */
+  private final float INITIAL_DENSITY = 1.0f;
+  /**
+   * frozen density
+   */
+  private final float FROZEN_DENSITY = 100.0f;
+  /**
    * The factor to multiply by the input
    */
   private float force;
@@ -53,7 +61,6 @@ public class PlayerModel extends CapsuleObstacle {
    * Cooldown (in animation frames) for jumping
    */
   private int jumpLimit;
-
   /**
    * The current horizontal movement of the character
    */
@@ -70,6 +77,12 @@ public class PlayerModel extends CapsuleObstacle {
    * How long until we can jump again
    */
   private int jumpCooldown;
+
+  /**
+   * Whether we are actively bouncing
+   */
+
+  // SENSOR FIELDS
   /**
    * Whether we are actively jumping
    */
@@ -78,12 +91,6 @@ public class PlayerModel extends CapsuleObstacle {
    * Whether we are currently frozen
    */
   private boolean isFrozen;
-
-  /**
-   * Whether we are actively bouncing
-   */
-
-  // SENSOR FIELDS
   /**
    * Ground sensor to represent our feet
    */
@@ -97,7 +104,6 @@ public class PlayerModel extends CapsuleObstacle {
    * The color to paint the sensor in debug mode
    */
   private Color sensorColor;
-
   /**
    * Cache for internal force calculations
    */
@@ -106,6 +112,7 @@ public class PlayerModel extends CapsuleObstacle {
    * Tint for drawing the color (blue if isFrozen)
    */
   private Color color;
+
   /**
    * Creates a new player with degenerate settings
    * <p>
@@ -145,7 +152,7 @@ public class PlayerModel extends CapsuleObstacle {
    */
   public void setMovement(float value) {
     movement = value;
-    if (isFrozen){
+    if (isFrozen) {
       movement = 0;
     }
     // Change facing if appropriate
@@ -210,13 +217,13 @@ public class PlayerModel extends CapsuleObstacle {
    */
   public void setFrozen(boolean value) {
     isFrozen = value;
-    if (isFrozen){
+    if (isFrozen) {
       color = Color.BLUE;
-      getBody().applyLinearImpulse(new Vector2(0f,-0.5f),getPosition(),true);
+      setDensity(FROZEN_DENSITY);
     } else {
       color = Color.WHITE;
+      setDensity(INITIAL_DENSITY);
     }
-    // you should probably make an isFrozen field
   }
 
   /**
@@ -368,7 +375,7 @@ public class PlayerModel extends CapsuleObstacle {
     // A JSON field might accidentally be missing
     setBodyType(json.get("bodytype").asString().equals("static") ? BodyDef.BodyType.StaticBody
         : BodyDef.BodyType.DynamicBody);
-    setDensity(json.get("density").asFloat());
+    setDensity(INITIAL_DENSITY);
     setFriction(json.get("friction").asFloat());
     setRestitution(json.get("restitution").asFloat());
     setForce(json.get("force").asFloat());

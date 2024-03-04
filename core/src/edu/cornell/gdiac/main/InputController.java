@@ -16,6 +16,7 @@ package edu.cornell.gdiac.main;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -133,6 +134,61 @@ public class InputController {
     }
     crosshair = new Vector2();
     crosscache = new Vector2();
+
+    Gdx.input.setInputProcessor(new InputProcessor() {
+      @Override
+      public boolean keyDown(int keycode) {
+        switch (keycode) {
+          case Keys.F:
+            isFrozen = !isFrozen;
+            return true;
+          case Keys.X:
+            meterPaused = !meterPaused;
+            return true;
+        }
+        return false;
+      }
+
+      @Override
+      public boolean keyUp(int keycode) {
+        return false;
+      }
+
+      @Override
+      public boolean keyTyped(char character) {
+        return false;
+      }
+
+      @Override
+      public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        return false;
+      }
+
+      @Override
+      public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        return false;
+      }
+
+      @Override
+      public boolean touchCancelled(int screenX, int screenY, int pointer, int button) {
+        return false;
+      }
+
+      @Override
+      public boolean touchDragged(int screenX, int screenY, int pointer) {
+        return false;
+      }
+
+      @Override
+      public boolean mouseMoved(int screenX, int screenY) {
+        return false;
+      }
+
+      @Override
+      public boolean scrolled(float amountX, float amountY) {
+        return false;
+      }
+    });
   }
 
   /**
@@ -358,14 +414,6 @@ public class InputController {
     prevPressed = (secondary && prevPressed) || (Gdx.input.isKeyPressed(Input.Keys.P));
     nextPressed = (secondary && nextPressed) || (Gdx.input.isKeyPressed(Input.Keys.N));
     exitPressed = (secondary && exitPressed) || (Gdx.input.isKeyPressed(Input.Keys.ESCAPE));
-    if (Gdx.input.isKeyJustPressed(Keys.X)) {
-      meterPaused = !meterPaused;
-    }
-
-    // If f is just pressed set isFrozen field
-    if (Gdx.input.isKeyJustPressed(Input.Keys.F)){
-      isFrozen = !isFrozen;
-    }
 
     // Directional controls
     horizontal = (secondary ? horizontal : 0.0f);
