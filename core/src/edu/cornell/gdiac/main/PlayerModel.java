@@ -42,6 +42,10 @@ public class PlayerModel extends CapsuleObstacle {
    */
   private final float FROZEN_DENSITY = 100.0f;
   /**
+   * Whether the character has a higher density in the frozen state which causes them to slide
+   */
+  private final boolean SHOULD_SLIDE = false;
+  /**
    * The factor to multiply by the input
    */
   private float force;
@@ -73,16 +77,16 @@ public class PlayerModel extends CapsuleObstacle {
    * Whether our feet are on the ground
    */
   private boolean isGrounded;
-  /**
-   * How long until we can jump again
-   */
-  private int jumpCooldown;
 
   /**
    * Whether we are actively bouncing
    */
 
   // SENSOR FIELDS
+  /**
+   * How long until we can jump again
+   */
+  private int jumpCooldown;
   /**
    * Whether we are actively jumping
    */
@@ -112,6 +116,9 @@ public class PlayerModel extends CapsuleObstacle {
    * Tint for drawing the color (blue if isFrozen)
    */
   private Color color;
+  /**
+   * The texture to use in the frozen state
+   */
   private TextureRegion frozenTexture;
 
   /**
@@ -219,12 +226,16 @@ public class PlayerModel extends CapsuleObstacle {
   public void setFrozen(boolean value) {
     isFrozen = value;
     if (isFrozen) {
-//      color = Color.BLUE;
-      setDensity(FROZEN_DENSITY);
-      body.applyLinearImpulse(0, -10, 0, 0, true);
+      if (SHOULD_SLIDE) {
+        setDensity(FROZEN_DENSITY);
+      }
+
+      body.applyLinearImpulse(0, SHOULD_SLIDE ? -10 : -1, 0, 0, true);
     } else {
-//      color = Color.WHITE;
-      setDensity(INITIAL_DENSITY);
+      if (SHOULD_SLIDE) {
+        setDensity(INITIAL_DENSITY);
+      }
+
     }
   }
 
