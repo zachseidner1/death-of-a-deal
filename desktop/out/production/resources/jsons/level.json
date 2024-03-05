@@ -311,7 +311,7 @@
       "texture": "earth",
       "debugcolor": "red",
       "debugopacity": 200,
-      "coefficient": 2.0
+      "coefficient": 1.5
     }
   }
 }
