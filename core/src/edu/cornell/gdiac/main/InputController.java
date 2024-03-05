@@ -116,7 +116,10 @@ public class InputController {
    * The toggle representing whether the timer is paused
    */
   private boolean meterPaused = false;
-
+  /**
+   * The toggle representing if the freezing mechanic increases density
+   */
+  private boolean densityIncreased = false;
 
   /**
    * Creates a new input controller
@@ -140,10 +143,15 @@ public class InputController {
       public boolean keyDown(int keycode) {
         switch (keycode) {
           case Keys.F:
-            isFrozen = !isFrozen;
-            return true;
+            if (meterPaused) {
+              isFrozen = !isFrozen;
+            }
+            return meterPaused;
           case Keys.X:
             meterPaused = !meterPaused;
+            return true;
+          case Keys.M:
+            densityIncreased = !densityIncreased;
             return true;
         }
         return false;
@@ -322,6 +330,10 @@ public class InputController {
 
   public boolean getMeterPaused() {
     return meterPaused;
+  }
+
+  public boolean getShouldSlide() {
+    return densityIncreased;
   }
 
   public boolean getFrozen() {

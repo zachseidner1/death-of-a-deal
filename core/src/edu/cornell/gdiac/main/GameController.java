@@ -391,6 +391,8 @@ public class GameController implements Screen {
       // This method only works when the game is paused!
       avatar.setFrozen(InputController.getInstance().getFrozen());
     }
+
+    avatar.setShouldSlide(input.getShouldSlide());
   }
 
   /**
@@ -415,9 +417,12 @@ public class GameController implements Screen {
       String message = "Meter: " + (int) meterCounter;
 
       if (input.getMeterPaused()) {
-        message += "p";
+        message = "paused";
       }
 
+      if (input.getShouldSlide()) {
+        message += " d";
+      }
       canvas.drawText(message, displayFont, canvas.getWidth() / 2f - 92, canvas.getHeight() - 36);
       canvas.end();
 

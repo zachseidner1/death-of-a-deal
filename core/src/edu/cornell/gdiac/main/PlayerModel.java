@@ -44,7 +44,7 @@ public class PlayerModel extends CapsuleObstacle {
   /**
    * Whether the character has a higher density in the frozen state which causes them to slide
    */
-  private final boolean SHOULD_SLIDE = false;
+  private boolean shouldSlide;
   /**
    * The factor to multiply by the input
    */
@@ -135,6 +135,7 @@ public class PlayerModel extends CapsuleObstacle {
     isJumping = false;
     isFrozen = false;
     faceRight = true;
+    shouldSlide = false;
     color = Color.WHITE;
 
     jumpCooldown = 0;
@@ -226,17 +227,21 @@ public class PlayerModel extends CapsuleObstacle {
   public void setFrozen(boolean value) {
     isFrozen = value;
     if (isFrozen) {
-      if (SHOULD_SLIDE) {
+      if (shouldSlide) {
         setDensity(FROZEN_DENSITY);
       }
 
-      body.applyLinearImpulse(0, SHOULD_SLIDE ? -10 : -1, 0, 0, true);
+      body.applyLinearImpulse(0, shouldSlide ? -10 : -1, 0, 0, true);
     } else {
-      if (SHOULD_SLIDE) {
+      if (shouldSlide) {
         setDensity(INITIAL_DENSITY);
       }
 
     }
+  }
+
+  public void setShouldSlide(boolean value) {
+    shouldSlide = value;
   }
 
   /**
