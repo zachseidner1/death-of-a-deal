@@ -231,7 +231,6 @@ public class LevelModel {
       slope = slope.next();
     }
 
-    // TODO P2 initialize bounce model
     JsonValue bounceFloor = levelFormat.get("bounceplatforms").child();
     while (bounceFloor != null) {
       BouncePlatformModel obj = new BouncePlatformModel();
