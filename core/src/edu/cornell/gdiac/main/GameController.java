@@ -279,6 +279,7 @@ public class GameController implements Screen {
     setComplete(false);
     setFailure(false);
     countdown = -1;
+    meterCounter = 0;
 
     // Reload the json each time
     level.populate(directory, levelFormat);

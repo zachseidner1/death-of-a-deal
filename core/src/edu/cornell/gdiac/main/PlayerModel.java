@@ -112,6 +112,7 @@ public class PlayerModel extends CapsuleObstacle {
    * Tint for drawing the color (blue if isFrozen)
    */
   private Color color;
+  private TextureRegion frozenTexture;
 
   /**
    * Creates a new player with degenerate settings
@@ -164,6 +165,10 @@ public class PlayerModel extends CapsuleObstacle {
   }
 
   /**
+   * Returns true if
+   */
+
+  /**
    * Returns true if the player is actively jumping.
    *
    * @return true if the player is actively jumping.
@@ -171,10 +176,6 @@ public class PlayerModel extends CapsuleObstacle {
   public boolean isJumping() {
     return isJumping && jumpCooldown <= 0 && isGrounded;
   }
-
-  /**
-   * Returns true if
-   */
 
   /**
    * Sets whether the player is actively jumping.
@@ -218,11 +219,11 @@ public class PlayerModel extends CapsuleObstacle {
   public void setFrozen(boolean value) {
     isFrozen = value;
     if (isFrozen) {
-      color = Color.BLUE;
+//      color = Color.BLUE;
       setDensity(FROZEN_DENSITY);
       body.applyLinearImpulse(0, -10, 0, 0, true);
     } else {
-      color = Color.WHITE;
+//      color = Color.WHITE;
       setDensity(INITIAL_DENSITY);
     }
   }
@@ -400,6 +401,7 @@ public class PlayerModel extends CapsuleObstacle {
     // Now get the texture from the AssetManager singleton
     String key = json.get("texture").asString();
     TextureRegion texture = new TextureRegion(directory.getEntry(key, Texture.class));
+    frozenTexture = new TextureRegion(directory.getEntry("frozen", Texture.class));
     setTexture(texture);
 
     // Get the sensor information
@@ -511,7 +513,8 @@ public class PlayerModel extends CapsuleObstacle {
   public void draw(GameCanvas canvas) {
     if (texture != null) {
       float effect = faceRight ? 1.0f : -1.0f;
-      canvas.draw(texture, color, origin.x, origin.y, getX() * drawScale.x,
+      canvas.draw(isFrozen ? frozenTexture : texture, color, origin.x, origin.y,
+          getX() * drawScale.x,
           getY() * drawScale.y, getAngle(), effect, 1.0f);
     }
   }
