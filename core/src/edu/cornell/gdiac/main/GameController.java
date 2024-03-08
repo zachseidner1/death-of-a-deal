@@ -417,7 +417,7 @@ public class GameController implements Screen {
       String message = "Meter: " + (int) meterCounter;
 
       if (input.getMeterPaused()) {
-        message = "paused";
+        message = "";
       }
 
       if (input.getShouldSlide()) {

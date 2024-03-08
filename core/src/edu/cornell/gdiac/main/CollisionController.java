@@ -13,9 +13,6 @@ import edu.cornell.gdiac.physics.obstacle.Obstacle;
 public class CollisionController implements ContactListener {
 
   /**
-   * Arbitrary bounce impulse that are used for bouncing up
-   */
-  /**
    * Mark set to handle more sophisticated collision callbacks
    */
   protected ObjectSet<Fixture> sensorFixtures;
