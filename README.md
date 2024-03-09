@@ -15,8 +15,11 @@ while evading the agent’s gaze.
 
 ## How to play the gameplay prototype
 
+The basic controls are using the arrow keys to move and using the up arrow to jump.
+
 There are two main game modes for our current gameplay prototype. The first is the "meter mode",
 where you need to manage the status of a suspicion meter, and you become frozen when the meter
 reaches 100. The second main game mode we have is where you get to control the freezing mechanic
 entirely. To activate this mode, press `x` to stop the timer and then `m` so you gain density when
-you freeze. Try playing around in this mode to hit the bounce pad and slide down the slope. 
+you freeze. Try playing around in this mode to hit the bounce pad and slide down the slope while
+frozen. To freeze in this game mode, press `f`.  
