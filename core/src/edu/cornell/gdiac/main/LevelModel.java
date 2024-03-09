@@ -242,7 +242,9 @@ public class LevelModel {
               directory, tileProperties);
           break;
         case "objects":
-          // TODO make objects
+          if (layer.get("objects") != null) {
+            makeObjects(layer.get("objects").child());
+          }
           break;
         case "deco":
           // TODO make decorations
@@ -284,6 +286,14 @@ public class LevelModel {
         obj.setDrawScale(scale);
         activate(obj);
       }
+    }
+  }
+
+  private void makeObjects(JsonValue objects) {
+    while (objects != null) {
+      // TODO add objects to the game
+
+      objects = objects.next();
     }
   }
 
