@@ -264,7 +264,7 @@ public class GameController implements Screen {
     jumpSound = directory.getEntry("jump", SoundEffect.class);
 
     // This represents the level but does not BUILD it
-    levelFormat = directory.getEntry("level1", JsonValue.class);
+    levelFormat = directory.getEntry("leveltiled", JsonValue.class);
   }
 
   /**

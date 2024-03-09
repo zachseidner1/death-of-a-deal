@@ -189,9 +189,35 @@ public class LevelModel {
    * @param levelFormat the JSON file defining the level
    */
   public void populate(AssetDirectory directory, JsonValue levelFormat) {
-    float gravity = levelFormat.getFloat("gravity");
-    float[] pSize = levelFormat.get("physicsSize").asFloatArray();
-    int[] gSize = levelFormat.get("graphicSize").asIntArray();
+    int tileWidth = levelFormat.getInt("tilewidth");
+    int tileHeight = levelFormat.getInt("tileheight");
+    int numTilesVertical = levelFormat.getInt("height");
+    int numTilesHorizontal = levelFormat.getInt("width");
+
+    float gravity = 0;
+    float[] pSize = new float[2];
+    JsonValue property = levelFormat.get("properties").child();
+    // get map properties (applies to entire level)
+    while (property != null) {
+      switch (property.getString("name")) {
+        case "gravity":
+          gravity = property.getFloat("value");
+          break;
+        // the width for box 2D physics
+        case "pwidth":
+          pSize[0] = property.getFloat("value");
+          break;
+        // the height for box 2D physics
+        case "pheight":
+          pSize[1] = property.getFloat("value");
+          break;
+      }
+      property = property.next();
+    }
+
+    // graphics size is tile width * the number of tiles horizontally
+    // by the tile height * the number of tiles vertically
+    int[] gSize = {numTilesHorizontal * tileWidth, numTilesVertical * tileHeight};
 
     world = new World(new Vector2(0, gravity), false);
     bounds = new Rectangle(0, 0, pSize[0], pSize[1]);
@@ -203,47 +229,62 @@ public class LevelModel {
     goalDoor.initialize(directory, levelFormat.get("exit"));
     goalDoor.setDrawScale(scale);
     activate(goalDoor);
-
-    JsonValue wall = levelFormat.get("walls").child();
-    while (wall != null) {
-      WallModel obj = new WallModel();
-      obj.initialize(directory, wall);
-      obj.setDrawScale(scale);
-      activate(obj);
-      wall = wall.next();
+    JsonValue layer = levelFormat.get("layers").child();
+    while (layer != null) {
+      JsonValue tileProperties = null;
+      if (layer.get("properties") != null) {
+        tileProperties = layer.get("properties").child();
+      }
+      switch (layer.getString("name")) {
+        case "level":
+          makeTiles(numTilesHorizontal, numTilesVertical, layer.get("data").asIntArray(), tileWidth,
+              tileHeight,
+              directory, tileProperties);
+          break;
+        case "objects":
+          // TODO make objects
+          break;
+        case "deco":
+          // TODO make decorations
+          break;
+      }
+      layer = layer.next();
     }
 
-    JsonValue floor = levelFormat.get("platforms").child();
-    while (floor != null) {
-      PlatformModel obj = new PlatformModel();
-      obj.initialize(directory, floor);
-      obj.setDrawScale(scale);
-      activate(obj);
-      floor = floor.next();
-    }
-
-    JsonValue slope = levelFormat.get("slopeplatforms").child();
-    while (slope != null) {
-      SlopeModel obj = new SlopeModel();
-      obj.initialize(directory, slope);
-      obj.setDrawScale(scale);
-      activate(obj);
-      slope = slope.next();
-    }
-
-    JsonValue bounceFloor = levelFormat.get("bounceplatforms").child();
-    while (bounceFloor != null) {
-      BouncePlatformModel obj = new BouncePlatformModel();
-      obj.initialize(directory, bounceFloor);
-      obj.setDrawScale(scale);
-      activate(obj);
-      bounceFloor = bounceFloor.next();
-    }
     // Create dude
     avatar = new PlayerModel();
     avatar.initialize(directory, levelFormat.get("avatar"));
     avatar.setDrawScale(scale);
     activate(avatar);
+  }
+
+  /**
+   * Adds tiles to the level according to the data array provided by Tiled.
+   *
+   * @param cols           the number of columns of the data array
+   * @param rows           the number of rows of the data array
+   * @param data           the data array
+   * @param tileWidth      the width of a tile in pixels
+   * @param tileHeight     the height of a tile in pixels
+   * @param directory      the asset directory
+   * @param tileProperties additional tile properties
+   */
+  private void makeTiles(int cols, int rows, int[] data, int tileWidth, int tileHeight,
+      AssetDirectory directory, JsonValue tileProperties) {
+    for (int i = 0; i < data.length; i++) {
+      if (data[i] != 0) {
+        // i % numCols = how deep in x
+        // i / numCols = how deep in y
+        int xPos = (i % cols) * tileWidth;
+        // subtract from full height since data starts at the top
+        int yPos = tileHeight * rows - (i / cols) * tileHeight;
+        PlatformModel obj = new PlatformModel();
+        obj.initializeAsTile(xPos, yPos, (float) tileHeight, directory, "" + data[i],
+            tileProperties, scale);
+        obj.setDrawScale(scale);
+        activate(obj);
+      }
+    }
   }
 
   public void dispose() {
