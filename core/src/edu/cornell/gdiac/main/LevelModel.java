@@ -281,9 +281,9 @@ public class LevelModel {
         // subtract from full height since data starts at the top
         int yPos = tileHeight * rows - (i / cols) * tileHeight;
         PlatformModel obj = new PlatformModel();
-        obj.initializeAsTile(xPos, yPos, (float) tileHeight, directory, "" + data[i],
-            tileProperties, scale);
         obj.setDrawScale(scale);
+        obj.initializeAsTile(xPos, yPos, (float) tileHeight, directory, "" + data[i],
+            tileProperties);
         activate(obj);
       }
     }

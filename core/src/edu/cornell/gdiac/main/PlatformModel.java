@@ -207,13 +207,13 @@ public class PlatformModel extends BoxObstacle {
    * @param directory      asset directory
    * @param tilekey        the key to the texture that is associated with the tile
    * @param tileProperties the properties of the tile as a JSON value
-   * @param scale          the scale value from the level model
    */
   public void initializeAsTile(float x, float y, float tileSize, AssetDirectory directory,
       String tilekey,
-      JsonValue tileProperties, Vector2 scale) {
-    setPosition(x * (1 / scale.x), y * (1 / scale.y));
-    setDimension(tileSize * ((float) 1 / scale.x), tileSize * ((float) 1 / (scale.y)));
+      JsonValue tileProperties) {
+    // Use the scale to convert pixel positions to box 2D positions
+    setPosition(x * (1 / drawScale.x), y * (1 / drawScale.y));
+    setDimension(tileSize * ((float) 1 / drawScale.x), tileSize * ((float) 1 / (drawScale.y)));
     setBodyType(BodyType.StaticBody);
     TextureRegion textureRegion = new TextureRegion(directory.getEntry(tilekey, Texture.class));
     setTexture(textureRegion);
