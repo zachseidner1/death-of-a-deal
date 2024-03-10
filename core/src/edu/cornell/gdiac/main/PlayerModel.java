@@ -461,6 +461,10 @@ public class PlayerModel extends CapsuleObstacle {
         case "sensorname":
           setSensorName(json.getString("value"));
           break;
+        default:
+          //Print statement for debugging
+          System.out.println("Missing a property");
+          break;
       }
 
       if (debugOpacity != -1 && debugColor != null) {

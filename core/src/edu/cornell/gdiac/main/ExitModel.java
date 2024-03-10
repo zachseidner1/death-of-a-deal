@@ -86,6 +86,10 @@ public class ExitModel extends BoxObstacle {
           TextureRegion texture = new TextureRegion(directory.getEntry(key, Texture.class));
           setTexture(texture);
           break;
+        default:
+          //Print statement for debugging
+          System.out.println("Missing a property");
+          break;
       }
 
       properties = properties.next();
