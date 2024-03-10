@@ -45,36 +45,50 @@ public class ExitModel extends BoxObstacle {
    * @param json      the JSON subtree defining the exit
    */
   public void initialize(AssetDirectory directory, JsonValue json) {
-    setName(json.name());
-    float[] pos = json.get("pos").asFloatArray();
-    float[] size = json.get("size").asFloatArray();
-    setPosition(pos[0], pos[1]);
-    setDimension(size[0], size[1]);
+    setName(json.getString("name"));
+    setPosition(json.getFloat("x"), json.getFloat("y"));
+    setDimension(json.getFloat("width"), json.getFloat("height"));
+    JsonValue properties = json.get("properites");
+    Color debugColor = null;
+    int debugOpacity = -1;
 
-    // Technically, we should do error checking here.
-    // A JSON field might accidentally be missing
-    setBodyType(json.get("bodytype").asString().equals("static") ? BodyDef.BodyType.StaticBody
-        : BodyDef.BodyType.DynamicBody);
-    setDensity(json.get("density").asFloat());
-    setFriction(json.get("friction").asFloat());
-    setRestitution(json.get("restitution").asFloat());
+    while (properties != null){
+      switch (json.getString("name")){
+        case "bodytype":
+          setBodyType(json.getString("value").equals("static") ? BodyDef.BodyType.StaticBody
+              : BodyDef.BodyType.DynamicBody);
+          break;
+        case "density":
+          setDensity(json.getFloat("value"));
+          break;
+        case "friction":
+          setFriction(json.getFloat("value"));
+          break;
+        case "restitution":
+          setRestitution(json.getFloat("value"));
+          break;
+        case "debugcolor":
+          try {
+            String cname = json.get("debugcolor").asString().toUpperCase();
+            Field field = Class.forName("com.badlogic.gdx.graphics.Color").getField(cname);
+            debugColor = new Color((Color) field.get(null));
+          } catch (Exception e) {
+            debugColor = null; // Not defined
+          }
+          setDebugColor(debugColor);
+          break;
+        case "debugopacity":
+          debugOpacity = json.get("debugopacity").asInt();
+          setDebugColor(getDebugColor().mul(debugOpacity / 255.0f));
+          break;
+        case "texture":
+          String key = json.getString("value");
+          TextureRegion texture = new TextureRegion(directory.getEntry(key, Texture.class));
+          setTexture(texture);
+          break;
+      }
 
-    // Reflection is best way to convert name to color
-    Color debugColor;
-    try {
-      String cname = json.get("debugcolor").asString().toUpperCase();
-      Field field = Class.forName("com.badlogic.gdx.graphics.Color").getField(cname);
-      debugColor = new Color((Color) field.get(null));
-    } catch (Exception e) {
-      debugColor = null; // Not defined
+      properties = properties.next();
     }
-    int opacity = json.get("debugopacity").asInt();
-    debugColor.mul(opacity / 255.0f);
-    setDebugColor(debugColor);
-
-    // Now get the texture from the AssetManager singleton
-    String key = json.get("texture").asString();
-    TextureRegion texture = new TextureRegion(directory.getEntry(key, Texture.class));
-    setTexture(texture);
   }
 }
