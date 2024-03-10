@@ -389,6 +389,47 @@ public class PlayerModel extends CapsuleObstacle {
     setPosition(pos[0], pos[1]);
     setDimension(size[0], size[1]);
 
+    //Walker code
+    setName(json.get("name").asString());
+    setPosition(json.get("x").asFloat(), json.get("y").asFloat());
+    JsonValue properties = json.get("properties");
+
+    while (properties != null){
+      switch (properties.getString("name")){
+        case "bodytype":
+          break;
+        case "density":
+          break;
+        case "friction":
+          break;
+        case "restitution":
+          break;
+        case "force":
+          break;
+        case "damping":
+          break;
+        case "maxspeed":
+          break;
+        case "jumppulse":
+          break;
+        case "jumplimit":
+          break;
+        case "debugcolor":
+          break;
+        case "debugopacity":
+          break;
+        case "texture":
+          break;
+        case "sensorsize":
+          break;
+        case "sensorcolor":
+          break;
+        case "sensoropacity":
+          break;
+        case "sensorname":
+          break;
+      }
+    }
     // Technically, we should do error checking here.
     // A JSON field might accidentally be missing
     setBodyType(json.get("bodytype").asString().equals("static") ? BodyDef.BodyType.StaticBody
