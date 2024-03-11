@@ -42,16 +42,30 @@ public class SlopeModel extends PolygonObstacle {
     while (properties != null){
       switch (properties.getString("name")){
         case "bodytype":
+          setBodyType(json.getString("value").equals("static") ? BodyDef.BodyType.StaticBody
+              : BodyDef.BodyType.DynamicBody);
           break;
         case "density":
+          setDensity(json.getFloat("value"));
           break;
         case "friction":
+          setFriction(json.getFloat("value"));
           break;
         case "restitution":
+          setRestitution(json.getFloat("value"));
           break;
         case "debugcolor":
+          try {
+            String cname = json.getString("value").toUpperCase();
+            Field field = Class.forName("com.badlogic.gdx.graphics.Color").getField(cname);
+            debugColor = new Color((Color) field.get(null));
+          } catch (Exception e) {
+            debugColor = null; // Not defined
+          }
           break;
         case "debugopacity":
+          int opacity = json.getInt("value");
+          setDebugColor(debugColor.mul(opacity/255.0f));
           break;
         case "texture":
           break;
@@ -63,36 +77,5 @@ public class SlopeModel extends PolygonObstacle {
 
       properties = properties.next();
     }
-  }
-
-  public static void initPlatformFromJson(
-      SimpleObstacle obstacle, AssetDirectory directory, JsonValue json) {
-    // Technically, we should do error checking here.
-    // A JSON field might accidentally be missing
-    obstacle.setBodyType(
-        json.get("bodytype").asString().equals("static")
-            ? BodyDef.BodyType.StaticBody
-            : BodyDef.BodyType.DynamicBody);
-    obstacle.setDensity(json.get("density").asFloat());
-    obstacle.setFriction(json.get("friction").asFloat());
-    obstacle.setRestitution(json.get("restitution").asFloat());
-
-    // Reflection is best way to convert name to color
-    Color debugColor;
-    try {
-      String cname = json.get("debugcolor").asString().toUpperCase();
-      Field field = Class.forName("com.badlogic.gdx.graphics.Color").getField(cname);
-      debugColor = new Color((Color) field.get(null));
-    } catch (Exception e) {
-      debugColor = null; // Not defined
-    }
-    int opacity = json.get("debugopacity").asInt();
-    debugColor.mul(opacity / 255.0f);
-    obstacle.setDebugColor(debugColor);
-
-    // Now get the texture from the AssetManager singleton
-    String key = json.get("texture").asString();
-    TextureRegion texture = new TextureRegion(directory.getEntry(key, Texture.class));
-    obstacle.setTexture(texture);
   }
 }
