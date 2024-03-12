@@ -225,10 +225,11 @@ public class LevelModel {
     scale.y = gSize[1] / pSize[1];
 
     // Add level goal
-    goalDoor = new ExitModel();
-    goalDoor.initialize(directory, levelFormat.get("exit"));
-    goalDoor.setDrawScale(scale);
-    activate(goalDoor);
+//    goalDoor = new ExitModel();
+//    goalDoor.initialize(directory, levelFormat.get("exit"));
+//    goalDoor.setDrawScale(scale);
+//    activate(goalDoor);
+
     JsonValue layer = levelFormat.get("layers").child();
     while (layer != null) {
       JsonValue tileProperties = null;
@@ -243,7 +244,7 @@ public class LevelModel {
           break;
         case "objects":
           if (layer.get("objects") != null) {
-            makeObjects(layer.get("objects").child());
+            makeObjects(directory, layer.get("objects").child());
           }
           break;
         case "deco":
@@ -254,10 +255,11 @@ public class LevelModel {
     }
 
     // Create dude
-    avatar = new PlayerModel();
-    avatar.initialize(directory, levelFormat.get("avatar"));
-    avatar.setDrawScale(scale);
-    activate(avatar);
+    // Does this need to change now?
+//    avatar = new PlayerModel();
+//    avatar.initialize(directory, levelFormat.get("avatar"));
+//    avatar.setDrawScale(scale);
+//    activate(avatar);
   }
 
   /**
@@ -289,10 +291,47 @@ public class LevelModel {
     }
   }
 
-  private void makeObjects(JsonValue objects) {
+  private void makeObjects(AssetDirectory directory, JsonValue objects) {
     while (objects != null) {
       // TODO add objects to the game
-
+      // not sure if this would be name or type
+      switch (objects.getString("type")){
+        case "player":
+          avatar = new PlayerModel();
+          avatar.initialize(directory, objects);
+          avatar.setDrawScale(scale);
+          activate(avatar);
+          this.objects.add(avatar);
+          break;
+        case "exit":
+          goalDoor = new ExitModel();
+          goalDoor.initialize(directory, objects);
+          goalDoor.setDrawScale(scale);
+          activate(goalDoor);
+          this.objects.add(goalDoor);
+          break;
+        case "platform":
+          PlatformModel platform = new PlatformModel();
+          platform.initialize(directory, objects);
+          platform.setDrawScale(scale);
+          activate(platform);
+          this.objects.add(platform);
+          break;
+        case "slope":
+          SlopeModel slope = new SlopeModel();
+          slope.initialize(directory, objects);
+          slope.setDrawScale(scale);
+          activate(slope);
+          this.objects.add(slope);
+          break;
+        case "wall":
+          WallModel wall = new WallModel();
+          wall.initialize(directory, objects);
+          wall.setDrawScale(scale);
+          activate(wall);
+          this.objects.add(wall);
+          break;
+      }
       objects = objects.next();
     }
   }
