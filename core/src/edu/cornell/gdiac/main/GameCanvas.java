@@ -91,6 +91,8 @@ public class GameCanvas {
    */
   private TextureRegion holder;
 
+  private boolean levelOn = false;
+
   /**
    * Creates a new GameCanvas determined by the application configuration.
    * <p>
@@ -103,8 +105,13 @@ public class GameCanvas {
     debugRender = new ShapeRenderer();
 
     // Set the projection matrix (for proper scaling)
-    camera = new OrthographicCamera(getWidth(), getHeight());
+    float w = getWidth();
+    float h = getHeight();
+    camera = new OrthographicCamera(w, h);
+    System.out.println("reset");
+    camera.position.set(camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0);
     camera.setToOrtho(false);
+
     spriteBatch.setProjectionMatrix(camera.combined);
     debugRender.setProjectionMatrix(camera.combined);
 
@@ -113,6 +120,12 @@ public class GameCanvas {
     local = new Affine2();
     global = new Matrix4();
     vertex = new Vector2();
+  }
+
+  public void startLevel() {
+    camera.zoom = 0.8f;
+    camera.position.set(camera.viewportWidth / 2f - 88, camera.viewportHeight / 2f - 52, 0);
+    camera.update();
   }
 
   /**
