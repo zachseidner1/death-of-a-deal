@@ -173,15 +173,15 @@ public class InputController {
   }
 
   /**
-   * Returns true if the primary action button was pressed.
+   * Returns true if the primary action button is being pressed.
    * <p>
-   * This is a one-press button. It only returns true at the moment it was pressed, and returns
-   * false at any frame afterwards.
+   * Unlike a one-press button that only returns true at the moment it was pressed, this method
+   * returns true as long as the button remains pressed, providing continuous detection.
    *
-   * @return true if the primary action button was pressed.
+   * @return true if the primary action button is being pressed.
    */
   public boolean didPrimary() {
-    return primePressed && !primePrevious;
+    return primePressed;
   }
 
   /**

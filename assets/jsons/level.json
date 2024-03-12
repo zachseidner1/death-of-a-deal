@@ -7,7 +7,7 @@
     800,
     600
   ],
-  "gravity": -9.8,
+  "gravity": -15.0,
   "avatar": {
     "pos": [
       2.5,
@@ -19,13 +19,13 @@
     ],
     "bodytype": "dynamic",
     "density": 1.0,
-    "friction": 0.0,
+    "friction": 0.5,
     "restitution": 0.0,
     "force": 10.0,
-    "damping": 10.0,
-    "maxspeed": 5.0,
-    "jumppulse": 1.25,
-    "jumplimit": 30,
+    "damping": 2.0,
+    "maxspeed": 4,
+    "jumppulse": 1.50,
+    "jumplimit": 10,
     "texture": "dude",
     "debugcolor": "white",
     "debugopacity": 192,

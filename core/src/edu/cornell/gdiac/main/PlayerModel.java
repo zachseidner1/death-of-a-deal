@@ -75,9 +75,10 @@ public class PlayerModel extends CapsuleObstacle {
    */
   private boolean isJumping;
 
-  /**
-   * Whether we are actively bouncing
-   */
+  private boolean isChargingJump = false; // Tracks if the jump is being charged
+  private float jumpCharge = 0; // Current charge of the jump
+  private float maxJumpCharge = 1.0f; // Maximum charge the jump can hold
+  private float jumpChargeRate = 1.0f; // Rate at which the jump charge increases per second
 
   // SENSOR FIELDS
   /**
@@ -163,8 +164,19 @@ public class PlayerModel extends CapsuleObstacle {
    *
    * @param value whether the player is actively jumping.
    */
-  public void setJumping(boolean value) {
-    isJumping = value;
+  public void setJumping(boolean value, boolean isReleasingJump, float dt) {
+    if (value && !isReleasingJump) {                          // When holding down the jump button
+      // Calculate Jump Charge
+      jumpCharge = Math.min(jumpCharge + jumpChargeRate * dt, maxJumpCharge);
+      isJumping = false;
+    } else if (!value && isReleasingJump && isGrounded) {     // When Releasing the jump button
+      // Calculate chargedImpulse for release based on jumpCharge
+      float chargedImpulse = jumppulse + (maxJumpCharge * jumpCharge);
+      Vector2 impulse = new Vector2(0, chargedImpulse);
+      body.applyLinearImpulse(impulse, body.getWorldCenter(), true);
+      // Reset jump charge
+      jumpCharge = 0;
+    }
   }
 
   /**
@@ -487,6 +499,10 @@ public class PlayerModel extends CapsuleObstacle {
       jumpCooldown = getJumpLimit();
     } else {
       jumpCooldown = Math.max(0, jumpCooldown - 1);
+    }
+
+    if (isChargingJump) {
+      jumpCharge = Math.min(jumpCharge + jumpChargeRate * dt, maxJumpCharge);
     }
 
     super.update(dt);

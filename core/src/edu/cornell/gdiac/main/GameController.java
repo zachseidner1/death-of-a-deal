@@ -114,6 +114,10 @@ public class GameController implements Screen {
    */
   private int countdown;
 
+  private boolean isJumpPressedLastFrame = false;
+
+  private boolean isJumpRelease = false;
+
   /**
    * Creates a new game world
    * <p>
@@ -329,7 +333,22 @@ public class GameController implements Screen {
     // Process actions in object model
     PlayerModel avatar = level.getAvatar();
     avatar.setMovement(InputController.getInstance().getHorizontal() * avatar.getForce());
-    avatar.setJumping(InputController.getInstance().didPrimary());
+
+    // Check for the transition from pressed to not pressed to detect a jump release
+    boolean isJumpPressed = InputController.getInstance().didPrimary();
+    boolean isJumpRelease = !isJumpPressed && isJumpPressedLastFrame;
+
+    avatar.setJumping(isJumpPressed, isJumpRelease, dt);
+
+    // Update the last frame state for the next update cycle
+    isJumpPressedLastFrame = isJumpPressed;
+
+//
+
+//
+//    // Set movement and jumping with the new parameter
+//    avatar.setMovement(input.getHorizontal() * avatar.getForce());
+//    avatar.setJumping(isJumpPressed, isJumpPressedLastFrame);
 
     avatar.applyForce();
     if (avatar.isJumping()) {
