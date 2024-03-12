@@ -131,7 +131,10 @@ public class GameController implements Screen {
    * Counter for keep track of meter
    */
   private float meterCounter;
-
+  /**
+   * Timer of the game
+   */
+  private float timer;
   /**
    * Creates a new game world
    * <p>
@@ -280,6 +283,7 @@ public class GameController implements Screen {
     setFailure(false);
     countdown = -1;
     meterCounter = 0;
+    timer = 6;
 
     // Reload the json each time
     level.populate(directory, levelFormat);
@@ -326,6 +330,10 @@ public class GameController implements Screen {
       setFailure(true);
       return false;
     }
+    if (!isFailure() && timer<=1) {
+      setFailure(true);
+      return false;
+    }
 
     return true;
   }
@@ -358,7 +366,7 @@ public class GameController implements Screen {
     // Turn the physics engine crank.
     level.getWorld().step(WORLD_STEP, WORLD_VELOC, WORLD_POSIT);
 
-    if (!input.getMeterPaused()) {
+    if (input.getMeterActive()) {
       meterCounter += dt;
 
       // If moving
@@ -386,12 +394,18 @@ public class GameController implements Screen {
       if (complete || failed) {
         meterCounter = 0;
       }
-    } else {
+    } else if (input.getTimerActive()){
+      timer-=dt;
+      avatar.setFrozen(InputController.getInstance().getFrozen());
+      if (complete || failed) {
+        timer = 0;
+      }
+    }
+    else {
       // Get input to see if f is just pressed and if so set frozen of the avatar to true
       // This method only works when the game is paused!
       avatar.setFrozen(InputController.getInstance().getFrozen());
     }
-
     avatar.setShouldSlide(input.getShouldSlide());
   }
 
@@ -414,18 +428,15 @@ public class GameController implements Screen {
     if (!complete && !failed) {
       displayFont.setColor(Color.BLACK);
       canvas.begin();
-      String message = "Meter: " + (int) meterCounter;
-
-      if (input.getMeterPaused()) {
-        message = "";
-      }
+      String message="";
+      if(input.getTimerActive()){ message = "Timer: " + (int) timer;}
+      if(input.getMeterActive()){message = "Meter: " + (int) meterCounter;}
 
       if (input.getShouldSlide()) {
         message += " d";
       }
       canvas.drawText(message, displayFont, canvas.getWidth() / 2f - 92, canvas.getHeight() - 36);
       canvas.end();
-
     }
 
     // Final message
