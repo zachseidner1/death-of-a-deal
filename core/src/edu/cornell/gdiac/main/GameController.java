@@ -349,6 +349,8 @@ public class GameController implements Screen {
     PlayerModel avatar = level.getAvatar();
     avatar.setMovement(InputController.getInstance().getHorizontal() * avatar.getForce());
     avatar.setJumping(InputController.getInstance().didPrimary());
+    // TODO: Refactor
+    avatar.setAirResistanceEnabled(input.getAirResistanceEnabled());
 
     avatar.applyForce();
     if (avatar.isJumping()) {
@@ -363,12 +365,12 @@ public class GameController implements Screen {
 
       // If moving
       if ((input.getHorizontal() != 0)
-          && meterCounter < FREEZE_SUSPICION_THRESHOLD) {
+        && meterCounter < FREEZE_SUSPICION_THRESHOLD) {
         meterCounter += STATIONARY_RATE;
       }
       // If jumping
       if (input.getVertical() != 0 && level.getAvatar().isJumping()
-          && meterCounter < FREEZE_SUSPICION_THRESHOLD) {
+        && meterCounter < FREEZE_SUSPICION_THRESHOLD) {
         meterCounter += JUMP_METER_ADDITION;
         // check if we've passed the freeze suspicion threshold, we want full freeze time
         if (meterCounter >= FREEZE_SUSPICION_THRESHOLD) {
@@ -419,9 +421,12 @@ public class GameController implements Screen {
       if (input.getMeterPaused()) {
         message = "";
       }
-
       if (input.getShouldSlide()) {
         message += " d";
+      }
+      // TODO: Refactor
+      if (input.getAirResistanceEnabled()) {
+        message += " a";
       }
       canvas.drawText(message, displayFont, canvas.getWidth() / 2f - 92, canvas.getHeight() - 36);
       canvas.end();

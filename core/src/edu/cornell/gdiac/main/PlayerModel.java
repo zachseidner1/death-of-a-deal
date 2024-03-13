@@ -40,7 +40,7 @@ public class PlayerModel extends CapsuleObstacle {
   /**
    * frozen density
    */
-  private final float FROZEN_DENSITY = 100.0f;
+  private final float FROZEN_DENSITY = 2.0f;
   /**
    * Whether the character has a higher density in the frozen state which causes them to slide
    */
@@ -95,6 +95,11 @@ public class PlayerModel extends CapsuleObstacle {
    * Whether we are currently frozen
    */
   private boolean isFrozen;
+  /**
+   * TODO: Can be refactored into an abstract class protected field
+   * Whether we allow this object to feel air resistance, defaults to True
+   */
+  private boolean allowAirResistance = true;
   /**
    * Ground sensor to represent our feet
    */
@@ -236,8 +241,16 @@ public class PlayerModel extends CapsuleObstacle {
       if (shouldSlide) {
         setDensity(INITIAL_DENSITY);
       }
-
     }
+  }
+
+  // TODO: Temporary for testing purposes
+  public void setAirResistanceEnabled(boolean value) {
+    allowAirResistance = value;
+  }
+
+  public boolean airResistanceEnabled() {
+    return allowAirResistance;
   }
 
   public void setShouldSlide(boolean value) {
@@ -392,7 +405,7 @@ public class PlayerModel extends CapsuleObstacle {
     // Technically, we should do error checking here.
     // A JSON field might accidentally be missing
     setBodyType(json.get("bodytype").asString().equals("static") ? BodyDef.BodyType.StaticBody
-        : BodyDef.BodyType.DynamicBody);
+      : BodyDef.BodyType.DynamicBody);
     setDensity(INITIAL_DENSITY);
     setFriction(json.get("friction").asFloat());
     setRestitution(json.get("restitution").asFloat());
@@ -482,24 +495,35 @@ public class PlayerModel extends CapsuleObstacle {
       return;
     }
 
-    // Don't want to be moving. Damp out player motion
-    if (getMovement() == 0f) {
+    // Damp dramatically on the ground
+    if (getMovement() == 0f && isGrounded()) {
       forceCache.set(-getDamping() * getVX(), 0);
       body.applyForce(forceCache, getPosition(), true);
     }
 
     // Velocity too high, clamp it
-    if (Math.abs(getVX()) >= getMaxSpeed()) {
+    if (Math.abs(getVX()) > getMaxSpeed()) {
       setVX(Math.signum(getVX()) * getMaxSpeed());
-    } else {
-      forceCache.set(getMovement(), 0);
-      body.applyForce(forceCache, getPosition(), true);
     }
+
+    forceCache.set(getMovement(), 0);
+    body.applyForce(forceCache, getPosition(), true);
 
     // Jump!
     if (isJumping()) {
-      forceCache.set(0, getJumpPulse());
+      forceCache.set(getVX(), getJumpPulse());
       body.applyLinearImpulse(forceCache, getPosition(), true);
+    }
+
+    // TODO: Refactor
+    // If in air apply air frictional force
+    if (!isGrounded()) {
+      float bodyDensity = getDensity();
+      float airResistanceX = allowAirResistance ? 0.2f * getVX() * getVX() : 0;
+      float airResistanceY = allowAirResistance ? 0.2f * getVY() * getVY() : 0;
+
+      forceCache.set(-airResistanceX, -airResistanceY);
+      body.applyForce(forceCache, getPosition(), true);
     }
   }
 
@@ -530,8 +554,8 @@ public class PlayerModel extends CapsuleObstacle {
     if (texture != null) {
       float effect = faceRight ? 1.0f : -1.0f;
       canvas.draw(isFrozen ? frozenTexture : texture, color, origin.x, origin.y,
-          getX() * drawScale.x,
-          getY() * drawScale.y, getAngle(), effect, 1.0f);
+        getX() * drawScale.x,
+        getY() * drawScale.y, getAngle(), effect, 1.0f);
     }
   }
 }

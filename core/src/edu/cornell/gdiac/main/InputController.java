@@ -120,6 +120,10 @@ public class InputController {
    * The toggle representing if the freezing mechanic increases density
    */
   private boolean densityIncreased = false;
+  /**
+   * The toggle for adding air resistance
+   */
+  private boolean airResistanceEnabled = true;
 
   /**
    * Creates a new input controller
@@ -152,6 +156,9 @@ public class InputController {
             return true;
           case Keys.M:
             densityIncreased = !densityIncreased;
+            return true;
+          case Keys.A:
+            airResistanceEnabled = !airResistanceEnabled;
             return true;
         }
         return false;
@@ -334,6 +341,10 @@ public class InputController {
 
   public boolean getShouldSlide() {
     return densityIncreased;
+  }
+
+  public boolean getAirResistanceEnabled() {
+    return airResistanceEnabled;
   }
 
   public boolean getFrozen() {
