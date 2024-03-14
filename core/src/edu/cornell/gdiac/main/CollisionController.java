@@ -36,7 +36,6 @@ public class CollisionController implements ContactListener {
    *                into contact
    */
   public void beginContact(Contact contact) {
-
     Fixture fix1 = contact.getFixtureA();
     Fixture fix2 = contact.getFixtureB();
 

@@ -264,7 +264,7 @@ public class GameController implements Screen {
     jumpSound = directory.getEntry("jump", SoundEffect.class);
 
     // This represents the level but does not BUILD it
-    levelFormat = directory.getEntry("level1", JsonValue.class);
+    levelFormat = directory.getEntry("leveltiled", JsonValue.class);
   }
 
   /**
@@ -283,6 +283,7 @@ public class GameController implements Screen {
 
     // Reload the json each time
     level.populate(directory, levelFormat);
+    canvas.startLevel();
     level.getWorld().setContactListener(collisionController);
   }
 
