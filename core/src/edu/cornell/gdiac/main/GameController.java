@@ -283,6 +283,7 @@ public class GameController implements Screen {
 
     // Reload the json each time
     level.populate(directory, levelFormat);
+    canvas.startLevel();
     level.getWorld().setContactListener(collisionController);
   }
 

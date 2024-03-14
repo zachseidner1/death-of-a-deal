@@ -242,10 +242,11 @@ public class LevelModel {
     scale.y = gSize[1] / pSize[1];
 
     // Add level goal
-    goalDoor = new ExitModel();
-    goalDoor.initialize(directory, levelFormat.get("exit"));
-    goalDoor.setDrawScale(scale);
-    activate(goalDoor);
+//    goalDoor = new ExitModel();
+//    goalDoor.initialize(directory, levelFormat.get("exit"));
+//    goalDoor.setDrawScale(scale);
+//    activate(goalDoor);
+
     JsonValue layer = levelFormat.get("layers").child();
     while (layer != null) {
       JsonValue tileProperties = null;
@@ -260,7 +261,7 @@ public class LevelModel {
           break;
         case "objects":
           if (layer.get("objects") != null) {
-            makeObjects(layer.get("objects").child());
+            makeObjects(directory, layer.get("objects").child(), gSize[1]);
           }
           break;
         case "deco":
@@ -271,10 +272,11 @@ public class LevelModel {
     }
 
     // Create dude
-    avatar = new PlayerModel();
-    avatar.initialize(directory, levelFormat.get("avatar"));
-    avatar.setDrawScale(scale);
-    activate(avatar);
+    // Does this need to change now?
+//    avatar = new PlayerModel();
+//    avatar.initialize(directory, levelFormat.get("avatar"));
+//    avatar.setDrawScale(scale);
+//    activate(avatar);
   }
 
   /**
@@ -306,10 +308,28 @@ public class LevelModel {
     }
   }
 
-  private void makeObjects(JsonValue objects) {
+  private void makeObjects(AssetDirectory directory, JsonValue objects, int gSizeY) {
     while (objects != null) {
-      // TODO add objects to the game
-
+      switch (objects.getString("name")){
+        case "player":
+          avatar = new PlayerModel();
+          avatar.setDrawScale(scale);
+          avatar.initialize(directory, objects, gSizeY);
+          activate(avatar);
+          break;
+        case "exit":
+          goalDoor = new ExitModel();
+          goalDoor.setDrawScale(scale);
+          goalDoor.initialize(directory, objects, gSizeY);
+          activate(goalDoor);
+          break;
+        case "slope":
+          SlopeModel slope = new SlopeModel();
+          slope.setDrawScale(scale);
+          slope.initialize(directory, objects, gSizeY);
+          activate(slope);
+          break;
+      }
       objects = objects.next();
     }
   }
