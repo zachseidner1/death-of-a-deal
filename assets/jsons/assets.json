@@ -20,7 +20,7 @@
     "jump": "sounds/jump.mp3"
   },
   "jsons": {
-    "level1": "jsons/level.json",
-    "leveltiled": "jsons/level1.json"
+    "level1": "jsons/level_map_format.json",
+    "leveltiled": "jsons/level_map_format.json"
   }
 }

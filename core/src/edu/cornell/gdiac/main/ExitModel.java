@@ -17,6 +17,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.physics.obstacle.BoxObstacle;
+import com.badlogic.gdx.math.Rectangle;
 import java.lang.reflect.Field;
 
 /**
@@ -44,32 +45,37 @@ public class ExitModel extends BoxObstacle {
    * @param directory the asset manager
    * @param json      the JSON subtree defining the exit
    */
-  public void initialize(AssetDirectory directory, JsonValue json) {
+  public void initialize(AssetDirectory directory, JsonValue json, int gSizeY) {
     setName(json.getString("name"));
-    setPosition(json.getFloat("x"), json.getFloat("y"));
-    setDimension(json.getFloat("width"), json.getFloat("height"));
-    JsonValue properties = json.get("properites");
+    // Set position and dimension
+    float x = json.getFloat("x") * (1/drawScale.x);
+    float y = (gSizeY - json.getFloat("y")) * (1/drawScale.y);
+    setPosition(x,y);
+    float width = json.getFloat("width") * (1/drawScale.x);
+    float height = json.getFloat("height") * (1/drawScale.y);
+    setDimension(width, height);
+
+    JsonValue properties = json.get("properties").child() ;
     Color debugColor = null;
     int debugOpacity = -1;
-
     while (properties != null){
-      switch (json.getString("name")){
+      switch (properties.getString("name")){
         case "bodytype":
-          setBodyType(json.getString("value").equals("static") ? BodyDef.BodyType.StaticBody
+          setBodyType(properties.getString("value").equals("static") ? BodyDef.BodyType.StaticBody
               : BodyDef.BodyType.DynamicBody);
           break;
         case "density":
-          setDensity(json.getFloat("value"));
+          setDensity(properties.getFloat("value"));
           break;
         case "friction":
-          setFriction(json.getFloat("value"));
+          setFriction(properties.getFloat("value"));
           break;
         case "restitution":
-          setRestitution(json.getFloat("value"));
+          setRestitution(properties.getFloat("value"));
           break;
         case "debugcolor":
           try {
-            String cname = json.get("debugcolor").asString().toUpperCase();
+            String cname = properties.get("value").asString().toUpperCase();
             Field field = Class.forName("com.badlogic.gdx.graphics.Color").getField(cname);
             debugColor = new Color((Color) field.get(null));
           } catch (Exception e) {
@@ -78,17 +84,15 @@ public class ExitModel extends BoxObstacle {
           setDebugColor(debugColor);
           break;
         case "debugopacity":
-          debugOpacity = json.get("debugopacity").asInt();
+          debugOpacity = properties.getInt("value");
           setDebugColor(getDebugColor().mul(debugOpacity / 255.0f));
           break;
         case "texture":
-          String key = json.getString("value");
+          String key = properties.getString("value");
           TextureRegion texture = new TextureRegion(directory.getEntry(key, Texture.class));
           setTexture(texture);
           break;
         default:
-          //Print statement for debugging
-          System.out.println("Missing a property");
           break;
       }
 

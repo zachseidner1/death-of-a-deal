@@ -3,6 +3,7 @@ package edu.cornell.gdiac.main;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.assets.AssetDirectory;
@@ -27,36 +28,45 @@ public class SlopeModel extends PolygonObstacle {
    * @param directory the asset manager
    * @param json      the JSON subtree defining the platform
    */
-  public void initialize(AssetDirectory directory, JsonValue json) {
-    //json for sloped platform should be a polygon object
+  public void initialize(AssetDirectory directory, JsonValue json, int gSizeY) {
     setName(json.getString("name"));
-    float[] points = json.get("polygon").asFloatArray();
-    initShapes(points);
 
-    //Unsure about this part
-    setPosition(json.getFloat("x"), json.getFloat("y"));
-    //For the example this is zero, so should I not be setting the dimension?
-//    setDimension(json.getFloat("width"), json.getFloat("height"));
-    //Assuming the polygon object has properties
-    JsonValue properties = json.get("properties");
+    float x = json.getFloat("x") * (1/drawScale.x);
+    float y = (gSizeY - json.getFloat("y")) * (1/drawScale.y);
+    setPosition(x,y);
+
+    float[] points = new float[10];
+    JsonValue polygon = json.get("polygon").child();
+    int index = 0;
+    while (polygon != null){
+      points[index] = polygon.getFloat("x") * (1/drawScale.x);
+      index++;
+      points[index] = -1 * polygon.getFloat("y") * (1/drawScale.y);
+      index++;
+      polygon = polygon.next();
+    }
+    initShapes(points);
+    initBounds();
+
+    JsonValue properties = json.get("properties").child();
     while (properties != null){
       switch (properties.getString("name")){
         case "bodytype":
-          setBodyType(json.getString("value").equals("static") ? BodyDef.BodyType.StaticBody
+          setBodyType(properties.getString("value").equals("static") ? BodyDef.BodyType.StaticBody
               : BodyDef.BodyType.DynamicBody);
           break;
         case "density":
-          setDensity(json.getFloat("value"));
+          setDensity(properties.getFloat("value"));
           break;
         case "friction":
-          setFriction(json.getFloat("value"));
+          setFriction(properties.getFloat("value"));
           break;
         case "restitution":
-          setRestitution(json.getFloat("value"));
+          setRestitution(properties.getFloat("value"));
           break;
         case "debugcolor":
           try {
-            String cname = json.getString("value").toUpperCase();
+            String cname = properties.getString("value").toUpperCase();
             Field field = Class.forName("com.badlogic.gdx.graphics.Color").getField(cname);
             debugColor = new Color((Color) field.get(null));
           } catch (Exception e) {
@@ -64,14 +74,15 @@ public class SlopeModel extends PolygonObstacle {
           }
           break;
         case "debugopacity":
-          int opacity = json.getInt("value");
+          int opacity = properties.getInt("value");
           setDebugColor(debugColor.mul(opacity/255.0f));
           break;
         case "texture":
+          String key = properties.getString("value");
+          TextureRegion texture = new TextureRegion(directory.getEntry(key, Texture.class));
+          setTexture(texture);
           break;
         default:
-          //Print statement for debugging
-          System.out.println("Missing a property");
           break;
       }
 
