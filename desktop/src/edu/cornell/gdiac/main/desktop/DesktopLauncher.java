@@ -34,7 +34,7 @@ public class DesktopLauncher {
    */
   public static void main(String[] arg) {
     GDXAppSettings config = new GDXAppSettings();
-    config.title = "JSON Demo";
+    config.title = "Death of a Deal";
     config.width = 800;
     config.height = 600;
     config.fullscreen = false;

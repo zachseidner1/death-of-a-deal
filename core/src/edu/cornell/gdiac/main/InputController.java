@@ -115,11 +115,11 @@ public class InputController {
   /**
    * The toggle representing whether the timer is paused
    */
-  private boolean meterPaused = false;
+  private boolean meterPaused = true;
   /**
    * The toggle representing if the freezing mechanic increases density
    */
-  private boolean densityIncreased = false;
+  private boolean densityIncreased = true;
 
   /**
    * Creates a new input controller
