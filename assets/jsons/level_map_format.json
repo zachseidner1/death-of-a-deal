@@ -303,7 +303,7 @@
                  "y":12.5608350730889
                 }, 
                 {
-                 "height":19.1708602923555,
+                 "height":32,
                  "id":8,
                  "name":"player",
                  "properties":[
@@ -320,7 +320,7 @@
                         {
                          "name":"debugcolor",
                          "type":"color",
-                         "value":"#ffffffff"
+                         "value":"yellow"
                         }, 
                         {
                          "name":"force",
@@ -385,7 +385,9 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":17.9726815240834,
+                 "width":32,
+                  "pwidth": 0.45,
+                  "pheight": 0.8,
                  "x":37.143541816439,
                  "y":383.417205847112
                 }],

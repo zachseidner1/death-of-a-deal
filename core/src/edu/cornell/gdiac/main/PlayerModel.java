@@ -16,7 +16,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
@@ -393,21 +392,21 @@ public class PlayerModel extends CapsuleObstacle {
     setName(json.get("name").asString());
 
     // Set position and dimension
-    float x = json.getFloat("x") * (1/drawScale.x);
-    float y = (gSizeY - json.getFloat("y"))* (1/drawScale.y);
+    float x = json.getFloat("x") * (1 / drawScale.x);
+    float y = (gSizeY - json.getFloat("y")) * (1 / drawScale.y);
+
     setPosition(x, y);
-    float width = json.getFloat("width") * (1/drawScale.x);
-    float height = json.getFloat("height") * (1/drawScale.y);
-    setDimension(width, height);
+    setDimension(json.getFloat("pwidth"), json.getFloat("pheight"));
 
     JsonValue properties = json.get("properties").child();
     Color debugColor = null;
     int debugOpacity = -1;
-    while (properties != null){
-      switch (properties.getString("name")){
+    while (properties != null) {
+      switch (properties.getString("name")) {
         case "bodytype":
-          setBodyType(properties.get("value").asString().equals("static") ? BodyDef.BodyType.StaticBody
-              : BodyDef.BodyType.DynamicBody);
+          setBodyType(
+              properties.get("value").asString().equals("static") ? BodyDef.BodyType.StaticBody
+                  : BodyDef.BodyType.DynamicBody);
           break;
         case "density":
           setDensity(properties.getFloat("value"));
@@ -453,12 +452,12 @@ public class PlayerModel extends CapsuleObstacle {
           frozenTexture = new TextureRegion(directory.getEntry("frozen", Texture.class));
           setTexture(texture);
           break;
-        case "sensorsizex" :
+        case "sensorsizex":
           sensorSizeX = properties.getFloat("value");
         case "sensorsizey":
           Vector2 sensorCenter = new Vector2(0, -getHeight() / 2);
           float sSizeY = properties.getFloat("value");
-          if (sensorSizeX == 0){
+          if (sensorSizeX == 0) {
             System.out.println("Sensor size X has not yet been set");
           }
           sensorShape = new PolygonShape();
@@ -475,7 +474,7 @@ public class PlayerModel extends CapsuleObstacle {
           break;
         case "sensoropacity":
           int opacity = properties.get("value").asInt();
-          if (sensorColor != null){
+          if (sensorColor != null) {
             sensorColor.mul(opacity / 255.0f);
           }
           break;
