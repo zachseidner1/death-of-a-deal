@@ -197,23 +197,22 @@ public class PlayerModel extends CapsuleObstacle {
    *
    * @param value whether the player is actively jumping.
    */
-  public void setJumping(boolean value) {
-    isJumping = value && !isFrozen;
+
   public void setJumping(boolean value, boolean isReleasingJump, float dt) {
+
     if (value && !isReleasingJump) {                          // When holding down the jump button
       // Calculate Jump Charge
       jumpCharge = Math.min(jumpCharge + jumpChargeRate * 4 * dt, maxJumpCharge);
       isJumping = false;
     } else if (isReleasingJump && isGrounded) {     // When Releasing the jump button
-      // Calculate chargedImpulse for release based on jumpCharge
-      float chargedImpulse = jumppulse + (maxJumpCharge * jumpCharge);
-      Vector2 impulse = new Vector2(0, chargedImpulse);
-      body.applyLinearImpulse(impulse, body.getWorldCenter(), true);
-      // Reset jump charge
-      jumpCharge = 0;
+      System.out.println("Set Jumping:");
+      System.out.println(jumpCharge);
+      isJumping = true;
     } else if (!isGrounded) {
       jumpCharge = 0;
+      isJumping = false;
     }
+    isJumping = isJumping && !isFrozen;
   }
 
   /**
@@ -520,8 +519,16 @@ public class PlayerModel extends CapsuleObstacle {
 
     // Jump!
     if (isJumping()) {
-      forceCache.set(0, getJumpPulse());
+      System.out.println("Apply Force:");
+      System.out.println(jumpCharge);
+      // Calculate chargedImpulse for release based on jumpCharge
+      float chargedImpulse = getJumpPulse() + (maxJumpCharge * jumpCharge);
+      forceCache.set(0, chargedImpulse);
       body.applyLinearImpulse(forceCache, getPosition(), true);
+      // Reset jump charge
+      jumpCharge = 0;
+      // Reset jump status
+      isJumping = false;
     }
   }
 

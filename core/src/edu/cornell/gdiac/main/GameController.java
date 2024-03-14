@@ -365,7 +365,6 @@ public class GameController implements Screen {
 
     if (isJumpPressed) {
       jumpTimer += dt;
-      System.out.println(jumpTimer);
       if (jumpTimer >= JUMP_RELEASE_THRESHOLD) {
         // Release jump automatically when threshold is reached
         isJumpOvertime = true;

@@ -7,7 +7,7 @@
     800,
     600
   ],
-  "gravity": -9.8,
+  "gravity": -15.8,
   "avatar": {
     "pos": [
       2.5,
@@ -18,7 +18,7 @@
       0.61
     ],
     "bodytype": "dynamic",
-    "friction": 0.0,
+    "friction": 0.3,
     "restitution": 0.0,
     "force": 10.0,
     "damping": 10.0,
