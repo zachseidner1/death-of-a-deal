@@ -34,6 +34,18 @@ import java.lang.reflect.Field;
 public class PlayerModel extends CapsuleObstacle {
   // Physics constants
   /**
+   * The initial density of the player configured from the JSON
+   */
+  private final float INITIAL_DENSITY = 1.0f;
+  /**
+   * frozen density
+   */
+  private final float FROZEN_DENSITY = 100.0f;
+  /**
+   * Whether the character has a higher density in the frozen state which causes them to slide
+   */
+  private boolean shouldSlide;
+  /**
    * The factor to multiply by the input
    */
   private float force;
@@ -53,7 +65,6 @@ public class PlayerModel extends CapsuleObstacle {
    * Cooldown (in animation frames) for jumping
    */
   private int jumpLimit;
-
   /**
    * The current horizontal movement of the character
    */
@@ -66,6 +77,12 @@ public class PlayerModel extends CapsuleObstacle {
    * Whether our feet are on the ground
    */
   private boolean isGrounded;
+
+  /**
+   * Whether we are actively bouncing
+   */
+
+  // SENSOR FIELDS
   /**
    * How long until we can jump again
    */
@@ -82,6 +99,10 @@ public class PlayerModel extends CapsuleObstacle {
 
   // SENSOR FIELDS
   /**
+   * Whether we are currently frozen
+   */
+  private boolean isFrozen;
+  /**
    * Ground sensor to represent our feet
    */
   private Fixture sensorFixture;
@@ -94,11 +115,18 @@ public class PlayerModel extends CapsuleObstacle {
    * The color to paint the sensor in debug mode
    */
   private Color sensorColor;
-
   /**
    * Cache for internal force calculations
    */
   private Vector2 forceCache = new Vector2();
+  /**
+   * Tint for drawing the color (blue if isFrozen)
+   */
+  private Color color;
+  /**
+   * The texture to use in the frozen state
+   */
+  private TextureRegion frozenTexture;
 
   /**
    * Creates a new player with degenerate settings
@@ -112,7 +140,10 @@ public class PlayerModel extends CapsuleObstacle {
     // Gameplay attributes
     isGrounded = false;
     isJumping = false;
+    isFrozen = false;
     faceRight = true;
+    shouldSlide = false;
+    color = Color.WHITE;
 
     jumpCooldown = 0;
   }
@@ -136,8 +167,10 @@ public class PlayerModel extends CapsuleObstacle {
    * @param value left/right movement of this character.
    */
   public void setMovement(float value) {
-    // TODO P3 make sure player cannot move when frozen
     movement = value;
+    if (isFrozen) {
+      movement = 0;
+    }
     // Change facing if appropriate
     if (movement < 0) {
       faceRight = false;
@@ -145,6 +178,10 @@ public class PlayerModel extends CapsuleObstacle {
       faceRight = true;
     }
   }
+
+  /**
+   * Returns true if
+   */
 
   /**
    * Returns true if the player is actively jumping.
@@ -156,14 +193,12 @@ public class PlayerModel extends CapsuleObstacle {
   }
 
   /**
-   * Returns true if
-   */
-
-  /**
    * Sets whether the player is actively jumping.
    *
    * @param value whether the player is actively jumping.
    */
+  public void setJumping(boolean value) {
+    isJumping = value && !isFrozen;
   public void setJumping(boolean value, boolean isReleasingJump, float dt) {
     if (value && !isReleasingJump) {                          // When holding down the jump button
       // Calculate Jump Charge
@@ -203,8 +238,7 @@ public class PlayerModel extends CapsuleObstacle {
    * Returns whether the player is frozen
    */
   public boolean isFrozen() {
-    // TODO P3 check if the player is frozen
-    return true;
+    return isFrozen;
   }
 
   /**
@@ -213,21 +247,24 @@ public class PlayerModel extends CapsuleObstacle {
    * @param value true if the player is frozen, false otherwise
    */
   public void setFrozen(boolean value) {
-    // TODO P3 update frozen and apply physics, also visually change player in some way
-    // you should probably make an isFrozen field
+    isFrozen = value;
+    if (isFrozen) {
+      if (shouldSlide) {
+        setDensity(FROZEN_DENSITY);
+      }
+
+      body.applyLinearImpulse(0, shouldSlide ? -10 : -1, 0, 0, true);
+    } else {
+      if (shouldSlide) {
+        setDensity(INITIAL_DENSITY);
+      }
+
+    }
   }
 
-  public void setBounce(float bounceImpulse) {
-    if (!isActive()) {
-      return;
-    }
-    // Ensure the player is only bounced when grounded to prevent continuous bouncing
-    if (isGrounded) {
-      Vector2 impulse = new Vector2(0, bounceImpulse);
-      body.applyLinearImpulse(impulse, body.getWorldCenter(), true);
-    }
+  public void setShouldSlide(boolean value) {
+    shouldSlide = value;
   }
-
 
   /**
    * Returns how much force to apply to get the player moving
@@ -378,7 +415,7 @@ public class PlayerModel extends CapsuleObstacle {
     // A JSON field might accidentally be missing
     setBodyType(json.get("bodytype").asString().equals("static") ? BodyDef.BodyType.StaticBody
         : BodyDef.BodyType.DynamicBody);
-    setDensity(json.get("density").asFloat());
+    setDensity(INITIAL_DENSITY);
     setFriction(json.get("friction").asFloat());
     setRestitution(json.get("restitution").asFloat());
     setForce(json.get("force").asFloat());
@@ -386,7 +423,6 @@ public class PlayerModel extends CapsuleObstacle {
     setMaxSpeed(json.get("maxspeed").asFloat());
     setJumpPulse(json.get("jumppulse").asFloat());
     setJumpLimit(json.get("jumplimit").asInt());
-
     // Reflection is best way to convert name to color
     Color debugColor;
     try {
@@ -403,6 +439,7 @@ public class PlayerModel extends CapsuleObstacle {
     // Now get the texture from the AssetManager singleton
     String key = json.get("texture").asString();
     TextureRegion texture = new TextureRegion(directory.getEntry(key, Texture.class));
+    frozenTexture = new TextureRegion(directory.getEntry("frozen", Texture.class));
     setTexture(texture);
 
     // Get the sensor information
@@ -518,7 +555,8 @@ public class PlayerModel extends CapsuleObstacle {
   public void draw(GameCanvas canvas) {
     if (texture != null) {
       float effect = faceRight ? 1.0f : -1.0f;
-      canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x,
+      canvas.draw(isFrozen ? frozenTexture : texture, color, origin.x, origin.y,
+          getX() * drawScale.x,
           getY() * drawScale.y, getAngle(), effect, 1.0f);
     }
   }

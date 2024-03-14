@@ -17,10 +17,6 @@ public class CollisionController implements ContactListener {
    */
   protected ObjectSet<Fixture> sensorFixtures;
   private LevelModel level;
-  /**
-   * Arbitrary bounce impulse that are used for bouncing up
-   */
-  private float bounceForce = 10f;
 
   /**
    * Set up the collision model based on Level Model & Create sensorFixtures to track active bodies
@@ -40,12 +36,12 @@ public class CollisionController implements ContactListener {
    *                into contact
    */
   public void beginContact(Contact contact) {
+
     Fixture fix1 = contact.getFixtureA();
     Fixture fix2 = contact.getFixtureB();
 
     Body body1 = fix1.getBody();
     Body body2 = fix2.getBody();
-
     Object fd1 = fix1.getUserData();
     Object fd2 = fix2.getUserData();
 
@@ -56,24 +52,11 @@ public class CollisionController implements ContactListener {
       PlayerModel avatar = level.getAvatar();
       BoxObstacle door = level.getExit();
 
-      // Check if any fixture is a bounce platform
-      BouncePlatformModel bouncePlatform = null;
-      if (bd1 instanceof BouncePlatformModel) {
-        bouncePlatform = (BouncePlatformModel) bd1;
-      } else if (bd2 instanceof BouncePlatformModel) {
-        bouncePlatform = (BouncePlatformModel) bd2;
-      }
-
       // See if we have landed on the ground
       if ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
           (avatar.getSensorName().equals(fd1) && avatar != bd2)) {
         avatar.setGrounded(true);
-        sensorFixtures.add(avatar == bd1 ? fix2 : fix1); // Could have more than one ground
-
-        // If we landed on a bounce platform, handle the bounce
-        if (bouncePlatform != null) {
-          handleBounce(avatar, bouncePlatform);
-        }
+        sensorFixtures.add(avatar == bd1 ? fix2 : fix1);
       }
 
       // Check for win condition
@@ -84,7 +67,6 @@ public class CollisionController implements ContactListener {
     } catch (Exception e) {
       e.printStackTrace();
     }
-
   }
 
   /**
@@ -101,7 +83,6 @@ public class CollisionController implements ContactListener {
 
     Body body1 = fix1.getBody();
     Body body2 = fix2.getBody();
-
     Object fd1 = fix1.getUserData();
     Object fd2 = fix2.getUserData();
 
@@ -127,7 +108,14 @@ public class CollisionController implements ContactListener {
    */
   public void preSolve(Contact contact, Manifold oldManifold) {
     // Pre-solve collision handling
+    Fixture fix1 = contact.getFixtureA();
+    Fixture fix2 = contact.getFixtureB();
+    Body body1 = fix1.getBody();
+    Body body2 = fix2.getBody();
+    PlayerModel plyr = level.getAvatar();
+    preSolveBounce(contact, plyr, body1, body2);
   }
+
 
   /**
    * Called after the physics engine has solved a contact
@@ -139,17 +127,30 @@ public class CollisionController implements ContactListener {
     // Post-solve collision handling
   }
 
-  /**
-   * Handles the interaction between the player and a bounce platform
-   *
-   * @param player         The player model that is interacting with the bounce platform
-   * @param bouncePlatform The bounce platform model that the player is interacting with
-   */
-  public void handleBounce(PlayerModel player, BouncePlatformModel bouncePlatform) {
-    // Check if the player is above the bounce platform
-    if (player.getPosition().y > bouncePlatform.getPosition().y) {
-      // Apply the bounce force to the player
-      player.setBounce(bounceForce);
+  public void preSolveBounce(Contact contact, PlayerModel plyr, Body body1, Body body2) {
+    try {
+      Obstacle bd1 = (Obstacle) body1.getUserData();
+      Obstacle bd2 = (Obstacle) body2.getUserData();
+      if (bd1.equals(plyr)) {
+        if (bd1 instanceof BouncePlatformModel) {
+          BouncePlatformModel bplt = (BouncePlatformModel) bd2;
+          float c = bplt.getCoefficient();
+          if (plyr.isFrozen()) {
+            contact.setRestitution(c);
+          }
+        }
+      }
+      if (bd2.equals(plyr)) {
+        if (bd1 instanceof BouncePlatformModel) {
+          BouncePlatformModel bplt = (BouncePlatformModel) bd1;
+          float c = bplt.getCoefficient();
+          if (plyr.isFrozen()) {
+            contact.setRestitution(c);
+          }
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
     }
   }
 }

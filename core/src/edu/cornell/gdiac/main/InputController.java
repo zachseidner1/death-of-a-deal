@@ -15,6 +15,8 @@ package edu.cornell.gdiac.main;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -105,6 +107,19 @@ public class InputController {
    * For the gamepad crosshair control
    */
   private float momentum;
+  /**
+   * Field to keep track of freezing mechanic input (F key)
+   */
+  private boolean isFrozen;
+
+  /**
+   * The toggle representing whether the timer is paused
+   */
+  private boolean meterPaused = false;
+  /**
+   * The toggle representing if the freezing mechanic increases density
+   */
+  private boolean densityIncreased = false;
 
   /**
    * Creates a new input controller
@@ -122,6 +137,66 @@ public class InputController {
     }
     crosshair = new Vector2();
     crosscache = new Vector2();
+
+    Gdx.input.setInputProcessor(new InputProcessor() {
+      @Override
+      public boolean keyDown(int keycode) {
+        switch (keycode) {
+          case Keys.F:
+            if (meterPaused) {
+              isFrozen = !isFrozen;
+            }
+            return meterPaused;
+          case Keys.X:
+            meterPaused = !meterPaused;
+            return true;
+          case Keys.M:
+            densityIncreased = !densityIncreased;
+            return true;
+        }
+        return false;
+      }
+
+      @Override
+      public boolean keyUp(int keycode) {
+        return false;
+      }
+
+      @Override
+      public boolean keyTyped(char character) {
+        return false;
+      }
+
+      @Override
+      public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        return false;
+      }
+
+      @Override
+      public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        return false;
+      }
+
+      @Override
+      public boolean touchCancelled(int screenX, int screenY, int pointer, int button) {
+        return false;
+      }
+
+      @Override
+      public boolean touchDragged(int screenX, int screenY, int pointer) {
+        return false;
+      }
+
+      @Override
+      public boolean mouseMoved(int screenX, int screenY) {
+        return false;
+      }
+
+      @Override
+      public boolean scrolled(float amountX, float amountY) {
+        return false;
+      }
+    });
   }
 
   /**
@@ -243,6 +318,7 @@ public class InputController {
     return debugPressed && !debugPrevious;
   }
 
+
   /**
    * Returns true if the exit button was pressed.
    *
@@ -252,9 +328,16 @@ public class InputController {
     return exitPressed && !exitPrevious;
   }
 
-  public boolean didPause() {
-    // TODO P1 use input controller to check if they paused the timer
-    return true;
+  public boolean getMeterPaused() {
+    return meterPaused;
+  }
+
+  public boolean getShouldSlide() {
+    return densityIncreased;
+  }
+
+  public boolean getFrozen() {
+    return isFrozen;
   }
 
   /**
