@@ -35,6 +35,11 @@ import edu.cornell.gdiac.util.PooledList;
 public class LevelModel {
 
   /**
+   * The initial air resistance of the level from the levels JSON
+   */
+  private final float INITIAL_AIR_RESISTANCE = 1.0f;
+
+  /**
    * The Box2D world
    */
   protected World world;
@@ -79,6 +84,15 @@ public class LevelModel {
    * Whether or not the level is completed
    */
   private boolean complete;
+
+  /**
+   * Air resistance scale to be applied to every obstacle in the level
+   */
+  private float airResistance = INITIAL_AIR_RESISTANCE;
+  /**
+   * Cache for internal force calculations
+   */
+  private Vector2 forceCache = new Vector2();
 
   /**
    * Creates a new LevelModel
@@ -200,6 +214,9 @@ public class LevelModel {
     // get map properties (applies to entire level)
     while (property != null) {
       switch (property.getString("name")) {
+        case "airresistance":
+          airResistance = property.getFloat("value");
+          break;
         case "gravity":
           gravity = property.getFloat("value");
           break;
@@ -238,8 +255,8 @@ public class LevelModel {
       switch (layer.getString("name")) {
         case "level":
           makeTiles(numTilesHorizontal, numTilesVertical, layer.get("data").asIntArray(), tileWidth,
-              tileHeight,
-              directory, tileProperties);
+            tileHeight,
+            directory, tileProperties);
           break;
         case "objects":
           if (layer.get("objects") != null) {
@@ -272,7 +289,7 @@ public class LevelModel {
    * @param tileProperties additional tile properties
    */
   private void makeTiles(int cols, int rows, int[] data, int tileWidth, int tileHeight,
-      AssetDirectory directory, JsonValue tileProperties) {
+                         AssetDirectory directory, JsonValue tileProperties) {
     for (int i = 0; i < data.length; i++) {
       if (data[i] != 0) {
         // i % numCols = how deep in x
@@ -283,7 +300,7 @@ public class LevelModel {
         PlatformModel obj = new PlatformModel();
         obj.setDrawScale(scale);
         obj.initializeAsTile(xPos, yPos, (float) tileHeight, directory, "" + data[i],
-            tileProperties);
+          tileProperties);
         activate(obj);
       }
     }
@@ -317,6 +334,27 @@ public class LevelModel {
     assert inBounds(obj) : "Object is not in bounds";
     objects.add(obj);
     obj.activatePhysics(world);
+  }
+
+  /**
+   * Applies air resistance to all objects
+   * <p>
+   * TODO: Figure out rotational air resistance
+   */
+  public void applyAirResistance() {
+    for (Obstacle obj : objects) {
+      // TODO: Refactor (can have obstacles implement air resistance interface to determine whether this force should be applied
+
+      float velX = obj.getVX();
+      float velY = obj.getVY();
+
+      // Apply air resistance force opposite of velocity
+      float airResistanceX = -Math.signum(velX) * airResistance * velX * velX;
+      float airResistanceY = -Math.signum(velY) * airResistance * velY * velY;
+
+      forceCache.set(airResistanceX, airResistanceY);
+      obj.getBody().applyForce(forceCache, obj.getPosition(), true);
+    }
   }
 
   /**

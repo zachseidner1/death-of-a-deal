@@ -40,7 +40,7 @@ public class PlayerModel extends CapsuleObstacle {
   /**
    * frozen density
    */
-  private final float FROZEN_DENSITY = 2.0f;
+  private final float FROZEN_DENSITY = 10.0f;
   /**
    * Whether the character has a higher density in the frozen state which causes them to slide
    */
@@ -95,11 +95,6 @@ public class PlayerModel extends CapsuleObstacle {
    * Whether we are currently frozen
    */
   private boolean isFrozen;
-  /**
-   * TODO: Can be refactored into an abstract class protected field
-   * Whether we allow this object to feel air resistance, defaults to True
-   */
-  private boolean allowAirResistance = true;
   /**
    * Ground sensor to represent our feet
    */
@@ -236,7 +231,7 @@ public class PlayerModel extends CapsuleObstacle {
         setDensity(FROZEN_DENSITY);
       }
 
-      body.applyLinearImpulse(0, shouldSlide ? -10 : -1, 0, 0, true);
+//      body.applyLinearImpulse(0, shouldSlide ? -10 : -1, 0, 0, true);
     } else {
       if (shouldSlide) {
         setDensity(INITIAL_DENSITY);
@@ -244,14 +239,6 @@ public class PlayerModel extends CapsuleObstacle {
     }
   }
 
-  // TODO: Temporary for testing purposes
-  public void setAirResistanceEnabled(boolean value) {
-    allowAirResistance = value;
-  }
-
-  public boolean airResistanceEnabled() {
-    return allowAirResistance;
-  }
 
   public void setShouldSlide(boolean value) {
     shouldSlide = value;
@@ -497,7 +484,7 @@ public class PlayerModel extends CapsuleObstacle {
 
     // Damp dramatically on the ground
     if (getMovement() == 0f && isGrounded()) {
-      forceCache.set(-getDamping() * getVX(), 0);
+      forceCache.set(getDensity() * getDamping() * -getVX(), 0);
       body.applyForce(forceCache, getPosition(), true);
     }
 
@@ -506,24 +493,13 @@ public class PlayerModel extends CapsuleObstacle {
       setVX(Math.signum(getVX()) * getMaxSpeed());
     }
 
-    forceCache.set(getMovement(), 0);
+    forceCache.set(getMovement() / (isGrounded() ? 1 : 10f), 0);
     body.applyForce(forceCache, getPosition(), true);
 
     // Jump!
     if (isJumping()) {
-      forceCache.set(getVX(), getJumpPulse());
+      forceCache.set(0, getJumpPulse());
       body.applyLinearImpulse(forceCache, getPosition(), true);
-    }
-
-    // TODO: Refactor
-    // If in air apply air frictional force
-    if (!isGrounded()) {
-      float bodyDensity = getDensity();
-      float airResistanceX = allowAirResistance ? 0.2f * getVX() * getVX() : 0;
-      float airResistanceY = allowAirResistance ? 0.2f * getVY() * getVY() : 0;
-
-      forceCache.set(-airResistanceX, -airResistanceY);
-      body.applyForce(forceCache, getPosition(), true);
     }
   }
 

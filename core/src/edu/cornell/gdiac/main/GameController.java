@@ -349,8 +349,6 @@ public class GameController implements Screen {
     PlayerModel avatar = level.getAvatar();
     avatar.setMovement(InputController.getInstance().getHorizontal() * avatar.getForce());
     avatar.setJumping(InputController.getInstance().didPrimary());
-    // TODO: Refactor
-    avatar.setAirResistanceEnabled(input.getAirResistanceEnabled());
 
     avatar.applyForce();
     if (avatar.isJumping()) {
@@ -359,6 +357,9 @@ public class GameController implements Screen {
 
     // Turn the physics engine crank.
     level.getWorld().step(WORLD_STEP, WORLD_VELOC, WORLD_POSIT);
+
+    // Apply air resistance to all objects in level
+    level.applyAirResistance();
 
     if (!input.getMeterPaused()) {
       meterCounter += dt;
@@ -423,10 +424,6 @@ public class GameController implements Screen {
       }
       if (input.getShouldSlide()) {
         message += " d";
-      }
-      // TODO: Refactor
-      if (input.getAirResistanceEnabled()) {
-        message += " a";
       }
       canvas.drawText(message, displayFont, canvas.getWidth() / 2f - 92, canvas.getHeight() - 36);
       canvas.end();
