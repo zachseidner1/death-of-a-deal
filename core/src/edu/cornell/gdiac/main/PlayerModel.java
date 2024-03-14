@@ -122,6 +122,11 @@ public class PlayerModel extends CapsuleObstacle {
   private TextureRegion frozenTexture;
 
   /**
+   * Field to temporarily hold player sensor size x
+   */
+  private float sensorSizeX;
+
+  /**
    * Creates a new player with degenerate settings
    * <p>
    * The main purpose of this constructor is to set the initial capsule orientation.
@@ -137,6 +142,7 @@ public class PlayerModel extends CapsuleObstacle {
     faceRight = true;
     shouldSlide = false;
     color = Color.WHITE;
+    sensorSizeX = 0;
 
     jumpCooldown = 0;
   }
@@ -382,61 +388,111 @@ public class PlayerModel extends CapsuleObstacle {
    * @param directory the asset manager
    * @param json      the JSON subtree defining the player
    */
-  public void initialize(AssetDirectory directory, JsonValue json) {
-    setName(json.name());
-    float[] pos = json.get("pos").asFloatArray();
-    float[] size = json.get("size").asFloatArray();
-    setPosition(pos[0], pos[1]);
-    setDimension(size[0], size[1]);
+  public void initialize(AssetDirectory directory, JsonValue json, int gSizeY) {
+    setName(json.get("name").asString());
 
-    // Technically, we should do error checking here.
-    // A JSON field might accidentally be missing
-    setBodyType(json.get("bodytype").asString().equals("static") ? BodyDef.BodyType.StaticBody
-        : BodyDef.BodyType.DynamicBody);
-    setDensity(INITIAL_DENSITY);
-    setFriction(json.get("friction").asFloat());
-    setRestitution(json.get("restitution").asFloat());
-    setForce(json.get("force").asFloat());
-    setDamping(json.get("damping").asFloat());
-    setMaxSpeed(json.get("maxspeed").asFloat());
-    setJumpPulse(json.get("jumppulse").asFloat());
-    setJumpLimit(json.get("jumplimit").asInt());
-    // Reflection is best way to convert name to color
-    Color debugColor;
-    try {
-      String cname = json.get("debugcolor").asString().toUpperCase();
-      Field field = Class.forName("com.badlogic.gdx.graphics.Color").getField(cname);
-      debugColor = new Color((Color) field.get(null));
-    } catch (Exception e) {
-      debugColor = null; // Not defined
+    // Set position and dimension
+    float x = json.getFloat("x") * (1 / drawScale.x);
+    float y = (gSizeY - json.getFloat("y")) * (1 / drawScale.y);
+
+    setPosition(x, y);
+    setDimension(json.getFloat("width") * (1 / drawScale.x),
+        json.getFloat("height") * (1 / drawScale.y));
+
+    JsonValue properties = json.get("properties").child();
+    Color debugColor = null;
+    int debugOpacity = -1;
+    while (properties != null) {
+      switch (properties.getString("name")) {
+        case "bodytype":
+          setBodyType(
+              properties.get("value").asString().equals("static") ? BodyDef.BodyType.StaticBody
+                  : BodyDef.BodyType.DynamicBody);
+          break;
+        case "density":
+          setDensity(properties.getFloat("value"));
+          break;
+        case "friction":
+          setFriction(properties.getFloat("value"));
+          break;
+        case "restitution":
+          setRestitution(properties.getFloat("value"));
+          break;
+        case "force":
+          setForce(properties.getFloat("value"));
+          break;
+        case "damping":
+          setDamping(properties.getFloat("value"));
+          break;
+        case "maxspeed":
+          setMaxSpeed(properties.getFloat("value"));
+          break;
+        case "jumppulse":
+          setJumpPulse(properties.getFloat("value"));
+          break;
+        case "jumplimit":
+          setJumpLimit(properties.getInt("value"));
+          break;
+        case "debugcolor":
+          try {
+            String cname = properties.getString("value").toUpperCase();
+            Field field = Class.forName("com.badlogic.gdx.graphics.Color").getField(cname);
+            debugColor = new Color((Color) field.get(null));
+          } catch (Exception e) {
+            debugColor = null;
+          }
+          setDebugColor(debugColor);
+          break;
+        case "debugopacity":
+          debugOpacity = properties.getInt("value");
+          setDebugColor(getDebugColor().mul(debugOpacity / 255.0f));
+          break;
+        case "texture":
+          String key = properties.getString("value");
+          TextureRegion texture = new TextureRegion(directory.getEntry(key, Texture.class));
+          frozenTexture = new TextureRegion(directory.getEntry("frozen", Texture.class));
+          setTexture(texture);
+          break;
+        case "sensorsizex":
+          sensorSizeX = properties.getFloat("value");
+        case "sensorsizey":
+          Vector2 sensorCenter = new Vector2(0, -getHeight() / 2);
+          float sSizeY = properties.getFloat("value");
+          if (sensorSizeX == 0) {
+            System.out.println("Sensor size X has not yet been set");
+          }
+          sensorShape = new PolygonShape();
+          sensorShape.setAsBox(sensorSizeX, sSizeY, sensorCenter, 0.0f);
+          break;
+        case "sensorcolor":
+          try {
+            String cname = properties.getString("value").toUpperCase();
+            Field field = Class.forName("com.badlogic.gdx.graphics.Color").getField(cname);
+            sensorColor = new Color((Color) field.get(null));
+          } catch (Exception e) {
+            sensorColor = null; // Not defined
+          }
+          break;
+        case "sensoropacity":
+          int opacity = properties.get("value").asInt();
+          if (sensorColor != null) {
+            sensorColor.mul(opacity / 255.0f);
+          }
+          break;
+        case "sensorname":
+          setSensorName(properties.getString("value"));
+          break;
+        default:
+          break;
+      }
+
+      if (debugOpacity != -1 && debugColor != null) {
+        debugColor.mul(debugOpacity / 255f);
+        setDebugColor(debugColor);
+      }
+
+      properties = properties.next();
     }
-    int opacity = json.get("debugopacity").asInt();
-    debugColor.mul(opacity / 255.0f);
-    setDebugColor(debugColor);
-
-    // Now get the texture from the AssetManager singleton
-    String key = json.get("texture").asString();
-    TextureRegion texture = new TextureRegion(directory.getEntry(key, Texture.class));
-    frozenTexture = new TextureRegion(directory.getEntry("frozen", Texture.class));
-    setTexture(texture);
-
-    // Get the sensor information
-    Vector2 sensorCenter = new Vector2(0, -getHeight() / 2);
-    float[] sSize = json.get("sensorsize").asFloatArray();
-    sensorShape = new PolygonShape();
-    sensorShape.setAsBox(sSize[0], sSize[1], sensorCenter, 0.0f);
-
-    // Reflection is best way to convert name to color
-    try {
-      String cname = json.get("sensorcolor").asString().toUpperCase();
-      Field field = Class.forName("com.badlogic.gdx.graphics.Color").getField(cname);
-      sensorColor = new Color((Color) field.get(null));
-    } catch (Exception e) {
-      sensorColor = null; // Not defined
-    }
-    opacity = json.get("sensoropacity").asInt();
-    sensorColor.mul(opacity / 255.0f);
-    sensorName = json.get("sensorname").asString();
   }
 
   /**
