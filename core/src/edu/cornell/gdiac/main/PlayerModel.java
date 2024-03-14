@@ -91,11 +91,18 @@ public class PlayerModel extends CapsuleObstacle {
    * Whether we are actively jumping
    */
   private boolean isJumping;
-
-  private boolean isChargingJump = false; // Tracks if the jump is being charged
-  private float jumpCharge = 0; // Current charge of the jump
-  private float maxJumpCharge = 1.3f; // Maximum charge the jump can hold
-  private float jumpChargeRate = 1.0f; // Rate at which the jump charge increases per second
+  /**
+   * Record how much jump charge have we built up
+   */
+  private float jumpCharge = 0;
+  /**
+   * Cap for jump charge
+   */
+  private float maxJumpCharge = 1.3f;
+  /**
+   * Rate of charging jumps
+   */
+  private float jumpChargeRate = 1.0f;
 
   // SENSOR FIELDS
   /**
@@ -546,11 +553,6 @@ public class PlayerModel extends CapsuleObstacle {
     } else {
       jumpCooldown = Math.max(0, jumpCooldown - 1);
     }
-
-    if (isChargingJump) {
-      jumpCharge = Math.min(jumpCharge + jumpChargeRate * dt, maxJumpCharge);
-    }
-
     super.update(dt);
   }
 
