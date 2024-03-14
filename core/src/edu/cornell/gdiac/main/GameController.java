@@ -58,16 +58,18 @@ public class GameController implements Screen {
    * Number of position iterations for the constrain solvers
    */
   public static final int WORLD_POSIT = 2;
+  // Threshold for automatic jump release in seconds
+  private final float JUMP_RELEASE_THRESHOLD = 0.2f;
   /**
    * Need an ongoing reference to the asset directory
    */
   protected AssetDirectory directory;
+
+  // THESE ARE CONSTANTS BECAUSE WE NEED THEM BEFORE THE LEVEL IS LOADED
   /**
    * The font for giving messages to the player
    */
   protected BitmapFont displayFont;
-
-  // THESE ARE CONSTANTS BECAUSE WE NEED THEM BEFORE THE LEVEL IS LOADED
   /**
    * Reference to the game canvas
    */
@@ -115,8 +117,8 @@ public class GameController implements Screen {
   private int countdown;
 
   private boolean isJumpPressedLastFrame = false;
-
   private boolean isJumpRelease = false;
+  private float jumpTimer = 0f;
 
   /**
    * Creates a new game world
@@ -338,11 +340,28 @@ public class GameController implements Screen {
     boolean isJumpPressed = InputController.getInstance().didPrimary();
     boolean isJumpRelease = !isJumpPressed && isJumpPressedLastFrame;
 
+    boolean isJumpOvertime = false;
+
+    if (isJumpPressed) {
+      jumpTimer += dt;
+      System.out.println(jumpTimer);
+      if (jumpTimer >= JUMP_RELEASE_THRESHOLD) {
+        // Release jump automatically when threshold is reached
+        isJumpOvertime = true;
+        jumpTimer = 0; // Reset timer for next jump
+      } else {
+        isJumpOvertime = false;
+      }
+    } else {
+      jumpTimer = 0;
+      isJumpOvertime = false; // Ensure jump is released if key is not pressed
+    }
+
+    isJumpRelease = isJumpOvertime || isJumpRelease;
+
     avatar.setJumping(isJumpPressed, isJumpRelease, dt);
 
-    // Update the last frame state for the next update cycle
     isJumpPressedLastFrame = isJumpPressed;
-
 //
 
 //
