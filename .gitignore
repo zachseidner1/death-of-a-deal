@@ -113,5 +113,7 @@ Thumbs.db
 /ios/IOSLauncher.app
 /ios/IOSLauncher.app.dSYM
 
-## Build artifacts
-out
+
+## Builds
+/out
+
