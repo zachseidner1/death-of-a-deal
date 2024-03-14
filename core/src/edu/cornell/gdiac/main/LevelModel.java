@@ -37,7 +37,7 @@ public class LevelModel {
   /**
    * The initial air resistance of the level from the levels JSON
    */
-  private final float INITIAL_AIR_RESISTANCE = 1.0f;
+  private final float INITIAL_AIR_RESISTANCE = 0.1f;
 
   /**
    * The Box2D world
@@ -310,7 +310,7 @@ public class LevelModel {
 
   private void makeObjects(AssetDirectory directory, JsonValue objects, int gSizeY) {
     while (objects != null) {
-      switch (objects.getString("name")){
+      switch (objects.getString("name")) {
         case "player":
           avatar = new PlayerModel();
           avatar.setDrawScale(scale);
