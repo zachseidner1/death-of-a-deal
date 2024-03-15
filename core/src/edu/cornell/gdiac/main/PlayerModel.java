@@ -40,7 +40,7 @@ public class PlayerModel extends CapsuleObstacle {
   /**
    * frozen density
    */
-  private final float FROZEN_DENSITY = 1.0f;
+  private final float FROZEN_DENSITY = 50.0f;
   /**
    * Whether the character has a higher density in the frozen state which causes them to slide
    */
@@ -233,7 +233,7 @@ public class PlayerModel extends CapsuleObstacle {
    */
   public void setFrozen(boolean value) {
     isFrozen = value;
-//    setDensity(isFrozen ? FROZEN_DENSITY : INITIAL_DENSITY);
+    setDensity(isFrozen ? FROZEN_DENSITY : INITIAL_DENSITY);
   }
 
   /**
@@ -525,18 +525,26 @@ public class PlayerModel extends CapsuleObstacle {
     }
 
     // Damp dramatically on the ground
-    if (getMovement() == 0f && isGrounded() && !getIsFrozen()) {
-      forceCache.set(getDensity() * getDamping() * -getVX(), 0);
+    // FIXME if slide doesn't work only damp when not frozen
+    if (getMovement() == 0f && isGrounded()) {
+      forceCache.set(getDamping() * -getVX(), 0);
       body.applyForce(forceCache, getPosition(), true);
     }
 
-    forceCache.set(getMovement() / 2F, 0);
+    forceCache.set(getMovement() / 2.5F, 0);
+    /*
+    Check for:
+    We are at a low speed and the user is inputting a direction
+    We are at a somewhat low speed but going the opposite of where the user wants to go
+     */
     if ((Math.abs(getVX()) <= 1
-        || Math.signum(forceCache.x) != Math.signum(getVX())) && forceCache.x != 0) {
-      setVX(2 * Math.signum(forceCache.x));
+        || (Math.abs(getVX()) < 5 && Math.signum(getVX()) != Math.signum(forceCache.x))
+        && forceCache.x != 0)) {
+      // Set player velocity in the direction of where the user wants to go
+      setVX(Math.signum(forceCache.x));
     }
     body.applyForce(forceCache, getPosition(), true);
-
+    System.out.println("vx: " + getVX());
     // Jump!
     if (isJumping()) {
       forceCache.set(0, getJumpPulse());
