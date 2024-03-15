@@ -40,7 +40,7 @@ public class PlayerModel extends CapsuleObstacle {
   /**
    * frozen density
    */
-  private final float FROZEN_DENSITY = 10.0f;
+  private final float FROZEN_DENSITY = 1.0f;
   /**
    * Whether the character has a higher density in the frozen state which causes them to slide
    */
@@ -143,6 +143,7 @@ public class PlayerModel extends CapsuleObstacle {
     shouldSlide = false;
     color = Color.WHITE;
     sensorSizeX = 0;
+    setDensity(1);
 
     jumpCooldown = 0;
   }
@@ -221,7 +222,7 @@ public class PlayerModel extends CapsuleObstacle {
   /**
    * Returns whether the player is frozen
    */
-  public boolean isFrozen() {
+  public boolean getIsFrozen() {
     return isFrozen;
   }
 
@@ -232,22 +233,7 @@ public class PlayerModel extends CapsuleObstacle {
    */
   public void setFrozen(boolean value) {
     isFrozen = value;
-    if (isFrozen) {
-      if (shouldSlide) {
-        setDensity(FROZEN_DENSITY);
-      }
-
-//      body.applyLinearImpulse(0, shouldSlide ? -10 : -1, 0, 0, true);
-    } else {
-      if (shouldSlide) {
-        setDensity(INITIAL_DENSITY);
-      }
-    }
-  }
-
-
-  public void setShouldSlide(boolean value) {
-    shouldSlide = value;
+//    setDensity(isFrozen ? FROZEN_DENSITY : INITIAL_DENSITY);
   }
 
   /**
@@ -406,8 +392,8 @@ public class PlayerModel extends CapsuleObstacle {
       switch (properties.getString("name")) {
         case "bodytype":
           setBodyType(
-            properties.get("value").asString().equals("static") ? BodyDef.BodyType.StaticBody
-              : BodyDef.BodyType.DynamicBody);
+              properties.get("value").asString().equals("static") ? BodyDef.BodyType.StaticBody
+                  : BodyDef.BodyType.DynamicBody);
           break;
         case "density":
           setDensity(properties.getFloat("value"));
@@ -539,17 +525,16 @@ public class PlayerModel extends CapsuleObstacle {
     }
 
     // Damp dramatically on the ground
-    if (getMovement() == 0f && isGrounded()) {
+    if (getMovement() == 0f && isGrounded() && !getIsFrozen()) {
+//      System.out.println("true1");
       forceCache.set(getDensity() * getDamping() * -getVX(), 0);
       body.applyForce(forceCache, getPosition(), true);
     }
 
-    // Velocity too high, clamp it
-    if (Math.abs(getVX()) > getMaxSpeed()) {
-      setVX(Math.signum(getVX()) * getMaxSpeed());
+    forceCache.set(getMovement() / 2F, 0);
+    if (Math.abs(getVX()) <= 1 || Math.signum(forceCache.x) != Math.signum(getVX())) {
+      setVX(2 * Math.signum(forceCache.x));
     }
-
-    forceCache.set(getMovement() / (isGrounded() ? 1 : 10f), 0);
     body.applyForce(forceCache, getPosition(), true);
 
     // Jump!
@@ -567,6 +552,7 @@ public class PlayerModel extends CapsuleObstacle {
    * @param dt Number of seconds since last animation frame
    */
   public void update(float dt) {
+    System.out.println("vx: " + getVX());
     // Apply cooldowns
     if (isJumping()) {
       jumpCooldown = getJumpLimit();
@@ -586,8 +572,8 @@ public class PlayerModel extends CapsuleObstacle {
     if (texture != null) {
       float effect = faceRight ? 1.0f : -1.0f;
       canvas.draw(isFrozen ? frozenTexture : texture, color, origin.x, origin.y,
-        getX() * drawScale.x,
-        getY() * drawScale.y, getAngle(), effect, 1.0f);
+          getX() * drawScale.x,
+          getY() * drawScale.y, getAngle(), effect, 1.0f);
     }
   }
 }

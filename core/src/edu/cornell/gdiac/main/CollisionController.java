@@ -134,7 +134,7 @@ public class CollisionController implements ContactListener {
         if (bd1 instanceof BouncePlatformModel) {
           BouncePlatformModel bplt = (BouncePlatformModel) bd2;
           float c = bplt.getCoefficient();
-          if (plyr.isFrozen()) {
+          if (plyr.getIsFrozen()) {
             contact.setRestitution(c);
           }
         }
@@ -143,7 +143,7 @@ public class CollisionController implements ContactListener {
         if (bd1 instanceof BouncePlatformModel) {
           BouncePlatformModel bplt = (BouncePlatformModel) bd1;
           float c = bplt.getCoefficient();
-          if (plyr.isFrozen()) {
+          if (plyr.getIsFrozen()) {
             contact.setRestitution(c);
           }
         }

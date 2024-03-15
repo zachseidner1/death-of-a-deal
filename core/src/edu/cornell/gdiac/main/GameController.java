@@ -59,22 +59,6 @@ public class GameController implements Screen {
    */
   public static final int WORLD_POSIT = 2;
   /**
-   * How much the meter goes up when you're not moving
-   */
-  private final float STATIONARY_RATE = 0.25f;
-  /**
-   * How much the meter goes up when you jump
-   */
-  private final float JUMP_METER_ADDITION = 10f;
-  /**
-   * When the meter goes above this value, the player will freeze
-   */
-  private final float FREEZE_SUSPICION_THRESHOLD = 100;
-  /**
-   * The time the player spends frozen in seconds
-   */
-  private final float FREEZE_TIME = 2;
-  /**
    * Need an ongoing reference to the asset directory
    */
   protected AssetDirectory directory;
@@ -348,55 +332,20 @@ public class GameController implements Screen {
     // Process actions in object model
     InputController input = InputController.getInstance();
     PlayerModel avatar = level.getAvatar();
-    avatar.setMovement(InputController.getInstance().getHorizontal() * avatar.getForce());
-    avatar.setJumping(InputController.getInstance().didPrimary());
+    avatar.setMovement(input.getHorizontal() * avatar.getForce());
+    avatar.setJumping(input.didPrimary());
 
-    avatar.applyForce();
     if (avatar.isJumping()) {
       jumpId = playSound(jumpSound, jumpId);
     }
 
     // Turn the physics engine crank.
     level.getWorld().step(WORLD_STEP, WORLD_VELOC, WORLD_POSIT);
-
     // Apply air resistance to all objects in level
     level.applyAirResistance();
 
-    if (!input.getMeterPaused()) {
-      meterCounter += dt;
-
-      // If moving
-      if ((input.getHorizontal() != 0)
-        && meterCounter < FREEZE_SUSPICION_THRESHOLD) {
-        meterCounter += STATIONARY_RATE;
-      }
-      // If jumping
-      if (input.getVertical() != 0 && level.getAvatar().isJumping()
-        && meterCounter < FREEZE_SUSPICION_THRESHOLD) {
-        meterCounter += JUMP_METER_ADDITION;
-        // check if we've passed the freeze suspicion threshold, we want full freeze time
-        if (meterCounter >= FREEZE_SUSPICION_THRESHOLD) {
-          meterCounter = FREEZE_SUSPICION_THRESHOLD;
-        }
-      }
-      if (meterCounter >= FREEZE_SUSPICION_THRESHOLD) {
-        level.getAvatar().setFrozen(true);
-        if (meterCounter >= FREEZE_SUSPICION_THRESHOLD + FREEZE_TIME) {
-          meterCounter = 0;
-          level.getAvatar().setFrozen(false);
-        }
-      }
-
-      if (complete || failed) {
-        meterCounter = 0;
-      }
-    } else {
-      // Get input to see if f is just pressed and if so set frozen of the avatar to true
-      // This method only works when the game is paused!
-      avatar.setFrozen(InputController.getInstance().getFrozen());
-    }
-
-    avatar.setShouldSlide(input.getShouldSlide());
+    avatar.setFrozen(input.getFrozen());
+    avatar.applyForce();
   }
 
   /**
@@ -411,25 +360,7 @@ public class GameController implements Screen {
    */
   public void draw(float delta) {
     canvas.clear();
-    InputController input = InputController.getInstance();
     level.draw(canvas);
-
-    // Display meter
-    if (!complete && !failed) {
-      displayFont.setColor(Color.BLACK);
-      canvas.begin();
-      String message = "Meter: " + (int) meterCounter;
-
-      if (input.getMeterPaused()) {
-        message = "";
-      }
-      if (input.getShouldSlide()) {
-        message += " d";
-      }
-      canvas.drawText(message, displayFont, canvas.getWidth() / 2f - 92, canvas.getHeight() - 36);
-      canvas.end();
-
-    }
 
     // Final message
     if (complete && !failed) {
