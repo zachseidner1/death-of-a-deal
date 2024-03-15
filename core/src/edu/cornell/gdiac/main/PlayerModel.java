@@ -78,10 +78,6 @@ public class PlayerModel extends CapsuleObstacle {
    */
   private boolean isGrounded;
 
-  /**
-   * Whether we are actively bouncing
-   */
-
   // SENSOR FIELDS
   /**
    * How long until we can jump again

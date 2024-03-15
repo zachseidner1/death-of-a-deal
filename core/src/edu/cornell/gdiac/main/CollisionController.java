@@ -114,6 +114,7 @@ public class CollisionController implements ContactListener {
     Body body2 = fix2.getBody();
     PlayerModel plyr = level.getAvatar();
     preSolveBounce(contact, plyr, body1, body2);
+    preSolveSlope(contact, plyr, body1, body2);
   }
 
 
@@ -147,6 +148,28 @@ public class CollisionController implements ContactListener {
           if (plyr.isFrozen()) {
             contact.setRestitution(c);
           }
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void preSolveSlope(Contact contact, PlayerModel plyr, Body body1, Body body2) {
+    try {
+      Obstacle bd1 = (Obstacle) body1.getUserData();
+      Obstacle bd2 = (Obstacle) body2.getUserData();
+      if (bd1.equals(plyr)) {
+        if (bd1 instanceof SlopeModel) {
+          SlopeModel bplt = (SlopeModel) bd2;
+          // TODO: finish implementation
+          
+        }
+      }
+      if (bd2.equals(plyr)) {
+        if (bd1 instanceof SlopeModel) {
+          SlopeModel bplt = (SlopeModel) bd1;
+          // TODO: finish implementation
         }
       }
     } catch (Exception e) {

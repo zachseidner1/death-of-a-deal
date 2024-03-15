@@ -357,10 +357,10 @@ public class GameController implements Screen {
     PlayerModel avatar = level.getAvatar();
     avatar.setMovement(InputController.getInstance().getHorizontal() * avatar.getForce());
 
+    // Jump Mechanics
     // Check for the transition from pressed to not pressed to detect a jump release
     boolean isJumpPressed = InputController.getInstance().didPrimary();
     boolean isJumpRelease = !isJumpPressed && isJumpPressedLastFrame;
-
     boolean isJumpOvertime = false;
 
     if (isJumpPressed) {
@@ -377,8 +377,8 @@ public class GameController implements Screen {
       isJumpOvertime = false; // Ensure jump is released if key is not pressed
     }
 
+    // Mark jump release if jump is over time limit or the player let go of the jump key
     isJumpRelease = isJumpOvertime || isJumpRelease;
-
     avatar.setJumping(isJumpPressed, isJumpRelease, dt);
 
     isJumpPressedLastFrame = isJumpPressed;
