@@ -59,6 +59,10 @@ public class GameController implements Screen {
    */
   public static final int WORLD_POSIT = 2;
   /**
+   * Mute the game for convenience while testing
+   */
+  private final boolean IS_MUTED = true;
+  /**
    * Need an ongoing reference to the asset directory
    */
   protected AssetDirectory directory;
@@ -336,7 +340,9 @@ public class GameController implements Screen {
     avatar.setJumping(input.didPrimary());
 
     if (avatar.isJumping()) {
-      jumpId = playSound(jumpSound, jumpId);
+      if (!IS_MUTED) {
+        jumpId = playSound(jumpSound, jumpId);
+      }
     }
 
     // Turn the physics engine crank.
