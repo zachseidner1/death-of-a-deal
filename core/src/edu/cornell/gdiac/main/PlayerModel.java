@@ -526,13 +526,13 @@ public class PlayerModel extends CapsuleObstacle {
 
     // Damp dramatically on the ground
     if (getMovement() == 0f && isGrounded() && !getIsFrozen()) {
-//      System.out.println("true1");
       forceCache.set(getDensity() * getDamping() * -getVX(), 0);
       body.applyForce(forceCache, getPosition(), true);
     }
 
     forceCache.set(getMovement() / 2F, 0);
-    if (Math.abs(getVX()) <= 1 || Math.signum(forceCache.x) != Math.signum(getVX())) {
+    if ((Math.abs(getVX()) <= 1
+        || Math.signum(forceCache.x) != Math.signum(getVX())) && forceCache.x != 0) {
       setVX(2 * Math.signum(forceCache.x));
     }
     body.applyForce(forceCache, getPosition(), true);
