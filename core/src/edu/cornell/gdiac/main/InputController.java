@@ -113,15 +113,6 @@ public class InputController {
   private boolean isFrozen;
 
   /**
-   * The toggle representing whether the timer is paused
-   */
-  private boolean meterPaused = false;
-  /**
-   * The toggle representing if the freezing mechanic increases density
-   */
-  private boolean densityIncreased = false;
-
-  /**
    * Creates a new input controller
    * <p>
    * The input controller attempts to connect to the X-Box controller at device 0, if it exists.
@@ -141,18 +132,8 @@ public class InputController {
     Gdx.input.setInputProcessor(new InputProcessor() {
       @Override
       public boolean keyDown(int keycode) {
-        switch (keycode) {
-          case Keys.F:
-            if (meterPaused) {
-              isFrozen = !isFrozen;
-            }
-            return meterPaused;
-          case Keys.X:
-            meterPaused = !meterPaused;
-            return true;
-          case Keys.M:
-            densityIncreased = !densityIncreased;
-            return true;
+        if (keycode == Keys.F) {
+          isFrozen = !isFrozen;
         }
         return false;
       }
@@ -328,13 +309,6 @@ public class InputController {
     return exitPressed && !exitPrevious;
   }
 
-  public boolean getMeterPaused() {
-    return meterPaused;
-  }
-
-  public boolean getShouldSlide() {
-    return densityIncreased;
-  }
 
   public boolean getFrozen() {
     return isFrozen;

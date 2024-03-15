@@ -35,6 +35,11 @@ import edu.cornell.gdiac.util.PooledList;
 public class LevelModel {
 
   /**
+   * The initial air resistance of the level from the levels JSON
+   */
+  private final float INITIAL_AIR_RESISTANCE = 0.1f;
+
+  /**
    * The Box2D world
    */
   protected World world;
@@ -79,6 +84,15 @@ public class LevelModel {
    * Whether or not the level is completed
    */
   private boolean complete;
+
+  /**
+   * Air resistance scale to be applied to every obstacle in the level
+   */
+  private float airResistance = INITIAL_AIR_RESISTANCE;
+  /**
+   * Cache for internal force calculations
+   */
+  private Vector2 forceCache = new Vector2();
 
   /**
    * Creates a new LevelModel
@@ -189,9 +203,38 @@ public class LevelModel {
    * @param levelFormat the JSON file defining the level
    */
   public void populate(AssetDirectory directory, JsonValue levelFormat) {
-    float gravity = levelFormat.getFloat("gravity");
-    float[] pSize = levelFormat.get("physicsSize").asFloatArray();
-    int[] gSize = levelFormat.get("graphicSize").asIntArray();
+    int tileWidth = levelFormat.getInt("tilewidth");
+    int tileHeight = levelFormat.getInt("tileheight");
+    int numTilesVertical = levelFormat.getInt("height");
+    int numTilesHorizontal = levelFormat.getInt("width");
+
+    float gravity = 0;
+    float[] pSize = new float[2];
+    JsonValue property = levelFormat.get("properties").child();
+    // get map properties (applies to entire level)
+    while (property != null) {
+      switch (property.getString("name")) {
+        case "airresistance":
+          airResistance = property.getFloat("value");
+          break;
+        case "gravity":
+          gravity = property.getFloat("value");
+          break;
+        // the width for box 2D physics
+        case "pwidth":
+          pSize[0] = property.getFloat("value");
+          break;
+        // the height for box 2D physics
+        case "pheight":
+          pSize[1] = property.getFloat("value");
+          break;
+      }
+      property = property.next();
+    }
+
+    // graphics size is tile width * the number of tiles horizontally
+    // by the tile height * the number of tiles vertically
+    int[] gSize = {numTilesHorizontal * tileWidth, numTilesVertical * tileHeight};
 
     world = new World(new Vector2(0, gravity), false);
     bounds = new Rectangle(0, 0, pSize[0], pSize[1]);
@@ -199,51 +242,96 @@ public class LevelModel {
     scale.y = gSize[1] / pSize[1];
 
     // Add level goal
-    goalDoor = new ExitModel();
-    goalDoor.initialize(directory, levelFormat.get("exit"));
-    goalDoor.setDrawScale(scale);
-    activate(goalDoor);
+//    goalDoor = new ExitModel();
+//    goalDoor.initialize(directory, levelFormat.get("exit"));
+//    goalDoor.setDrawScale(scale);
+//    activate(goalDoor);
 
-    JsonValue wall = levelFormat.get("walls").child();
-    while (wall != null) {
-      WallModel obj = new WallModel();
-      obj.initialize(directory, wall);
-      obj.setDrawScale(scale);
-      activate(obj);
-      wall = wall.next();
+    JsonValue layer = levelFormat.get("layers").child();
+    while (layer != null) {
+      JsonValue tileProperties = null;
+      if (layer.get("properties") != null) {
+        tileProperties = layer.get("properties").child();
+      }
+      switch (layer.getString("name")) {
+        case "level":
+          makeTiles(numTilesHorizontal, numTilesVertical, layer.get("data").asIntArray(), tileWidth,
+              tileHeight,
+              directory, tileProperties);
+          break;
+        case "objects":
+          if (layer.get("objects") != null) {
+            makeObjects(directory, layer.get("objects").child(), gSize[1]);
+          }
+          break;
+        case "deco":
+          // TODO make decorations
+          break;
+      }
+      layer = layer.next();
     }
 
-    JsonValue floor = levelFormat.get("platforms").child();
-    while (floor != null) {
-      PlatformModel obj = new PlatformModel();
-      obj.initialize(directory, floor);
-      obj.setDrawScale(scale);
-      activate(obj);
-      floor = floor.next();
-    }
-
-    JsonValue slope = levelFormat.get("slopeplatforms").child();
-    while (slope != null) {
-      SlopeModel obj = new SlopeModel();
-      obj.initialize(directory, slope);
-      obj.setDrawScale(scale);
-      activate(obj);
-      slope = slope.next();
-    }
-
-    JsonValue bounceFloor = levelFormat.get("bounceplatforms").child();
-    while (bounceFloor != null) {
-      BouncePlatformModel obj = new BouncePlatformModel();
-      obj.initialize(directory, bounceFloor);
-      obj.setDrawScale(scale);
-      activate(obj);
-      bounceFloor = bounceFloor.next();
-    }
     // Create dude
-    avatar = new PlayerModel();
-    avatar.initialize(directory, levelFormat.get("avatar"));
-    avatar.setDrawScale(scale);
-    activate(avatar);
+    // Does this need to change now?
+//    avatar = new PlayerModel();
+//    avatar.initialize(directory, levelFormat.get("avatar"));
+//    avatar.setDrawScale(scale);
+//    activate(avatar);
+  }
+
+  /**
+   * Adds tiles to the level according to the data array provided by Tiled.
+   *
+   * @param cols           the number of columns of the data array
+   * @param rows           the number of rows of the data array
+   * @param data           the data array
+   * @param tileWidth      the width of a tile in pixels
+   * @param tileHeight     the height of a tile in pixels
+   * @param directory      the asset directory
+   * @param tileProperties additional tile properties
+   */
+  private void makeTiles(int cols, int rows, int[] data, int tileWidth, int tileHeight,
+      AssetDirectory directory, JsonValue tileProperties) {
+    for (int i = 0; i < data.length; i++) {
+      if (data[i] != 0) {
+        // i % numCols = how deep in x
+        // i / numCols = how deep in y
+        int xPos = (i % cols) * tileWidth;
+        // subtract from full height since data starts at the top
+        int yPos = tileHeight * rows - (i / cols) * tileHeight;
+        PlatformModel obj = new PlatformModel();
+        obj.setDrawScale(scale);
+        obj.initializeAsTile(xPos, yPos, (float) tileHeight, directory, "" + data[i],
+            tileProperties);
+        activate(obj);
+      }
+    }
+  }
+
+  private void makeObjects(AssetDirectory directory, JsonValue objects, int gSizeY) {
+    while (objects != null) {
+      switch (objects.getString("name")) {
+        case "player":
+          avatar = new PlayerModel();
+          avatar.setDrawScale(scale);
+          avatar.initialize(directory, objects, gSizeY);
+          activate(avatar);
+          break;
+        case "exit":
+          goalDoor = new ExitModel();
+          goalDoor.setDrawScale(scale);
+          goalDoor.initialize(directory, objects, gSizeY);
+          activate(goalDoor);
+          break;
+        case "slope":
+          SlopeModel slope = new SlopeModel();
+          slope.setDrawScale(scale);
+          slope.initialize(directory, objects, gSizeY);
+          activate(slope);
+          break;
+      }
+      objects = objects.next();
+    }
   }
 
   public void dispose() {
@@ -266,6 +354,27 @@ public class LevelModel {
     assert inBounds(obj) : "Object is not in bounds";
     objects.add(obj);
     obj.activatePhysics(world);
+  }
+
+  /**
+   * Applies air resistance to all objects
+   * <p>
+   * TODO: Figure out rotational air resistance
+   */
+  public void applyAirResistance() {
+    for (Obstacle obj : objects) {
+      // TODO: Refactor (can have obstacles implement air resistance interface to determine whether this force should be applied
+
+      float velX = obj.getVX();
+      float velY = obj.getVY();
+
+      // Apply air resistance force opposite of velocity
+      float airResistanceX = -Math.signum(velX) * airResistance * velX * velX;
+      float airResistanceY = -Math.signum(velY) * airResistance * velY * velY;
+
+      forceCache.set(airResistanceX, airResistanceY);
+      obj.getBody().applyForce(forceCache, obj.getPosition(), true);
+    }
   }
 
   /**

@@ -7,7 +7,8 @@
     },
     "dude": "textures/dude.png",
     "frozen": "textures/frozen.png",
-    "goal": "textures/goaldoor.png"
+    "goal": "textures/goaldoor.png",
+    "1": "textures/tile.png"
   },
   "fonts": {
     "display": {
@@ -19,6 +20,7 @@
     "jump": "sounds/jump.mp3"
   },
   "jsons": {
-    "level1": "jsons/level.json"
+    "level1": "jsons/level.json",
+    "leveltiled": "jsons/level1.json"
   }
 }

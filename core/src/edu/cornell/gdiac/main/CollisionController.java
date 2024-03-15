@@ -36,7 +36,6 @@ public class CollisionController implements ContactListener {
    *                into contact
    */
   public void beginContact(Contact contact) {
-
     Fixture fix1 = contact.getFixtureA();
     Fixture fix2 = contact.getFixtureB();
 
@@ -136,7 +135,7 @@ public class CollisionController implements ContactListener {
         if (bd1 instanceof BouncePlatformModel) {
           BouncePlatformModel bplt = (BouncePlatformModel) bd2;
           float c = bplt.getCoefficient();
-          if (plyr.isFrozen()) {
+          if (plyr.getIsFrozen()) {
             contact.setRestitution(c);
           }
         }
@@ -145,7 +144,7 @@ public class CollisionController implements ContactListener {
         if (bd1 instanceof BouncePlatformModel) {
           BouncePlatformModel bplt = (BouncePlatformModel) bd1;
           float c = bplt.getCoefficient();
-          if (plyr.isFrozen()) {
+          if (plyr.getIsFrozen()) {
             contact.setRestitution(c);
           }
         }

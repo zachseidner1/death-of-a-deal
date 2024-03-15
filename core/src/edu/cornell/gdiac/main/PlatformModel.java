@@ -17,13 +17,16 @@
 package edu.cornell.gdiac.main;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.PolygonRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.physics.obstacle.BoxObstacle;
 import edu.cornell.gdiac.util.SimpleObstacleJsonParser;
+import java.lang.reflect.Field;
 
 /**
  * A polygon shape representing the screen boundary
@@ -43,6 +46,7 @@ public class PlatformModel extends BoxObstacle {
    * The texture anchor upon region initialization
    */
   protected Vector2 anchor;
+
   /**
    * Create a new PlatformModel with degenerate settings
    */
@@ -192,6 +196,60 @@ public class PlatformModel extends BoxObstacle {
     setDimension(size[0], size[1]);
 
     SimpleObstacleJsonParser.initPlatformFromJson(this, directory, json);
+  }
+
+  /**
+   * Initializes a platform based on the assumption that it is a tile. This assumption implies the
+   * body type is static and the object is square.
+   *
+   * @param x              x position of the tile (unscaled, just based on where it is in Tiled)
+   * @param y              y position of the tile (unscaled, just based on where it is in Tiled)
+   * @param directory      asset directory
+   * @param tilekey        the key to the texture that is associated with the tile
+   * @param tileProperties the properties of the tile as a JSON value
+   */
+  public void initializeAsTile(float x, float y, float tileSize, AssetDirectory directory,
+      String tilekey,
+      JsonValue tileProperties) {
+    // Use the scale to convert pixel positions to box 2D positions
+    setPosition(x * (1 / drawScale.x), y * (1 / drawScale.y));
+    setDimension(tileSize * ((float) 1 / drawScale.x), tileSize * ((float) 1 / (drawScale.y)));
+    setBodyType(BodyType.StaticBody);
+    TextureRegion textureRegion = new TextureRegion(directory.getEntry(tilekey, Texture.class));
+    setTexture(textureRegion);
+    Color debugColor = null;
+    int debugOpacity = -1;
+    while (tileProperties != null) {
+      switch (tileProperties.getString("name")) {
+        case "density":
+          setDensity(tileProperties.getFloat("value"));
+          break;
+        case "restitution":
+          setRestitution(tileProperties.getFloat("value"));
+          break;
+        case "friction":
+          setFriction(tileProperties.getFloat("value"));
+          break;
+        case "debugcolor":
+          try {
+            String cname = tileProperties.get("value").asString().toUpperCase();
+            Field field = Class.forName("com.badlogic.gdx.graphics.Color").getField(cname);
+            debugColor = new Color((Color) field.get(null));
+          } catch (Exception e) {
+            debugColor = null; // Not defined
+          }
+          break;
+        case "debugopacity":
+          debugOpacity = tileProperties.getInt("value");
+          break;
+      }
+      if (debugOpacity != -1 && debugColor != null) {
+        debugColor.mul(debugOpacity / 255f);
+        setDebugColor(debugColor);
+      }
+
+      tileProperties = tileProperties.next();
+    }
   }
 
   /**
