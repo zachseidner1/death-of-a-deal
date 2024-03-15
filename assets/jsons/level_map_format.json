@@ -191,16 +191,16 @@
                  "name":"slope",
                  "polygon":[
                         {
-                         "x":1.89093,
-                         "y":1.01864
+                         "x":0,
+                         "y":0
                         }, 
                         {
-                         "x":81.4335,
-                         "y":-30.5682
+                         "x":64,
+                         "y":-32
                         }, 
                         {
-                         "x":81.4335,
-                         "y":1.05408
+                         "x":64,
+                         "y":0
                         }],
                  "properties":[
                         {
@@ -236,7 +236,7 @@
                         {
                          "name":"restitution",
                          "type":"float",
-                         "value":0.1
+                         "value":0
                         }, 
                         {
                          "name":"texture",
@@ -252,8 +252,8 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":144,
-                 "y":240
+                 "x":256,
+                 "y":352
                 }, 
                 {
                  "height":48,
@@ -388,6 +388,76 @@
                  "width":16,
                  "x":48,
                  "y":96
+                }, 
+                {
+                 "height":0,
+                 "id":10,
+                 "name":"slope",
+                 "polygon":[
+                        {
+                         "x":-64,
+                         "y":0
+                        }, 
+                        {
+                         "x":-64,
+                         "y":-32
+                        }, 
+                        {
+                         "x":64,
+                         "y":0
+                        }],
+                 "properties":[
+                        {
+                         "name":"bodytype",
+                         "type":"string",
+                         "value":"static"
+                        }, 
+                        {
+                         "name":"debugcolor",
+                         "type":"string",
+                         "value":"yellow"
+                        }, 
+                        {
+                         "name":"debugopacity",
+                         "type":"int",
+                         "value":255
+                        }, 
+                        {
+                         "name":"denisty",
+                         "type":"float",
+                         "value":0
+                        }, 
+                        {
+                         "name":"friction",
+                         "type":"float",
+                         "value":0.01
+                        }, 
+                        {
+                         "name":"height",
+                         "type":"float",
+                         "value":0
+                        }, 
+                        {
+                         "name":"restitution",
+                         "type":"float",
+                         "value":0
+                        }, 
+                        {
+                         "name":"texture",
+                         "type":"string",
+                         "value":"earth"
+                        }, 
+                        {
+                         "name":"width",
+                         "type":"float",
+                         "value":0
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":192,
+                 "y":352
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -396,7 +466,7 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":10,
+ "nextobjectid":11,
  "orientation":"orthogonal",
  "properties":[
         {
