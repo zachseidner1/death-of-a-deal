@@ -215,8 +215,6 @@ public class PlayerModel extends CapsuleObstacle {
       jumpCharge = Math.min(jumpCharge + jumpChargeRate * 4 * dt, maxJumpCharge);
       isJumping = false;
     } else if (isReleasingJump && isGrounded) {     // When Releasing the jump button
-      System.out.println("Set Jumping:");
-      System.out.println(jumpCharge);
       isJumping = true;
     } else if (!isGrounded) {
       jumpCharge = 0;
@@ -570,8 +568,6 @@ public class PlayerModel extends CapsuleObstacle {
     body.applyForce(forceCache, getPosition(), true);
     // Jump!
     if (isJumping()) {
-      System.out.println("Apply Force:");
-      System.out.println(jumpCharge);
       // Calculate chargedImpulse for release based on jumpCharge
       float chargedImpulse = getJumpPulse() + (maxJumpCharge * jumpCharge);
       forceCache.set(0, chargedImpulse);

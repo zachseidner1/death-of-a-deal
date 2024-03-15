@@ -378,7 +378,6 @@ public class GameController implements Screen {
 //    avatar.setMovement(input.getHorizontal() * avatar.getForce());
 //    avatar.setJumping(isJumpPressed, isJumpPressedLastFrame);
     avatar.setMovement(input.getHorizontal() * avatar.getForce());
-    avatar.setJumping(input.didPrimary());
 
     if (avatar.isJumping()) {
       if (!IS_MUTED) {

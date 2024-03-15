@@ -1,5 +1,6 @@
 package edu.cornell.gdiac.main;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
@@ -17,6 +18,7 @@ public class CollisionController implements ContactListener {
    */
   protected ObjectSet<Fixture> sensorFixtures;
   private LevelModel level;
+
 
   /**
    * Set up the collision model based on Level Model & Create sensorFixtures to track active bodies
@@ -158,17 +160,20 @@ public class CollisionController implements ContactListener {
     try {
       Obstacle bd1 = (Obstacle) body1.getUserData();
       Obstacle bd2 = (Obstacle) body2.getUserData();
-      if (bd1.equals(plyr)) {
-        if (bd1 instanceof SlopeModel) {
-          SlopeModel bplt = (SlopeModel) bd2;
-          // TODO: finish implementation
-          
-        }
-      }
-      if (bd2.equals(plyr)) {
-        if (bd1 instanceof SlopeModel) {
-          SlopeModel bplt = (SlopeModel) bd1;
-          // TODO: finish implementation
+
+      if ((bd1.equals(plyr) && bd2 instanceof SlopeModel) || (bd2.equals(plyr)
+          && bd1 instanceof SlopeModel)) {
+        SlopeModel slope = (bd1 instanceof SlopeModel) ? (SlopeModel) bd1 : (SlopeModel) bd2;
+
+        // Only add extra force when player is frozen
+        if (plyr.getIsFrozen()) {
+          float slopeAngle = slope.getSlopeAngle();
+          float forceMagnitude = slope.SLOPE_FROZEN_FORCE;
+
+          Vector2 force = new Vector2((float) Math.cos(slopeAngle) * -forceMagnitude,
+              (float) Math.sin(slopeAngle) * -forceMagnitude);
+
+          plyr.getBody().applyForce(force, plyr.getPosition(), true);
         }
       }
     } catch (Exception e) {
