@@ -544,7 +544,6 @@ public class PlayerModel extends CapsuleObstacle {
       setVX(Math.signum(forceCache.x));
     }
     body.applyForce(forceCache, getPosition(), true);
-    System.out.println("vx: " + getVX());
     // Jump!
     if (isJumping()) {
       forceCache.set(0, getJumpPulse());
@@ -560,7 +559,6 @@ public class PlayerModel extends CapsuleObstacle {
    * @param dt Number of seconds since last animation frame
    */
   public void update(float dt) {
-    System.out.println("vx: " + getVX());
     // Apply cooldowns
     if (isJumping()) {
       jumpCooldown = getJumpLimit();
