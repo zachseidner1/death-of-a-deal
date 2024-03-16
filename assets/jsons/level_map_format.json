@@ -440,7 +440,7 @@
                         {
                          "name":"Side",
                          "type":"string",
-                         "value":"right"
+                         "value":"left"
                         }, 
                         {
                          "name":"Type",
@@ -450,7 +450,7 @@
                         {
                          "name":"WindBreadth",
                          "type":"float",
-                         "value":100
+                         "value":70
                         }, 
                         {
                          "name":"WindLength",
@@ -467,12 +467,89 @@
                          "type":"string",
                          "value":"earth"
                         }],
-                 "rotation":-10,
+                 "rotation":0,
                  "type":"Fan",
                  "visible":true,
                  "width":20,
-                 "x":137.488275143304,
-                 "y":286.294945284002
+                 "x":400,
+                 "y":300
+                }, 
+                {
+                 "height":80,
+                 "id":16,
+                 "name":"fan",
+                 "properties":[
+                        {
+                         "name":"Active",
+                         "type":"bool",
+                         "value":true
+                        }, 
+                        {
+                         "name":"BodyType",
+                         "type":"string",
+                         "value":"static"
+                        }, 
+                        {
+                         "name":"DebugColor",
+                         "type":"string",
+                         "value":"yellow"
+                        }, 
+                        {
+                         "name":"DebugOpacity",
+                         "type":"int",
+                         "value":255
+                        }, 
+                        {
+                         "name":"FanTexture",
+                         "type":"string",
+                         "value":"earth"
+                        }, 
+                        {
+                         "name":"Period",
+                         "type":"float",
+                         "value":0
+                        }, 
+                        {
+                         "name":"PeriodOnRatio",
+                         "type":"float",
+                         "value":1
+                        }, 
+                        {
+                         "name":"Side",
+                         "type":"string",
+                         "value":"right"
+                        }, 
+                        {
+                         "name":"Type",
+                         "type":"string",
+                         "value":"constant"
+                        }, 
+                        {
+                         "name":"WindBreadth",
+                         "type":"float",
+                         "value":70
+                        }, 
+                        {
+                         "name":"WindLength",
+                         "type":"float",
+                         "value":120
+                        }, 
+                        {
+                         "name":"WindStrength",
+                         "type":"float",
+                         "value":50
+                        }, 
+                        {
+                         "name":"WindTexture",
+                         "type":"string",
+                         "value":"earth"
+                        }],
+                 "rotation":0,
+                 "type":"Fan",
+                 "visible":true,
+                 "width":20,
+                 "x":160,
+                 "y":300
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -481,7 +558,7 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":16,
+ "nextobjectid":17,
  "orientation":"orthogonal",
  "properties":[
         {

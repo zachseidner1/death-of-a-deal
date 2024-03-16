@@ -78,9 +78,9 @@ public class FanModel extends PlatformModel {
     float y = (gSizeY - json.getFloat("y")) * scaleFactorY;
     setPosition(x + width / 2, y - height / 2);
 
-    // TODO: Fix rotation
-//    float rotation = json.getFloat("rotation") / (float) (Math.PI / 2);
-//    setAngle(rotation);
+    // TODO: Implement rotation
+    float rotation = -1 * json.getFloat("rotation") / (float) (Math.PI / 2);
+    setAngle(rotation);
 
     // Wind wrapper fields
     Vector2 windSource = new Vector2();

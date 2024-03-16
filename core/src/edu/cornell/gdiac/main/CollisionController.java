@@ -68,6 +68,7 @@ public class CollisionController implements ContactListener {
       }
 
       // On wind contact callback
+      // TODO: Collisions are detected passively (i.e. moving player in wind results in more collisions and wind force feedback)
       if (wind != null && obj != null) {
         // Should not continue detection with static body
         if (obj.getBodyType() == BodyType.StaticBody) {
