@@ -12,13 +12,13 @@ public class BouncePlatformModel extends PlatformModel {
    * frozen.
    */
   private float bounceCoefficient;
-  private float maxVelocity;
+  private float maxSpeed;
 
   public BouncePlatformModel() {
     super();
     region = null;
     bounceCoefficient = 0.0f;
-    maxVelocity=0;
+    maxSpeed=0;
   }
 
   public float getCoefficient() {
@@ -28,12 +28,12 @@ public class BouncePlatformModel extends PlatformModel {
   public void setCoefficient(float c) {
     bounceCoefficient = c;
   }
-  public float getMaxVelocity() {
-    return maxVelocity;
+  public float getMaxSpeed() {
+    return maxSpeed;
   }
 
-  public void setMaxVelocity(float c) {
-    maxVelocity = c;
+  public void setMaxSpeed(float c) {
+    maxSpeed = c;
   }
   public void initialize(AssetDirectory directory, JsonValue json) {
     setName(json.name());
@@ -43,9 +43,9 @@ public class BouncePlatformModel extends PlatformModel {
     setPosition(pos[0], pos[1]);
     setDimension(size[0], size[1]);
     float coefficient = json.get("coefficient").asFloat();
-    float velocity = json.get("max_velocity").asFloat();
+    float speed = json.get("maxspeed").asFloat();
     setCoefficient(coefficient);
-    setMaxVelocity(velocity);
+    setMaxSpeed(speed);
     SimpleObstacleJsonParser.initPlatformFromJson(this, directory, json);
   }
 

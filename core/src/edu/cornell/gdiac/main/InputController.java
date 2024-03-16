@@ -146,9 +146,7 @@ public class InputController {
       public boolean keyDown(int keycode) {
         switch (keycode) {
           case Keys.F:
-            if (timerActive) {
               isFrozen = !isFrozen;
-            }
             return timerActive;
           case Keys.X:
             meterActive = !meterActive;

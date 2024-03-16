@@ -79,7 +79,10 @@ public class LevelModel {
    * Whether or not the level is completed
    */
   private boolean complete;
-
+  /**
+   * Time limit for the level
+   */
+  private float timer;
   /**
    * Creates a new LevelModel
    *
@@ -181,7 +184,12 @@ public class LevelModel {
   public void setComplete(boolean value) {
     complete = value;
   }
-
+  /**
+   * Return the time limit
+   */
+  public float getTimer() {
+    return timer;
+  }
   /**
    * Lays out the game geography from the given JSON file
    *
@@ -189,6 +197,7 @@ public class LevelModel {
    * @param levelFormat the JSON file defining the level
    */
   public void populate(AssetDirectory directory, JsonValue levelFormat) {
+    timer = levelFormat.getFloat("timelimit");
     float gravity = levelFormat.getFloat("gravity");
     float[] pSize = levelFormat.get("physicsSize").asFloatArray();
     int[] gSize = levelFormat.get("graphicSize").asIntArray();

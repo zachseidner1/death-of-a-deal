@@ -489,12 +489,10 @@ public class PlayerModel extends CapsuleObstacle {
     }
 
     // Velocity too high, clamp it
-    if (Math.abs(getVX()) >= getMaxSpeed()) {
-      setVX(Math.signum(getVX()) * getMaxSpeed());
-    } else {
+
       forceCache.set(getMovement(), 0);
       body.applyForce(forceCache, getPosition(), true);
-    }
+
 
     // Jump!
     if (isJumping()) {

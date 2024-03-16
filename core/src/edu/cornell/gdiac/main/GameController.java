@@ -147,6 +147,7 @@ public class GameController implements Screen {
     failed = false;
     active = false;
     countdown = -1;
+    timer=100;
     // create CollisionController, which is extended from ContactListener
     collisionController = new CollisionController(level);
 
@@ -283,7 +284,7 @@ public class GameController implements Screen {
     setFailure(false);
     countdown = -1;
     meterCounter = 0;
-    timer = 6;
+    timer = level.getTimer();
 
     // Reload the json each time
     level.populate(directory, levelFormat);
@@ -330,11 +331,6 @@ public class GameController implements Screen {
       setFailure(true);
       return false;
     }
-    if (!isFailure() && timer<=1) {
-      setFailure(true);
-      return false;
-    }
-
     return true;
   }
 
@@ -396,7 +392,10 @@ public class GameController implements Screen {
       }
     } else if (input.getTimerActive()){
       timer-=dt;
-      avatar.setFrozen(InputController.getInstance().getFrozen());
+      avatar.setFrozen(input.getFrozen());
+      if (!isFailure() && timer<=1) {
+        setFailure(true);
+      }
       if (complete || failed) {
         timer = 0;
       }
@@ -404,7 +403,7 @@ public class GameController implements Screen {
     else {
       // Get input to see if f is just pressed and if so set frozen of the avatar to true
       // This method only works when the game is paused!
-      avatar.setFrozen(InputController.getInstance().getFrozen());
+      avatar.setFrozen(input.getFrozen());
     }
     avatar.setShouldSlide(input.getShouldSlide());
   }
@@ -440,7 +439,7 @@ public class GameController implements Screen {
     }
 
     // Final message
-    if (complete && !failed) {
+    if (complete) {
       displayFont.setColor(Color.YELLOW);
       canvas.begin(); // DO NOT SCALE
       canvas.drawTextCentered("VICTORY!", displayFont, 0.0f);
