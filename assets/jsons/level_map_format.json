@@ -478,6 +478,49 @@
                  "width":0,
                  "x":192,
                  "y":352
+                }, 
+                {
+                 "gid":1,
+                 "height":16,
+                 "id":18,
+                 "name":"breakable",
+                 "properties":[
+                        {
+                         "name":"bodytype",
+                         "type":"string",
+                         "value":"static"
+                        }, 
+                        {
+                         "name":"breakminvelocity",
+                         "type":"float",
+                         "value":6
+                        }, 
+                        {
+                         "name":"debugcolor",
+                         "type":"string",
+                         "value":"yellow"
+                        }, 
+                        {
+                         "name":"density",
+                         "type":"float",
+                         "value":0
+                        }, 
+                        {
+                         "name":"friction",
+                         "type":"float",
+                         "value":0
+                        }, 
+                        {
+                         "name":"restitution",
+                         "type":"float",
+                         "value":0
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":48,
+                 "x":128,
+                 "y":208
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -486,7 +529,7 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":12,
+ "nextobjectid":19,
  "orientation":"orthogonal",
  "properties":[
         {
