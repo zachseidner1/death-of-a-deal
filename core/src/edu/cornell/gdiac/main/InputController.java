@@ -113,6 +113,11 @@ public class InputController {
   private boolean isFrozen;
 
   /**
+   * The toggle representing if the freezing mechanic increases density
+   */
+  private boolean timerActive = false;
+
+  /**
    * Creates a new input controller
    * <p>
    * The input controller attempts to connect to the X-Box controller at device 0, if it exists.
@@ -132,8 +137,13 @@ public class InputController {
     Gdx.input.setInputProcessor(new InputProcessor() {
       @Override
       public boolean keyDown(int keycode) {
-        if (keycode == Keys.F) {
-          isFrozen = !isFrozen;
+        switch (keycode) {
+          case Keys.F:
+            isFrozen = !isFrozen;
+            return true;
+          case Keys.T:
+            timerActive = !timerActive;
+            return true;
         }
         return false;
       }
@@ -308,7 +318,11 @@ public class InputController {
   public boolean didExit() {
     return exitPressed && !exitPrevious;
   }
+  
 
+  public boolean getTimerActive() {
+    return timerActive;
+  }
 
   public boolean getFrozen() {
     return isFrozen;

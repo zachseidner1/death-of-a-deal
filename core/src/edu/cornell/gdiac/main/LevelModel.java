@@ -84,7 +84,10 @@ public class LevelModel {
    * Whether or not the level is completed
    */
   private boolean complete;
-
+  /**
+   * Time limit for the level
+   */
+  private float timer;
   /**
    * Air resistance scale to be applied to every obstacle in the level
    */
@@ -195,7 +198,12 @@ public class LevelModel {
   public void setComplete(boolean value) {
     complete = value;
   }
-
+  /**
+   * Return the time limit
+   */
+  public float getTimer() {
+    return timer;
+  }
   /**
    * Lays out the game geography from the given JSON file
    *
@@ -329,6 +337,11 @@ public class LevelModel {
           slope.initialize(directory, objects, gSizeY);
           activate(slope);
           break;
+        case "Bounce":
+          BouncePlatformModel platform= new BouncePlatformModel();
+          platform.setDrawScale(scale);
+          platform.initialize(directory,objects,gSizeY);
+          activate(platform);
       }
       objects = objects.next();
     }

@@ -576,6 +576,7 @@ public class PlayerModel extends CapsuleObstacle {
       body.applyForce(forceCache, getPosition(), true);
     }
 
+
     forceCache.set(getMovement() / 2.5F, 0);
     /*
     Check for:
