@@ -88,7 +88,6 @@ public class CollisionController implements ContactListener {
         } else {
           // Apply wind force
           Vector2 windForce = fan.findWindForce(obj.getX(), obj.getY());
-          System.out.println("Wind force: " + windForce.x + ", " + windForce.y);
           obj.getBody().applyForce(windForce, obj.getPosition(), true);
         }
       }

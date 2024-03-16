@@ -3,13 +3,10 @@ package edu.cornell.gdiac.main;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.physics.obstacle.PolygonObstacle;
-import edu.cornell.gdiac.physics.obstacle.SimpleObstacle;
-import edu.cornell.gdiac.util.SimpleObstacleJsonParser;
 import java.lang.reflect.Field;
 
 public class SlopeModel extends PolygonObstacle {
@@ -31,17 +28,17 @@ public class SlopeModel extends PolygonObstacle {
   public void initialize(AssetDirectory directory, JsonValue json, int gSizeY) {
     setName(json.getString("name"));
 
-    float x = json.getFloat("x") * (1/drawScale.x);
-    float y = (gSizeY - json.getFloat("y")) * (1/drawScale.y);
-    setPosition(x,y);
+    float x = json.getFloat("x") * (1 / drawScale.x);
+    float y = (gSizeY - json.getFloat("y")) * (1 / drawScale.y);
+    setPosition(x, y);
 
     float[] points = new float[10];
     JsonValue polygon = json.get("polygon").child();
     int index = 0;
-    while (polygon != null){
-      points[index] = polygon.getFloat("x") * (1/drawScale.x);
+    while (polygon != null) {
+      points[index] = polygon.getFloat("x") * (1 / drawScale.x);
       index++;
-      points[index] = -1 * polygon.getFloat("y") * (1/drawScale.y);
+      points[index] = -1 * polygon.getFloat("y") * (1 / drawScale.y);
       index++;
       polygon = polygon.next();
     }
@@ -49,11 +46,11 @@ public class SlopeModel extends PolygonObstacle {
     initBounds();
 
     JsonValue properties = json.get("properties").child();
-    while (properties != null){
-      switch (properties.getString("name")){
+    while (properties != null) {
+      switch (properties.getString("name")) {
         case "bodytype":
           setBodyType(properties.getString("value").equals("static") ? BodyDef.BodyType.StaticBody
-              : BodyDef.BodyType.DynamicBody);
+            : BodyDef.BodyType.DynamicBody);
           break;
         case "density":
           setDensity(properties.getFloat("value"));
@@ -75,7 +72,7 @@ public class SlopeModel extends PolygonObstacle {
           break;
         case "debugopacity":
           int opacity = properties.getInt("value");
-          setDebugColor(debugColor.mul(opacity/255.0f));
+          setDebugColor(debugColor.mul(opacity / 255.0f));
           break;
         case "texture":
           String key = properties.getString("value");

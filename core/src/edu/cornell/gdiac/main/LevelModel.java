@@ -54,11 +54,11 @@ public class LevelModel {
 
   // Physics objects for the game
   /**
-   * The boundary of the world
+   * The boundary of the world (defined in world coordinates / physics units)
    */
   protected Rectangle bounds;
   /**
-   * The world scale
+   * The world scale (scale factor to convert from world coordinate to pixels)
    */
   protected Vector2 scale;
   /**
@@ -212,7 +212,7 @@ public class LevelModel {
     int numTilesHorizontal = levelFormat.getInt("width");
 
     float gravity = 0;
-    float[] pSize = new float[2];
+    float[] pSize = new float[2]; // World coordinate system (physics units in meters)
     JsonValue property = levelFormat.get("properties").child();
     // get map properties (applies to entire level)
     while (property != null) {
@@ -236,7 +236,7 @@ public class LevelModel {
     }
 
     // graphics size is tile width * the number of tiles horizontally
-    // by the tile height * the number of tiles vertically
+    // by the tile height * the number of tiles vertically (i.e. canvas dimensions in pixels)
     int[] gSize = {numTilesHorizontal * tileWidth, numTilesVertical * tileHeight};
 
     world = new World(new Vector2(0, gravity), false);

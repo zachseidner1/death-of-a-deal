@@ -3,7 +3,7 @@ package edu.cornell.gdiac.main;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.assets.AssetDirectory;
-import edu.cornell.gdiac.util.SimpleObstacleJsonParser;
+import edu.cornell.gdiac.util.TiledJsonParser;
 
 public class BouncePlatformModel extends PlatformModel {
 
@@ -36,13 +36,13 @@ public class BouncePlatformModel extends PlatformModel {
     setDimension(size[0], size[1]);
     float coefficient = json.get("coefficient").asFloat();
     setCoefficient(coefficient);
-    SimpleObstacleJsonParser.initPlatformFromJson(this, directory, json);
+    TiledJsonParser.initPlatformFromJson(this, directory, json);
   }
 
   public void draw(GameCanvas canvas) {
     if (region != null) {
       canvas.draw(region, Color.RED, 0, 0, (getX() - anchor.x) * drawScale.x,
-          (getY() - anchor.y) * drawScale.y, getAngle(), 1, 1);
+        (getY() - anchor.y) * drawScale.y, getAngle(), 1, 1);
     }
   }
 }

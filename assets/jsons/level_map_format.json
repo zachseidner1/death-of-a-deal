@@ -1,4 +1,12 @@
 { "compressionlevel":-1,
+ "editorsettings":
+    {
+     "export":
+        {
+         "format":"json",
+         "target":"level_map_format.json"
+        }
+    },
  "height":30,
  "infinite":false,
  "layers":[
@@ -191,15 +199,15 @@
                  "name":"slope",
                  "polygon":[
                         {
-                         "x":1.89093,
+                         "x":2.72340295178728,
                          "y":1.01864
                         }, 
                         {
-                         "x":81.4335,
+                         "x":117.284211617759,
                          "y":-30.5682
                         }, 
                         {
-                         "x":81.4335,
+                         "x":117.284211617759,
                          "y":1.05408
                         }],
                  "properties":[
@@ -252,8 +260,8 @@
                  "type":"Slope",
                  "visible":true,
                  "width":0,
-                 "x":144,
-                 "y":240
+                 "x":136.914270143575,
+                 "y":207.483064095883
                 }, 
                 {
                  "height":48,
@@ -303,7 +311,7 @@
                  "y":0
                 }, 
                 {
-                 "height":32,
+                 "height":30,
                  "id":8,
                  "name":"player",
                  "properties":[
@@ -442,17 +450,17 @@
                         {
                          "name":"WindBreadth",
                          "type":"float",
-                         "value":80
+                         "value":40
                         }, 
                         {
                          "name":"WindLength",
                          "type":"float",
-                         "value":100
+                         "value":5
                         }, 
                         {
                          "name":"WindStrength",
                          "type":"float",
-                         "value":25
+                         "value":50
                         }, 
                         {
                          "name":"WindTexture",
@@ -462,9 +470,9 @@
                  "rotation":0,
                  "type":"Fan",
                  "visible":true,
-                 "width":16,
-                 "x":80,
-                 "y":160
+                 "width":20,
+                 "x":92.4960917144346,
+                 "y":338.874413757165
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -476,11 +484,6 @@
  "nextobjectid":16,
  "orientation":"orthogonal",
  "properties":[
-        {
-         "name":"airresitance",
-         "type":"float",
-         "value":1
-        }, 
         {
          "name":"gravity",
          "type":"float",
