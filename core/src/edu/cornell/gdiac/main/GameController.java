@@ -432,7 +432,7 @@ public class GameController implements Screen {
       if (input.getShouldSlide()) {
         message += " d";
       }
-      canvas.drawText(message, displayFont, canvas.getWidth() / 2f - 92, canvas.getHeight() - 36);
+      canvas.drawText(message, displayFont, canvas.getWidth() / 2f - 180, canvas.getHeight() - 120);
       canvas.end();
     }
 

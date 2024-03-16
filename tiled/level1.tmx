@@ -8,6 +8,7 @@
   <property name="gravity" type="float" value="-9.8"/>
   <property name="pheight" type="float" value="12"/>
   <property name="pwidth" type="float" value="16"/>
+  <property name="timelimit" value="31"/>
  </properties>
  <tileset firstgid="1" source="../TiledProject2/tile.tsx"/>
  <layer id="2" name="deco" width="40" height="30">
