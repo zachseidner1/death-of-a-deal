@@ -477,6 +477,11 @@
  "orientation":"orthogonal",
  "properties":[
         {
+         "name":"airresitance",
+         "type":"float",
+         "value":1
+        }, 
+        {
          "name":"gravity",
          "type":"float",
          "value":-9.8
