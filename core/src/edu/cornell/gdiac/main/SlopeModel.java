@@ -14,13 +14,11 @@ public class SlopeModel extends PolygonObstacle {
 
   /**
    * Arbitrary force applied to players if frozen and on slope
+   * <p></p>
+   * Default value is 0 unless explicitly specified in Tiled
    */
-  public final float SLOPE_FROZEN_FORCE = 1000.0f;
+  private float slopeFrozenForce = 0;
 
-  /**
-   * Record the friction of the force, could be useful when dealing with frozen (not used)
-   */
-  private float frictionCoefficient;
 
   /**
    * Record the angle of the slope
@@ -72,7 +70,6 @@ public class SlopeModel extends PolygonObstacle {
           setDensity(properties.getFloat("value"));
           break;
         case "friction":
-          this.frictionCoefficient = properties.getFloat("value");
           setFriction(properties.getFloat("value"));
           break;
         case "restitution":
@@ -96,6 +93,9 @@ public class SlopeModel extends PolygonObstacle {
           TextureRegion texture = new TextureRegion(directory.getEntry(key, Texture.class));
           setTexture(texture);
           break;
+        case "frozenforce":
+          this.slopeFrozenForce = properties.getFloat("value");
+          break;
         default:
           break;
       }
@@ -108,7 +108,7 @@ public class SlopeModel extends PolygonObstacle {
   /**
    * Calculates the angle of the slope based on the longest edge and stores it.
    */
-  public void calculateSlopeAngle() {
+  private void calculateSlopeAngle() {
     if (vertices.length < 4) {
       return; // Not enough vertices to form an edge
     }
@@ -142,13 +142,15 @@ public class SlopeModel extends PolygonObstacle {
   public float getSlopeAngle() {
     return slopeAngle;
   }
-  
+
   /**
-   * Gets the friction coefficient of the slope.
+   * Returns the force applied to the player when they touch the slope, in the direction opposite of
+   * the hypotenuse
    *
-   * @return The friction coefficient.
+   * @return the force applied to the player when they touch the slope, in the direction opposite of
+   * the hypotenuse
    */
-  public float getFrictionCoefficient() {
-    return this.frictionCoefficient;
+  public float getSlopeFrozenForce() {
+    return slopeFrozenForce;
   }
 }

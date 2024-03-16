@@ -30,6 +30,25 @@ public class CollisionController implements ContactListener {
     this.sensorFixtures = new ObjectSet<Fixture>();
   }
 
+  private static Vector2 getForceVector(SlopeModel slope) {
+    float slopeAngle = slope.getSlopeAngle();
+    float forceMagnitude = slope.getSlopeFrozenForce();
+
+    Vector2 force;
+    if (slopeAngle >= 0 && slopeAngle <= Math.PI) {
+      // Slope is pointing down left
+      force = new Vector2(
+          (float) -Math.cos(slopeAngle) * forceMagnitude,
+          (float) -Math.sin(slopeAngle) * forceMagnitude
+      );
+    } else {
+      // Slope is pointing down right
+      force = new Vector2((float) Math.cos(slopeAngle) * forceMagnitude,
+          (float) Math.sin(slopeAngle) * forceMagnitude);
+    }
+    return force;
+  }
+
   /**
    * Called when two fixtures begin to touch. This method is triggered during the simulation step at
    * the start of a contact between two fixtures
@@ -118,7 +137,6 @@ public class CollisionController implements ContactListener {
     preSolveSlope(contact, plyr, body1, body2);
   }
 
-
   /**
    * Called after the physics engine has solved a contact
    *
@@ -168,21 +186,7 @@ public class CollisionController implements ContactListener {
         // Only add extra force when player is frozen
         if (plyr.getIsFrozen()) {
 
-          float slopeAngle = slope.getSlopeAngle();
-          float forceMagnitude = slope.SLOPE_FROZEN_FORCE;
-
-          Vector2 force;
-          if (slopeAngle >= 0 && slopeAngle <= Math.PI) {
-            // Slope is pointing down left
-            force = new Vector2(
-                (float) -Math.cos(slopeAngle) * forceMagnitude,
-                (float) -Math.sin(slopeAngle) * forceMagnitude
-            );
-          } else {
-            // Slope is pointing down right
-            force = new Vector2((float) Math.cos(slopeAngle) * forceMagnitude,
-                (float) Math.sin(slopeAngle) * forceMagnitude);
-          }
+          Vector2 force = getForceVector(slope);
           plyr.getBody().applyForce(force, plyr.getPosition(), true);
         }
       }

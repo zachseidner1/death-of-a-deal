@@ -195,11 +195,11 @@
                          "y":0
                         }, 
                         {
-                         "x":64,
-                         "y":-32
+                         "x":16,
+                         "y":-16
                         }, 
                         {
-                         "x":64,
+                         "x":16,
                          "y":0
                         }],
                  "properties":[
@@ -227,6 +227,11 @@
                          "name":"friction",
                          "type":"float",
                          "value":0.01
+                        }, 
+                        {
+                         "name":"frozenforce",
+                         "type":"float",
+                         "value":0
                         }, 
                         {
                          "name":"height",
@@ -433,6 +438,11 @@
                          "value":0.01
                         }, 
                         {
+                         "name":"frozenforce",
+                         "type":"float",
+                         "value":500
+                        }, 
+                        {
                          "name":"height",
                          "type":"float",
                          "value":0
@@ -466,7 +476,7 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":11,
+ "nextobjectid":12,
  "orientation":"orthogonal",
  "properties":[
         {
