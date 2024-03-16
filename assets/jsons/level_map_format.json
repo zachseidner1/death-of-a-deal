@@ -328,11 +328,6 @@
                          "value":"yellow"
                         }, 
                         {
-                         "name":"fallMultiplier",
-                         "type":"float",
-                         "value":1.1
-                        }, 
-                        {
                          "name":"force",
                          "type":"float",
                          "value":10
@@ -348,19 +343,14 @@
                          "value":30
                         }, 
                         {
-                         "name":"jumpvelocity",
-                         "type":"float",
-                         "value":10
-                        }, 
-                        {
-                         "name":"lowJumpMultiplier",
+                         "name":"jumppulse",
                          "type":"float",
                          "value":2
                         }, 
                         {
                          "name":"maxspeed",
                          "type":"float",
-                         "value":6
+                         "value":5
                         }, 
                         {
                          "name":"restitution",
@@ -538,14 +528,9 @@
          "value":1
         }, 
         {
-         "name":"fallMultiplier",
-         "type":"float",
-         "value":1.75
-        }, 
-        {
          "name":"gravity",
          "type":"float",
-         "value":-12
+         "value":-9.8
         }, 
         {
          "name":"pheight",
