@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="40" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="12">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="40" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="19">
  <editorsettings>
   <export target="../assets/jsons/level_map_format.json" format="json"/>
  </editorsettings>
@@ -162,6 +162,16 @@
     <property name="width" type="float" value="0"/>
    </properties>
    <polygon points="-64,0 -64,-32 64,0"/>
+  </object>
+  <object id="18" name="breakable" gid="1" x="128" y="208" width="48" height="16">
+   <properties>
+    <property name="bodytype" value="static"/>
+    <property name="breakminvelocity" type="float" value="6"/>
+    <property name="debugcolor" value="yellow"/>
+    <property name="density" type="float" value="0"/>
+    <property name="friction" type="float" value="0"/>
+    <property name="restitution" type="float" value="0"/>
+   </properties>
   </object>
  </objectgroup>
 </map>
