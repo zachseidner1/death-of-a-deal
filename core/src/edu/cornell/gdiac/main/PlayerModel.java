@@ -58,7 +58,9 @@ public class PlayerModel extends CapsuleObstacle {
    */
   private int jumpLimit;
   /**
-   * The current horizontal movement of the character
+   * The current horizontal movement of the character.
+   * <p></p>
+   * Is 1 if the player is moving right, and -1 otherwise
    */
   private float movement;
   /**
@@ -184,7 +186,7 @@ public class PlayerModel extends CapsuleObstacle {
    * @param value left/right movement of this character.
    */
   public void setMovement(float value) {
-    movement = value;
+    movement = value / 10F;
     if (isFrozen) {
       movement = 0;
     }
@@ -531,21 +533,18 @@ public class PlayerModel extends CapsuleObstacle {
     if (!isActive()) {
       return;
     }
+    // The speed the player wants to be at, indicated by their movement
+    float targetSpeed = maxspeed * movement;
 
-    // Damp dramatically on the ground
-    // FIXME if slide doesn't work only damp when not frozen
-    if (getMovement() == 0f && isGrounded()) {
-      forceCache.set(getDamping() * -getVX(), 0);
-      body.applyForce(forceCache, getPosition(), true);
+    float accelRate = (isGrounded() ? 1.2F : 1F);
+    if (Math.abs(getVX()) > Math.abs(targetSpeed) && Math.signum(getVX()) == Math.signum(
+        targetSpeed) && Math.abs(targetSpeed) > 0.01F) {
+      accelRate = 0;
     }
+    float speedDif = targetSpeed - (getVX());
 
-    float speedDif = maxspeed - Math.abs(getVX());
-    /*
-    Player could be moving faster than their max speed in which case we shouldn't apply force in the
-    opposite direction of where they want to move.
-     */
-
-    forceCache.set(getMovement() * speedDif * 0.3F, 0);
+    float movement = speedDif * accelRate;
+    forceCache.set(movement, 0);
     // Jump!
     if (getIsJumping()) {
       setVY(jumpVelocity);
