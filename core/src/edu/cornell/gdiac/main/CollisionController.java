@@ -166,7 +166,6 @@ public class CollisionController implements ContactListener {
           BreakablePlatformModel brplt = (BreakablePlatformModel) bd2;
           if (plyr.getLinearVelocity().y > brplt.getBreakMinVelocity() && brplt.notBroken()) {
             brplt.setBroken(true);
-            plyr.setGrounded(false);
           }
         }
       }
@@ -175,7 +174,6 @@ public class CollisionController implements ContactListener {
           BreakablePlatformModel brplt = (BreakablePlatformModel) bd1;
           if (plyr.getLinearVelocity().y > brplt.getBreakMinVelocity() && brplt.notBroken()){
             brplt.setBroken(true);
-            plyr.setGrounded(false);
           }
         }
       }
