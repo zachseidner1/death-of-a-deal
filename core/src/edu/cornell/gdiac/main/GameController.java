@@ -59,7 +59,7 @@ public class GameController implements Screen {
    */
   public static final int WORLD_POSIT = 2;
   // Threshold for automatic jump release in seconds
-  private final float JUMP_RELEASE_THRESHOLD = 0.2f;
+  private final float JUMP_RELEASE_THRESHOLD = 0.1f;
   /**
    * Mute the game for convenience while testing
    */
