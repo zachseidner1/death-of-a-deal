@@ -198,12 +198,14 @@ public class LevelModel {
   public void setComplete(boolean value) {
     complete = value;
   }
+
   /**
    * Return the time limit
    */
   public float getTimer() {
     return timer;
   }
+
   /**
    * Lays out the game geography from the given JSON file
    *
@@ -249,12 +251,6 @@ public class LevelModel {
     scale.x = gSize[0] / pSize[0];
     scale.y = gSize[1] / pSize[1];
 
-    // Add level goal
-//    goalDoor = new ExitModel();
-//    goalDoor.initialize(directory, levelFormat.get("exit"));
-//    goalDoor.setDrawScale(scale);
-//    activate(goalDoor);
-
     JsonValue layer = levelFormat.get("layers").child();
     while (layer != null) {
       JsonValue tileProperties = null;
@@ -278,13 +274,6 @@ public class LevelModel {
       }
       layer = layer.next();
     }
-
-    // Create dude
-    // Does this need to change now?
-//    avatar = new PlayerModel();
-//    avatar.initialize(directory, levelFormat.get("avatar"));
-//    avatar.setDrawScale(scale);
-//    activate(avatar);
   }
 
   /**
@@ -338,9 +327,9 @@ public class LevelModel {
           activate(slope);
           break;
         case "Bounce":
-          BouncePlatformModel platform= new BouncePlatformModel();
+          BouncePlatformModel platform = new BouncePlatformModel();
           platform.setDrawScale(scale);
-          platform.initialize(directory,objects,gSizeY);
+          platform.initialize(directory, objects, gSizeY);
           activate(platform);
           break;
         // Breakable platforms as game objects
