@@ -24,6 +24,8 @@ import com.badlogic.gdx.utils.ObjectSet;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.audio.SoundEffect;
 import edu.cornell.gdiac.util.ScreenListener;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -131,6 +133,8 @@ public class GameController implements Screen {
   private boolean isJumpPressedLastFrame = false;
   private boolean isJumpRelease = false;
   private float jumpTimer = 0f;
+  private int levelNumber=1;
+  private static ArrayList<String> levels;
 
   /**
    * Creates a new game world
@@ -147,12 +151,9 @@ public class GameController implements Screen {
     timer = 100;
     // create CollisionController, which is extended from ContactListener
     collisionController = new CollisionController(level);
-
     setComplete(false);
     setFailure(false);
     sensorFixtures = new ObjectSet<Fixture>();
-
-
   }
 
   /**
@@ -257,6 +258,10 @@ public class GameController implements Screen {
    * @param directory Reference to global asset manager.
    */
   public void gatherAssets(AssetDirectory directory) {
+    levels=new ArrayList<String>();
+    levels.add(0,"level0");
+    levels.add(1,"level1");
+    levels.add(2,"level2");
     // Access the assets used directly by this controller
     this.directory = directory;
     // Some assets may have not finished loading so this is a catch-all for those.
@@ -265,7 +270,7 @@ public class GameController implements Screen {
     jumpSound = directory.getEntry("jump", SoundEffect.class);
 
     // This represents the level but does not BUILD it
-    levelFormat = directory.getEntry("leveltiled", JsonValue.class);
+    levelFormat = directory.getEntry(levels.get(1), JsonValue.class);
   }
 
   /**
@@ -280,8 +285,7 @@ public class GameController implements Screen {
     setComplete(false);
     setFailure(false);
     countdown = -1;
-
-    // Reload the json each time
+    // Reload the designated level
     level.populate(directory, levelFormat);
     timer = level.getTimer();
     canvas.startLevel();
@@ -312,6 +316,30 @@ public class GameController implements Screen {
     // Handle resets
     if (input.didReset()) {
       reset();
+    }
+    if(input.getNextLevel()){
+      if (levelNumber<levels.size()-1){
+        levelNumber+=1;
+        levelFormat = directory.getEntry(levels.get(levelNumber), JsonValue.class);
+        reset();
+        input.setNextLevel();
+      }
+      else{
+        reset();
+        input.setNextLevel();
+      }
+    }
+    if(input.getPastLevel()){
+      if (levelNumber!=0){
+        levelNumber-=1;
+        levelFormat = directory.getEntry(levels.get(levelNumber), JsonValue.class);
+        reset();
+        input.setPastLevel();
+      }
+      else{
+        reset();
+        input.setPastLevel();
+      }
     }
 
     // Now it is time to maybe switch screens.
@@ -344,7 +372,6 @@ public class GameController implements Screen {
   public void update(float dt) {
     // Check if the game has completed (if player touches the objective)
     setComplete(level.getComplete());
-    System.out.println(timer);
     // Process actions in object model
     InputController input = InputController.getInstance();
     PlayerModel avatar = level.getAvatar();

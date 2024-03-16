@@ -21,6 +21,8 @@
   },
   "jsons": {
     "level1": "jsons/level_map_format.json",
-    "leveltiled": "jsons/level_map_format.json"
+    "leveltiled": "jsons/level_map_format.json",
+    "level0": "jsons/level0.json",
+    "level2":"jsons/level2.json"
   }
 }
