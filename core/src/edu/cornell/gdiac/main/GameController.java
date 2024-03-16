@@ -58,6 +58,8 @@ public class GameController implements Screen {
    * Number of position iterations for the constrain solvers
    */
   public static final int WORLD_POSIT = 2;
+  // Threshold for automatic jump release in seconds
+  private final float JUMP_RELEASE_THRESHOLD = 0.2f;
   /**
    * Mute the game for convenience while testing
    */
@@ -66,6 +68,8 @@ public class GameController implements Screen {
    * Need an ongoing reference to the asset directory
    */
   protected AssetDirectory directory;
+
+  // THESE ARE CONSTANTS BECAUSE WE NEED THEM BEFORE THE LEVEL IS LOADED
   /**
    * The font for giving messages to the player
    */
@@ -119,6 +123,10 @@ public class GameController implements Screen {
    * Counter for keep track of meter
    */
   private float meterCounter;
+
+  private boolean isJumpPressedLastFrame = false;
+  private boolean isJumpRelease = false;
+  private float jumpTimer = 0f;
 
   /**
    * Creates a new game world
@@ -336,8 +344,40 @@ public class GameController implements Screen {
     // Process actions in object model
     InputController input = InputController.getInstance();
     PlayerModel avatar = level.getAvatar();
+    avatar.setMovement(InputController.getInstance().getHorizontal() * avatar.getForce());
+
+    // Jump Mechanics
+    // Check for the transition from pressed to not pressed to detect a jump release
+    boolean isJumpPressed = InputController.getInstance().didPrimary();
+    boolean isJumpRelease = !isJumpPressed && isJumpPressedLastFrame;
+    boolean isJumpOvertime = false;
+
+    if (isJumpPressed) {
+      jumpTimer += dt;
+      if (jumpTimer >= JUMP_RELEASE_THRESHOLD) {
+        // Release jump automatically when threshold is reached
+        isJumpOvertime = true;
+        jumpTimer = 0; // Reset timer for next jump
+      } else {
+        isJumpOvertime = false;
+      }
+    } else {
+      jumpTimer = 0;
+      isJumpOvertime = false; // Ensure jump is released if key is not pressed
+    }
+
+    // Mark jump release if jump is over time limit or the player let go of the jump key
+    isJumpRelease = isJumpOvertime || isJumpRelease;
+    avatar.setJumping(isJumpPressed, isJumpRelease, dt);
+
+    isJumpPressedLastFrame = isJumpPressed;
+//
+
+//
+//    // Set movement and jumping with the new parameter
+//    avatar.setMovement(input.getHorizontal() * avatar.getForce());
+//    avatar.setJumping(isJumpPressed, isJumpPressedLastFrame);
     avatar.setMovement(input.getHorizontal() * avatar.getForce());
-    avatar.setJumping(input.didPrimary());
 
     if (avatar.isJumping()) {
       if (!IS_MUTED) {

@@ -78,10 +78,6 @@ public class PlayerModel extends CapsuleObstacle {
    */
   private boolean isGrounded;
 
-  /**
-   * Whether we are actively bouncing
-   */
-
   // SENSOR FIELDS
   /**
    * How long until we can jump again
@@ -91,6 +87,20 @@ public class PlayerModel extends CapsuleObstacle {
    * Whether we are actively jumping
    */
   private boolean isJumping;
+  /**
+   * Record how much jump charge have we built up
+   */
+  private float jumpCharge = 0;
+  /**
+   * Cap for jump charge
+   */
+  private float maxJumpCharge = 1.3f;
+  /**
+   * Rate of charging jumps
+   */
+  private float jumpChargeRate = 1.0f;
+
+  // SENSOR FIELDS
   /**
    * Whether we are currently frozen
    */
@@ -197,8 +207,20 @@ public class PlayerModel extends CapsuleObstacle {
    *
    * @param value whether the player is actively jumping.
    */
-  public void setJumping(boolean value) {
-    isJumping = value && !isFrozen;
+
+  public void setJumping(boolean value, boolean isReleasingJump, float dt) {
+
+    if (value && !isReleasingJump) {                          // When holding down the jump button
+      // Calculate Jump Charge
+      jumpCharge = Math.min(jumpCharge + jumpChargeRate * 4 * dt, maxJumpCharge);
+      isJumping = false;
+    } else if (isReleasingJump && isGrounded) {     // When Releasing the jump button
+      isJumping = true;
+    } else if (!isGrounded) {
+      jumpCharge = 0;
+      isJumping = false;
+    }
+    isJumping = isJumping && !isFrozen;
   }
 
   /**
@@ -546,8 +568,14 @@ public class PlayerModel extends CapsuleObstacle {
     body.applyForce(forceCache, getPosition(), true);
     // Jump!
     if (isJumping()) {
-      forceCache.set(0, getJumpPulse());
+      // Calculate chargedImpulse for release based on jumpCharge
+      float chargedImpulse = getJumpPulse() + (maxJumpCharge * jumpCharge);
+      forceCache.set(0, chargedImpulse);
       body.applyLinearImpulse(forceCache, getPosition(), true);
+      // Reset jump charge
+      jumpCharge = 0;
+      // Reset jump status
+      isJumping = false;
     }
   }
 
@@ -565,7 +593,6 @@ public class PlayerModel extends CapsuleObstacle {
     } else {
       jumpCooldown = Math.max(0, jumpCooldown - 1);
     }
-
     super.update(dt);
   }
 

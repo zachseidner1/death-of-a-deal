@@ -1,5 +1,6 @@
 package edu.cornell.gdiac.main;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
@@ -18,6 +19,7 @@ public class CollisionController implements ContactListener {
   protected ObjectSet<Fixture> sensorFixtures;
   private LevelModel level;
 
+
   /**
    * Set up the collision model based on Level Model & Create sensorFixtures to track active bodies
    *
@@ -26,6 +28,25 @@ public class CollisionController implements ContactListener {
   public CollisionController(LevelModel levelModel) {
     this.level = levelModel;
     this.sensorFixtures = new ObjectSet<Fixture>();
+  }
+
+  private static Vector2 getForceVector(SlopeModel slope) {
+    float slopeAngle = slope.getSlopeAngle();
+    float forceMagnitude = slope.getSlopeFrozenForce();
+
+    Vector2 force;
+    if (slopeAngle >= 0 && slopeAngle <= Math.PI) {
+      // Slope is pointing down left
+      force = new Vector2(
+          (float) -Math.cos(slopeAngle) * forceMagnitude,
+          (float) -Math.sin(slopeAngle) * forceMagnitude
+      );
+    } else {
+      // Slope is pointing down right
+      force = new Vector2((float) Math.cos(slopeAngle) * forceMagnitude,
+          (float) Math.sin(slopeAngle) * forceMagnitude);
+    }
+    return force;
   }
 
   /**
@@ -113,8 +134,8 @@ public class CollisionController implements ContactListener {
     Body body2 = fix2.getBody();
     PlayerModel plyr = level.getAvatar();
     preSolveBounce(contact, plyr, body1, body2);
+    preSolveSlope(contact, plyr, body1, body2);
   }
-
 
   /**
    * Called after the physics engine has solved a contact
@@ -146,6 +167,27 @@ public class CollisionController implements ContactListener {
           if (plyr.getIsFrozen()) {
             contact.setRestitution(c);
           }
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void preSolveSlope(Contact contact, PlayerModel plyr, Body body1, Body body2) {
+    try {
+      Obstacle bd1 = (Obstacle) body1.getUserData();
+      Obstacle bd2 = (Obstacle) body2.getUserData();
+
+      if ((bd1.equals(plyr) && bd2 instanceof SlopeModel) || (bd2.equals(plyr)
+          && bd1 instanceof SlopeModel)) {
+        SlopeModel slope = (bd1 instanceof SlopeModel) ? (SlopeModel) bd1 : (SlopeModel) bd2;
+
+        // Only add extra force when player is frozen
+        if (plyr.getIsFrozen()) {
+
+          Vector2 force = getForceVector(slope);
+          plyr.getBody().applyForce(force, plyr.getPosition(), true);
         }
       }
     } catch (Exception e) {
