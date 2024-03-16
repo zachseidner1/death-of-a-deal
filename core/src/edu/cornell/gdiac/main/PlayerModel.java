@@ -383,7 +383,7 @@ public class PlayerModel extends CapsuleObstacle {
 
     setPosition(x, y);
     setDimension(json.getFloat("width") * (1 / drawScale.x),
-        json.getFloat("height") * (1 / drawScale.y));
+      json.getFloat("height") * (1 / drawScale.y));
 
     JsonValue properties = json.get("properties").child();
     Color debugColor = null;
@@ -392,8 +392,8 @@ public class PlayerModel extends CapsuleObstacle {
       switch (properties.getString("name")) {
         case "bodytype":
           setBodyType(
-              properties.get("value").asString().equals("static") ? BodyDef.BodyType.StaticBody
-                  : BodyDef.BodyType.DynamicBody);
+            properties.get("value").asString().equals("static") ? BodyDef.BodyType.StaticBody
+              : BodyDef.BodyType.DynamicBody);
           break;
         case "density":
           setDensity(properties.getFloat("value"));
@@ -538,13 +538,12 @@ public class PlayerModel extends CapsuleObstacle {
     We are at a somewhat low speed but going the opposite of where the user wants to go
      */
     if ((Math.abs(getVX()) <= 1
-        || (Math.abs(getVX()) < 5 && Math.signum(getVX()) != Math.signum(forceCache.x))
-        && forceCache.x != 0)) {
+      || (Math.abs(getVX()) < 5 && Math.signum(getVX()) != Math.signum(forceCache.x))
+      && forceCache.x != 0)) {
       // Set player velocity in the direction of where the user wants to go
       setVX(Math.signum(forceCache.x));
     }
     body.applyForce(forceCache, getPosition(), true);
-    System.out.println("vx: " + getVX());
     // Jump!
     if (isJumping()) {
       forceCache.set(0, getJumpPulse());
@@ -560,7 +559,6 @@ public class PlayerModel extends CapsuleObstacle {
    * @param dt Number of seconds since last animation frame
    */
   public void update(float dt) {
-    System.out.println("vx: " + getVX());
     // Apply cooldowns
     if (isJumping()) {
       jumpCooldown = getJumpLimit();
@@ -580,8 +578,8 @@ public class PlayerModel extends CapsuleObstacle {
     if (texture != null) {
       float effect = faceRight ? 1.0f : -1.0f;
       canvas.draw(isFrozen ? frozenTexture : texture, color, origin.x, origin.y,
-          getX() * drawScale.x,
-          getY() * drawScale.y, getAngle(), effect, 1.0f);
+        getX() * drawScale.x,
+        getY() * drawScale.y, getAngle(), effect, 1.0f);
     }
   }
 }

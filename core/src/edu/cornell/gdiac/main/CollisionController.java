@@ -1,6 +1,8 @@
 package edu.cornell.gdiac.main;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
@@ -53,16 +55,44 @@ public class CollisionController implements ContactListener {
 
       // See if we have landed on the ground
       if ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
-          (avatar.getSensorName().equals(fd1) && avatar != bd2)) {
+        (avatar.getSensorName().equals(fd1) && avatar != bd2)) {
         avatar.setGrounded(true);
         sensorFixtures.add(avatar == bd1 ? fix2 : fix1);
       }
 
       // Check for win condition
       if ((bd1 == avatar && bd2 == door) ||
-          (bd1 == door && bd2 == avatar)) {
+        (bd1 == door && bd2 == avatar)) {
         level.setComplete(true);
       }
+
+      // Determine if there is a "collision" with wind from fans
+      boolean isBody1Fan = body1.getUserData() instanceof FanModel;
+      boolean isBody2Fan = body2.getUserData() instanceof FanModel;
+      FanModel fan = null;
+      Obstacle obj = null;
+
+      if (isBody1Fan) {
+        fan = (FanModel) body1.getUserData();
+        obj = bd2;
+      } else if (isBody2Fan) {
+        fan = (FanModel) body2.getUserData();
+        obj = bd1;
+      }
+
+      // On wind contact callback
+      if (fan != null && obj != null) {
+        // Should not continue detection with static body
+        if (obj.getBodyType() == BodyType.StaticBody) {
+          contact.setEnabled(false);
+        } else {
+          // Apply wind force
+          Vector2 windForce = fan.findWindForce(obj.getX(), obj.getY());
+          System.out.println("Wind force: " + windForce.x + ", " + windForce.y);
+          obj.getBody().applyForce(windForce, obj.getPosition(), true);
+        }
+      }
+
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -90,7 +120,7 @@ public class CollisionController implements ContactListener {
 
     PlayerModel avatar = level.getAvatar();
     if ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
-        (avatar.getSensorName().equals(fd1) && avatar != bd2)) {
+      (avatar.getSensorName().equals(fd1) && avatar != bd2)) {
       sensorFixtures.remove(avatar == bd1 ? fix2 : fix1);
       if (sensorFixtures.size == 0) {
         avatar.setGrounded(false);

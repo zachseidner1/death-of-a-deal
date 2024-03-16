@@ -18,6 +18,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.JsonValue;
+import com.badlogic.gdx.utils.ObjectSet;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.physics.obstacle.Obstacle;
 import edu.cornell.gdiac.util.PooledList;
@@ -38,61 +39,56 @@ public class LevelModel {
    * The initial air resistance of the level from the levels JSON
    */
   private final float INITIAL_AIR_RESISTANCE = 0.1f;
-
+  /**
+   * Cache for internal force calculations
+   */
+  final private Vector2 forceCache = new Vector2();
+  /**
+   * Keeps track of all fan objects
+   */
+  final private ObjectSet<FanModel> fans = new ObjectSet<>();
   /**
    * The Box2D world
    */
   protected World world;
 
+  // Physics objects for the game
   /**
    * The boundary of the world
    */
   protected Rectangle bounds;
-
   /**
    * The world scale
    */
   protected Vector2 scale;
-
-  // Physics objects for the game
   /**
    * All the objects in the world.
    */
   protected PooledList<Obstacle> objects = new PooledList<Obstacle>();
-
   /**
    * Reference to the character avatar
    */
   private PlayerModel avatar;
-
   /**
    * Reference to the bounce pad (for collision detection)
    */
   private BouncePlatformModel bouncePlatformModel;
-
   /**
    * Reference to the goalDoor (for collision detection)
    */
   private ExitModel goalDoor;
-
   /**
    * Whether or not the level is in debug more (showing off physics)
    */
   private boolean debug;
-
   /**
    * Whether or not the level is completed
    */
   private boolean complete;
-
   /**
    * Air resistance scale to be applied to every obstacle in the level
    */
   private float airResistance = INITIAL_AIR_RESISTANCE;
-  /**
-   * Cache for internal force calculations
-   */
-  private Vector2 forceCache = new Vector2();
 
   /**
    * Creates a new LevelModel
@@ -143,6 +139,13 @@ public class LevelModel {
    */
   public PlayerModel getAvatar() {
     return avatar;
+  }
+
+  /**
+   * Returns reference to fans
+   */
+  public ObjectSet<FanModel> getFans() {
+    return fans;
   }
 
   /**
@@ -256,8 +259,8 @@ public class LevelModel {
       switch (layer.getString("name")) {
         case "level":
           makeTiles(numTilesHorizontal, numTilesVertical, layer.get("data").asIntArray(), tileWidth,
-              tileHeight,
-              directory, tileProperties);
+            tileHeight,
+            directory, tileProperties);
           break;
         case "objects":
           if (layer.get("objects") != null) {
@@ -291,7 +294,7 @@ public class LevelModel {
    * @param tileProperties additional tile properties
    */
   private void makeTiles(int cols, int rows, int[] data, int tileWidth, int tileHeight,
-      AssetDirectory directory, JsonValue tileProperties) {
+                         AssetDirectory directory, JsonValue tileProperties) {
     for (int i = 0; i < data.length; i++) {
       if (data[i] != 0) {
         // i % numCols = how deep in x
@@ -302,7 +305,7 @@ public class LevelModel {
         PlatformModel obj = new PlatformModel();
         obj.setDrawScale(scale);
         obj.initializeAsTile(xPos, yPos, (float) tileHeight, directory, "" + data[i],
-            tileProperties);
+          tileProperties);
         activate(obj);
       }
     }
@@ -310,24 +313,31 @@ public class LevelModel {
 
   private void makeObjects(AssetDirectory directory, JsonValue objects, int gSizeY) {
     while (objects != null) {
-      switch (objects.getString("name")) {
-        case "player":
+      switch (objects.getString("type")) {
+        case "Player":
           avatar = new PlayerModel();
           avatar.setDrawScale(scale);
           avatar.initialize(directory, objects, gSizeY);
           activate(avatar);
           break;
-        case "exit":
+        case "Exit":
           goalDoor = new ExitModel();
           goalDoor.setDrawScale(scale);
           goalDoor.initialize(directory, objects, gSizeY);
           activate(goalDoor);
           break;
-        case "slope":
+        case "Slope":
           SlopeModel slope = new SlopeModel();
           slope.setDrawScale(scale);
           slope.initialize(directory, objects, gSizeY);
           activate(slope);
+          break;
+        case "Fan":
+          FanModel fan = new FanModel();
+          fan.setDrawScale(scale);
+          fan.initialize(directory, objects, gSizeY);
+          activate(fan);
+          fans.add(fan);
           break;
       }
       objects = objects.next();
@@ -339,6 +349,7 @@ public class LevelModel {
       obj.deactivatePhysics(world);
     }
     objects.clear();
+    fans.clear();
     if (world != null) {
       world.dispose();
       world = null;

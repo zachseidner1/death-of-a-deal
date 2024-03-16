@@ -179,7 +179,7 @@
                          "value":0
                         }],
                  "rotation":0,
-                 "type":"",
+                 "type":"Slope",
                  "visible":true,
                  "width":0,
                  "x":544,
@@ -249,7 +249,7 @@
                          "value":0
                         }],
                  "rotation":0,
-                 "type":"",
+                 "type":"Slope",
                  "visible":true,
                  "width":0,
                  "x":144,
@@ -296,7 +296,7 @@
                          "value":"goal"
                         }],
                  "rotation":0,
-                 "type":"",
+                 "type":"Exit",
                  "visible":true,
                  "width":32,
                  "x":16,
@@ -383,11 +383,88 @@
                          "value":"dude"
                         }],
                  "rotation":0,
-                 "type":"",
+                 "type":"Player",
                  "visible":true,
                  "width":16,
                  "x":48,
                  "y":96
+                }, 
+                {
+                 "height":80,
+                 "id":10,
+                 "name":"fan",
+                 "properties":[
+                        {
+                         "name":"Active",
+                         "type":"bool",
+                         "value":true
+                        }, 
+                        {
+                         "name":"BodyType",
+                         "type":"string",
+                         "value":"static"
+                        }, 
+                        {
+                         "name":"DebugColor",
+                         "type":"string",
+                         "value":"yellow"
+                        }, 
+                        {
+                         "name":"DebugOpacity",
+                         "type":"int",
+                         "value":255
+                        }, 
+                        {
+                         "name":"FanTexture",
+                         "type":"string",
+                         "value":"earth"
+                        }, 
+                        {
+                         "name":"Period",
+                         "type":"float",
+                         "value":0
+                        }, 
+                        {
+                         "name":"PeriodOnRatio",
+                         "type":"float",
+                         "value":1
+                        }, 
+                        {
+                         "name":"Side",
+                         "type":"string",
+                         "value":"right"
+                        }, 
+                        {
+                         "name":"Type",
+                         "type":"string",
+                         "value":"constant"
+                        }, 
+                        {
+                         "name":"WindBreadth",
+                         "type":"float",
+                         "value":80
+                        }, 
+                        {
+                         "name":"WindLength",
+                         "type":"float",
+                         "value":100
+                        }, 
+                        {
+                         "name":"WindStrength",
+                         "type":"float",
+                         "value":25
+                        }, 
+                        {
+                         "name":"WindTexture",
+                         "type":"string",
+                         "value":"earth"
+                        }],
+                 "rotation":0,
+                 "type":"Fan",
+                 "visible":true,
+                 "width":16,
+                 "x":80,
+                 "y":160
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -396,7 +473,7 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":10,
+ "nextobjectid":16,
  "orientation":"orthogonal",
  "properties":[
         {
