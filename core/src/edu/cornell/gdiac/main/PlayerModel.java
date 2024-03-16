@@ -537,12 +537,14 @@ public class PlayerModel extends CapsuleObstacle {
     float targetSpeed = maxspeed * movement;
 
     float accelRate = (isGrounded() ? 1.2F : 1F);
+    // If the player is traveling faster than their target speed, do not change movement
     if (Math.abs(getVX()) > Math.abs(targetSpeed) && Math.signum(getVX()) == Math.signum(
         targetSpeed) && Math.abs(targetSpeed) > 0.01F) {
       accelRate = 0;
     }
     float speedDif = targetSpeed - (getVX());
 
+    // We move the player based on how far they are from their target speed
     float movement = speedDif * accelRate;
     forceCache.set(movement, 0);
     // Jump!

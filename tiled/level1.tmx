@@ -138,7 +138,7 @@
     <property name="jumplimit" type="int" value="30"/>
     <property name="jumpvelocity" type="float" value="10"/>
     <property name="lowJumpMultiplier" type="float" value="2"/>
-    <property name="maxspeed" type="float" value="10"/>
+    <property name="maxspeed" type="float" value="6"/>
     <property name="restitution" type="float" value="0"/>
     <property name="sensorcolor" value="red"/>
     <property name="sensorname" value="dudeGroundSensor"/>
