@@ -342,6 +342,14 @@ public class LevelModel {
           platform.setDrawScale(scale);
           platform.initialize(directory,objects,gSizeY);
           activate(platform);
+          break;
+        // Breakable platforms as game objects
+        case "breakable":
+          BreakablePlatformModel breakable = new BreakablePlatformModel();
+          breakable.setDrawScale(scale);
+          breakable.initialize(directory, objects, gSizeY);
+          activate(breakable);
+          break;
       }
       objects = objects.next();
     }
@@ -427,6 +435,17 @@ public class LevelModel {
         obj.drawDebug(canvas);
       }
       canvas.endDebug();
+    }
+  }
+
+  public void breakPlatforms(){
+    for (Obstacle obj : objects){
+      if (obj instanceof BreakablePlatformModel){
+        if (((BreakablePlatformModel) obj).isBroken()){
+          objects.remove(obj);
+          obj.deactivatePhysics(world);
+        }
+      }
     }
   }
 }

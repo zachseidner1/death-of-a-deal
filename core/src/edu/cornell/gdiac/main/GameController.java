@@ -146,7 +146,7 @@ public class GameController implements Screen {
     countdown = -1;
     timer = 100;
     // create CollisionController, which is extended from ContactListener
-    collisionController = new CollisionController(level);
+    collisionController = new  CollisionController(level);
 
     setComplete(false);
     setFailure(false);
@@ -329,6 +329,9 @@ public class GameController implements Screen {
       setFailure(true);
       return false;
     }
+
+    level.breakPlatforms();
+
     return true;
   }
 
