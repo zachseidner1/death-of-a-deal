@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="40" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="15">
+ <editorsettings>
+  <export target="../DeathOfADeal/assets/jsons/level_map_format.json" format="json"/>
+ </editorsettings>
+ <properties>
+  <property name="airresitance" type="float" value="1"/>
+  <property name="gravity" type="float" value="-9.8"/>
+  <property name="pheight" type="float" value="12"/>
+  <property name="pwidth" type="float" value="16"/>
+ </properties>
+ <tileset firstgid="1" source="../TiledProject2/tile.tsx"/>
+ <layer id="2" name="deco" width="40" height="30">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <layer id="1" name="level" width="40" height="30">
+  <properties>
+   <property name="debugcolor" value="yellow"/>
+   <property name="debugopacity" type="int" value="255"/>
+   <property name="density" type="float" value="0"/>
+   <property name="friction" type="float" value="0.4"/>
+   <property name="restitution" type="float" value="0"/>
+  </properties>
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,0,0,0,0,1,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,
+1,1,1,1,1,0,0,0,0,1,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0
+</data>
+ </layer>
+ <objectgroup id="3" name="objects">
+  <object id="2" name="slope" x="544" y="256">
+   <properties>
+    <property name="bodytype" value="static"/>
+    <property name="debugcolor" value="yellow"/>
+    <property name="debugopacity" type="int" value="255"/>
+    <property name="denisty" type="float" value="0"/>
+    <property name="friction" type="float" value="0.01"/>
+    <property name="height" type="float" value="0"/>
+    <property name="restitution" type="float" value="0.1"/>
+    <property name="texture" value="earth"/>
+    <property name="width" type="float" value="0"/>
+   </properties>
+   <polygon points="1.89093,1.01864 81.4335,-30.5682 81.4335,1.05408"/>
+  </object>
+  <object id="9" name="slope" x="256" y="352">
+   <properties>
+    <property name="bodytype" value="static"/>
+    <property name="debugcolor" value="yellow"/>
+    <property name="debugopacity" type="int" value="255"/>
+    <property name="denisty" type="float" value="0"/>
+    <property name="friction" type="float" value="0.01"/>
+    <property name="frozenforce" type="float" value="0"/>
+    <property name="height" type="float" value="0"/>
+    <property name="restitution" type="float" value="0"/>
+    <property name="texture" value="earth"/>
+    <property name="width" type="float" value="0"/>
+   </properties>
+   <polygon points="0,0 16,-16 16,0"/>
+  </object>
+  <object id="6" name="exit" x="16" y="0" width="32" height="48">
+   <properties>
+    <property name="bodytype" value="static"/>
+    <property name="debugcolor" value="yellow"/>
+    <property name="debugopacity" type="int" value="200"/>
+    <property name="density" type="float" value="0"/>
+    <property name="friction" type="float" value="0"/>
+    <property name="restitution" type="float" value="0"/>
+    <property name="texture" value="goal"/>
+   </properties>
+  </object>
+  <object id="8" name="player" x="48" y="96" width="16" height="32">
+   <properties>
+    <property name="bodytype" value="dynamic"/>
+    <property name="damping" type="float" value="10"/>
+    <property name="debugcolor" value="yellow"/>
+    <property name="force" type="float" value="10"/>
+    <property name="friction" type="float" value="0"/>
+    <property name="jumplimit" type="int" value="30"/>
+    <property name="jumppulse" type="float" value="2"/>
+    <property name="maxspeed" type="float" value="5"/>
+    <property name="restitution" type="float" value="0"/>
+    <property name="sensorcolor" value="red"/>
+    <property name="sensorname" value="dudeGroundSensor"/>
+    <property name="sensoropacity" type="int" value="192"/>
+    <property name="sensorsizex" type="float" value="0.183"/>
+    <property name="sensorsizey" type="float" value="0.05"/>
+    <property name="texture" value="dude"/>
+   </properties>
+  </object>
+  <object id="10" name="slope" x="192" y="352">
+   <properties>
+    <property name="bodytype" value="static"/>
+    <property name="debugcolor" value="yellow"/>
+    <property name="debugopacity" type="int" value="255"/>
+    <property name="denisty" type="float" value="0"/>
+    <property name="friction" type="float" value="0.01"/>
+    <property name="frozenforce" type="float" value="10"/>
+    <property name="height" type="float" value="0"/>
+    <property name="restitution" type="float" value="0"/>
+    <property name="texture" value="earth"/>
+    <property name="width" type="float" value="0"/>
+   </properties>
+   <polygon points="-64,0 -64,-32 64,0"/>
+  </object>
+  <object id="13" name="Bounce" x="10.0052" y="344.554" width="15.0078" height="73.7884">
+   <properties>
+    <property name="bodytype" value="static"/>
+    <property name="coefficient" value="3"/>
+    <property name="debugcolor" value="yellow"/>
+    <property name="debugopacity" type="int" value="255"/>
+    <property name="denisty" type="float" value="0"/>
+    <property name="friction" type="float" value="0.01"/>
+    <property name="height" type="float" value="0"/>
+    <property name="max_speed" value="50"/>
+    <property name="restitution" type="float" value="0"/>
+    <property name="texture" value="earth"/>
+    <property name="width" type="float" value="0"/>
+   </properties>
+  </object>
+  <object id="14" name="Bounce" x="110.057" y="202.606" width="95.0495" height="15.0078">
+   <properties>
+    <property name="bodytype" value="static"/>
+    <property name="coefficient" value="1.5"/>
+    <property name="debugcolor" value="yellow"/>
+    <property name="debugopacity" type="int" value="255"/>
+    <property name="denisty" type="float" value="0"/>
+    <property name="friction" type="float" value="0.01"/>
+    <property name="height" type="float" value="0"/>
+    <property name="max_speed" value="10"/>
+    <property name="restitution" type="float" value="0"/>
+    <property name="texture" value="earth"/>
+    <property name="width" type="float" value="0"/>
+   </properties>
+  </object>
+ </objectgroup>
+</map>

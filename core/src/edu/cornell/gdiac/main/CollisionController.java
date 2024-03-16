@@ -182,52 +182,38 @@ public class CollisionController implements ContactListener {
       e.printStackTrace();
     }
   }
+
   public void postSolveBounce(Contact contact, PlayerModel plyr, Body body1, Body body2) {
     try {
       Obstacle bd1 = (Obstacle) body1.getUserData();
       Obstacle bd2 = (Obstacle) body2.getUserData();
-      if (bd1.equals(plyr)) {
-        if (bd2 instanceof BouncePlatformModel) {
-          if (plyr.getIsFrozen()) {
-            BouncePlatformModel bplt = (BouncePlatformModel) bd2;
-            float maxSpeed = bplt.getMaxSpeed();
-            float xSpeed = plyr.getLinearVelocity().x;
-            float ySpeed = plyr.getLinearVelocity().y;
-            if (xSpeed > maxSpeed) {
-              plyr.setVX(maxSpeed);
-            } else if (xSpeed < -maxSpeed) {
-              plyr.setVX(-maxSpeed);
-            }
-            if (ySpeed > maxSpeed) {
-              plyr.setVY(maxSpeed);
-            } else if (ySpeed < -maxSpeed) {
-              plyr.setVY(-maxSpeed);
-            }
-          }
-        }
-      }
-      if (bd2.equals(plyr)) {
-        if (bd1 instanceof BouncePlatformModel) {
-          if (plyr.getIsFrozen()) {
-            BouncePlatformModel bplt = (BouncePlatformModel) bd1;
-            float maxSpeed = bplt.getMaxSpeed();
-            float xSpeed = plyr.getLinearVelocity().x;
-            float ySpeed = plyr.getLinearVelocity().y;
-            if (xSpeed > maxSpeed) {
-              plyr.setVX(maxSpeed);
-            } else if (xSpeed < -maxSpeed) {
-              plyr.setVX(-maxSpeed);
-            }
-            if (ySpeed > maxSpeed) {
-              plyr.setVY(maxSpeed);
-            } else if (ySpeed < -maxSpeed) {
-              plyr.setVY(-maxSpeed);
-            }
-          }
-        }
-      }
+      applyBounceVelocity(plyr, bd1, bd2);
+      applyBounceVelocity(plyr, bd2, bd1);
     } catch (Exception e) {
       e.printStackTrace();
+    }
+  }
+
+  private void applyBounceVelocity(PlayerModel playerModel, Obstacle bd1, Obstacle bd2) {
+    if (bd1.equals(playerModel)) {
+      if (bd2 instanceof BouncePlatformModel) {
+        if (playerModel.getIsFrozen()) {
+          BouncePlatformModel bplt = (BouncePlatformModel) bd2;
+          float maxSpeed = bplt.getMaxSpeed();
+          float xSpeed = playerModel.getLinearVelocity().x;
+          float ySpeed = playerModel.getLinearVelocity().y;
+          if (xSpeed > maxSpeed) {
+            playerModel.setVX(maxSpeed);
+          } else if (xSpeed < -maxSpeed) {
+            playerModel.setVX(-maxSpeed);
+          }
+          if (ySpeed > maxSpeed) {
+            playerModel.setVY(maxSpeed);
+          } else if (ySpeed < -maxSpeed) {
+            playerModel.setVY(-maxSpeed);
+          }
+        }
+      }
     }
   }
 

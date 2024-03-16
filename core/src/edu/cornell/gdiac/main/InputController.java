@@ -120,10 +120,9 @@ public class InputController {
   /**
    * The toggle representing if the freezing mechanic increases density
    */
-  private boolean timerActive=false;
+  private boolean timerActive = false;
+
   /**
-=======
->>>>>>> 2134b0e0942575c00f4922552756445c77393653
    * Creates a new input controller
    * <p>
    * The input controller attempts to connect to the X-Box controller at device 0, if it exists.
@@ -150,7 +149,8 @@ public class InputController {
             densityIncreased = !densityIncreased;
             return true;
           case Keys.T:
-            timerActive=!timerActive;
+            timerActive = !timerActive;
+            return true;
         }
         return false;
       }

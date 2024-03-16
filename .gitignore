@@ -117,3 +117,5 @@ Thumbs.db
 ## Builds
 /out
 
+## Tiled
+*.tiled-session
