@@ -53,19 +53,6 @@ public class CollisionController implements ContactListener {
       PlayerModel avatar = level.getAvatar();
       BoxObstacle door = level.getExit();
 
-      // See if we have landed on the ground
-      if ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
-        (avatar.getSensorName().equals(fd1) && avatar != bd2)) {
-        avatar.setGrounded(true);
-        sensorFixtures.add(avatar == bd1 ? fix2 : fix1);
-      }
-
-      // Check for win condition
-      if ((bd1 == avatar && bd2 == door) ||
-        (bd1 == door && bd2 == avatar)) {
-        level.setComplete(true);
-      }
-
       // Determine if there is a "collision" with wind from fans
       boolean is1WindFixture = fix1.getUserData() instanceof WindModel;
       boolean is2WindFixture = fix2.getUserData() instanceof WindModel;
@@ -81,7 +68,6 @@ public class CollisionController implements ContactListener {
       }
 
       // On wind contact callback
-      // TODO: Player collision with wind does not work properly when falling onto the wind, but works when jumping up to the wind
       if (wind != null && obj != null) {
         // Should not continue detection with static body
         if (obj.getBodyType() == BodyType.StaticBody) {
@@ -91,6 +77,19 @@ public class CollisionController implements ContactListener {
           Vector2 windForce = wind.findWindForce(obj.getX(), obj.getY());
           obj.getBody().applyForce(windForce, obj.getPosition(), true);
         }
+      }
+
+      // See if we have landed on the ground
+      if (!is1WindFixture && !is2WindFixture && ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
+        (avatar.getSensorName().equals(fd1) && avatar != bd2))) {
+        avatar.setGrounded(true);
+        sensorFixtures.add(avatar == bd1 ? fix2 : fix1);
+      }
+
+      // Check for win condition
+      if ((bd1 == avatar && bd2 == door) ||
+        (bd1 == door && bd2 == avatar)) {
+        level.setComplete(true);
       }
 
     } catch (Exception e) {

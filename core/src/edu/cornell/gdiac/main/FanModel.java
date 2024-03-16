@@ -40,18 +40,14 @@ public class FanModel extends PlatformModel {
    */
   private boolean isFanActive;
   private WindSide fanSide;
-
   /**
    * Contains the wind fixture def and wind force logic
    */
   private WindModel wind;
   private Fixture windFixture;
 
-
   public FanModel() {
-    // Since we do not know points yet, initialize to box
-    // TODO: Fix
-    // super(new float[]{0, 0, 1, 0, 1, 1, 0, 1}, 0, 0);
+    // Degenerate settings
     super();
 
     // Wind fixture creation
@@ -82,10 +78,9 @@ public class FanModel extends PlatformModel {
     float y = (gSizeY - json.getFloat("y")) * scaleFactorY;
     setPosition(x + width / 2, y - height / 2);
 
-    // TODO: Fix
-//    float[] points = {x, y, x + width, y, x + width, y - height, x, y - height};
-//    initShapes(points);
-//    initBounds();
+    // TODO: Fix rotation
+//    float rotation = json.getFloat("rotation") / (float) (Math.PI / 2);
+//    setAngle(rotation);
 
     // Wind wrapper fields
     Vector2 windSource = new Vector2();
@@ -159,9 +154,6 @@ public class FanModel extends PlatformModel {
           break;
         case "Active":
           isFanActive = properties.getBoolean("value");
-          break;
-        case "Rotation":
-          fanRotation = properties.getFloat("value");
           break;
         case "DebugOpacity":
           int opacity = properties.getInt("value");

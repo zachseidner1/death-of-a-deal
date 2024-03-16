@@ -137,16 +137,6 @@ public class PlatformModel extends BoxObstacle {
   }
 
   /**
-   * Sets the angle of rotation for this body (about the center).
-   *
-   * @param value the angle of rotation for this body (in radians)
-   */
-  @Override
-  public void setAngle(float value) {
-    throw new UnsupportedOperationException("Cannot rotate platforms");
-  }
-
-  /**
    * Sets the object texture for drawing purposes.
    *
    * <p>In order for drawing to work properly, you MUST set the drawScale. The drawScale converts

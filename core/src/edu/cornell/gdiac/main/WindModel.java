@@ -155,7 +155,7 @@ public class WindModel {
     normX /= norm;
     normY /= norm;
 
-    // TODO: Temporarily set to pure directional force
+    // TODO: Temporarily set to pure directional force (will need to change if rotation exists)
     windForce.set(
       windSide == WindSide.LEFT ? -1 : windSide == WindSide.RIGHT ? 1 : 0,
       windSide == WindSide.BOTTOM ? -1 : windSide == WindSide.TOP ? 1 : 0);
