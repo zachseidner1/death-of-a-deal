@@ -39,6 +39,8 @@ public class DesktopLauncher {
     config.height = 600;
     config.fullscreen = false;
     config.resizable = false;
+    config.foregroundFPS=60;
+    config.backgroundFPS=60;
     new GDXApp(new GDXRoot(), config);
   }
 }

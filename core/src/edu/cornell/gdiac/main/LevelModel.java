@@ -86,6 +86,10 @@ public class LevelModel {
    */
   private boolean complete;
   /**
+   * Time limit for the level
+   */
+  private float timer;
+  /**
    * Air resistance scale to be applied to every obstacle in the level
    */
   private float airResistance = INITIAL_AIR_RESISTANCE;
@@ -197,6 +201,13 @@ public class LevelModel {
    */
   public void setComplete(boolean value) {
     complete = value;
+  }
+
+  /**
+   * Return the time limit
+   */
+  public float getTimer() {
+    return timer;
   }
 
   /**
@@ -338,6 +349,14 @@ public class LevelModel {
           fan.initialize(directory, objects, gSizeY);
           activate(fan);
           fans.add(fan);
+          break;
+        case "Bounce":
+          BouncePlatformModel platform = new BouncePlatformModel();
+          platform.setDrawScale(scale);
+          platform.initialize(directory, objects, gSizeY);
+          activate(platform);
+          break;
+        default:
           break;
       }
       objects = objects.next();

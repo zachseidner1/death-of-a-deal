@@ -79,8 +79,9 @@ public class PlayerModel extends CapsuleObstacle {
   private boolean isGrounded;
 
   /**
-   * Whether we are actively bouncing
+   * Whether during a jump and is flying
    */
+  private boolean isFlying;
 
   // SENSOR FIELDS
   /**
@@ -91,6 +92,20 @@ public class PlayerModel extends CapsuleObstacle {
    * Whether we are actively jumping
    */
   private boolean isJumping;
+  /**
+   * Record how much jump charge have we built up
+   */
+  private float flyCharge = 0;
+  /**
+   * Cap for jump charge
+   */
+  private float maxflyCharge = 2.0f;
+  /**
+   * Rate of charging jumps
+   */
+  private float flyChargeRate = 20.0f;
+
+  // SENSOR FIELDS
   /**
    * Whether we are currently frozen
    */
@@ -192,13 +207,43 @@ public class PlayerModel extends CapsuleObstacle {
     return isJumping && jumpCooldown <= 0 && isGrounded;
   }
 
+  public boolean isFlying() {
+    return isFlying;
+  }
+
   /**
    * Sets whether the player is actively jumping.
    *
    * @param value whether the player is actively jumping.
    */
-  public void setJumping(boolean value) {
-    isJumping = value && !isFrozen;
+
+  public void setJumping(boolean value, boolean isReleasingJump, float dt) {
+
+    if (value) {                 // When holding down the jump button
+      // Calculate Fly Charge
+      flyCharge = Math.min(flyCharge + flyChargeRate * dt, maxflyCharge);
+    } else {
+      flyCharge = 0;
+    }
+
+    if (value && isGrounded) {  // When hit the jump button and player is on the ground
+      isJumping = true;
+      isFlying = false;
+    } else if (value && !isGrounded
+        && isJumping) {        // The moment after player jumps (start flying, stop jumping)
+      flyCharge = 0;           // Reset flyCharge to 0
+      isJumping = false;
+      isFlying = true;
+    }
+
+    if (isReleasingJump) {    // When you let go of the jump button or hold down for too long
+      isJumping = false;
+      isFlying = false;
+      flyCharge = 0;
+    }
+
+    isJumping = isJumping && !isFrozen;
+
   }
 
   /**
@@ -531,6 +576,7 @@ public class PlayerModel extends CapsuleObstacle {
       body.applyForce(forceCache, getPosition(), true);
     }
 
+
     forceCache.set(getMovement() / 2.5F, 0);
     /*
     Check for:
@@ -544,9 +590,23 @@ public class PlayerModel extends CapsuleObstacle {
       setVX(Math.signum(forceCache.x));
     }
     body.applyForce(forceCache, getPosition(), true);
+
     // Jump!
     if (isJumping()) {
-      forceCache.set(0, getJumpPulse());
+      float chargedImpulse = getJumpPulse();
+      forceCache.set(0, chargedImpulse);
+      body.applyLinearImpulse(forceCache, getPosition(), true);
+      // Reset fly charge
+      flyCharge = 0;
+      // Reset jump status
+      isJumping = false;
+    }
+
+    // Fly Boost
+    if (isFlying()) {
+      // Calculate chargedImpulse for release based on flyCharge
+      float chargedImpulse = (maxflyCharge * flyCharge);
+      forceCache.set(0, chargedImpulse);
       body.applyLinearImpulse(forceCache, getPosition(), true);
     }
   }
@@ -560,12 +620,11 @@ public class PlayerModel extends CapsuleObstacle {
    */
   public void update(float dt) {
     // Apply cooldowns
-    if (isJumping()) {
+    if (isJumping() || isFlying()) {
       jumpCooldown = getJumpLimit();
     } else {
       jumpCooldown = Math.max(0, jumpCooldown - 1);
     }
-
     super.update(dt);
   }
 

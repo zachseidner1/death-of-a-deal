@@ -3,6 +3,7 @@ package edu.cornell.gdiac.main;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.assets.AssetDirectory;
@@ -10,6 +11,19 @@ import edu.cornell.gdiac.physics.obstacle.PolygonObstacle;
 import java.lang.reflect.Field;
 
 public class SlopeModel extends PolygonObstacle {
+
+  /**
+   * Arbitrary force applied to players if frozen and on slope
+   * <p></p>
+   * Default value is 0 unless explicitly specified in Tiled
+   */
+  private float slopeFrozenForce = 0;
+
+
+  /**
+   * Record the angle of the slope
+   */
+  private float slopeAngle;
 
   public SlopeModel() {
     // Since we do not know points yet, initialize to box
@@ -79,11 +93,64 @@ public class SlopeModel extends PolygonObstacle {
           TextureRegion texture = new TextureRegion(directory.getEntry(key, Texture.class));
           setTexture(texture);
           break;
+        case "frozenforce":
+          this.slopeFrozenForce = properties.getFloat("value");
+          break;
         default:
           break;
       }
 
       properties = properties.next();
+      calculateSlopeAngle();
     }
+  }
+
+  /**
+   * Calculates the angle of the slope based on the longest edge and stores it.
+   */
+  private void calculateSlopeAngle() {
+    if (vertices.length < 4) {
+      return; // Not enough vertices to form an edge
+    }
+
+    float longestEdgeLength = -1;
+    Vector2 longestEdgeVector = new Vector2();
+
+    // Loop through vertices to find the longest edge
+    for (int i = 0; i < vertices.length; i += 2) {
+      Vector2 startPoint = new Vector2(vertices[i], vertices[i + 1]);
+      // Connect the last vertex with the first to close the shape
+      Vector2 endPoint = (i + 2 < vertices.length) ? new Vector2(vertices[i + 2], vertices[i + 3])
+        : new Vector2(vertices[0], vertices[1]);
+
+      Vector2 edgeVector = new Vector2(endPoint.x - startPoint.x, endPoint.y - startPoint.y);
+      float edgeLength = edgeVector.len2();
+      if (edgeLength > longestEdgeLength) {
+        longestEdgeLength = edgeLength;
+        longestEdgeVector = edgeVector;
+      }
+    }
+
+    slopeAngle = longestEdgeVector.angleRad();
+  }
+
+  /**
+   * Returns the stored slope angle.
+   *
+   * @return The angle of the slope in radians.
+   */
+  public float getSlopeAngle() {
+    return slopeAngle;
+  }
+
+  /**
+   * Returns the force applied to the player when they touch the slope, in the direction opposite of
+   * the hypotenuse
+   *
+   * @return the force applied to the player when they touch the slope, in the direction opposite of
+   * the hypotenuse
+   */
+  public float getSlopeFrozenForce() {
+    return slopeFrozenForce;
   }
 }
