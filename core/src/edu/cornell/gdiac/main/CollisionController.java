@@ -167,12 +167,22 @@ public class CollisionController implements ContactListener {
 
         // Only add extra force when player is frozen
         if (plyr.getIsFrozen()) {
+
           float slopeAngle = slope.getSlopeAngle();
           float forceMagnitude = slope.SLOPE_FROZEN_FORCE;
 
-          Vector2 force = new Vector2((float) Math.cos(slopeAngle) * -forceMagnitude,
-              (float) Math.sin(slopeAngle) * -forceMagnitude);
-
+          Vector2 force;
+          if (slopeAngle >= 0 && slopeAngle <= Math.PI) {
+            // Slope is pointing down left
+            force = new Vector2(
+                (float) -Math.cos(slopeAngle) * forceMagnitude,
+                (float) -Math.sin(slopeAngle) * forceMagnitude
+            );
+          } else {
+            // Slope is pointing down right
+            force = new Vector2((float) Math.cos(slopeAngle) * forceMagnitude,
+                (float) Math.sin(slopeAngle) * forceMagnitude);
+          }
           plyr.getBody().applyForce(force, plyr.getPosition(), true);
         }
       }
