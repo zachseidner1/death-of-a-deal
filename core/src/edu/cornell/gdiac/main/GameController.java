@@ -280,11 +280,10 @@ public class GameController implements Screen {
     setComplete(false);
     setFailure(false);
     countdown = -1;
-    meterCounter = 0;
-    timer = level.getTimer();
 
     // Reload the json each time
     level.populate(directory, levelFormat);
+    timer = level.getTimer();
     canvas.startLevel();
     level.getWorld().setContactListener(collisionController);
   }
@@ -345,7 +344,7 @@ public class GameController implements Screen {
   public void update(float dt) {
     // Check if the game has completed (if player touches the objective)
     setComplete(level.getComplete());
-
+    System.out.println(timer);
     // Process actions in object model
     InputController input = InputController.getInstance();
     PlayerModel avatar = level.getAvatar();
@@ -375,9 +374,6 @@ public class GameController implements Screen {
     isJumpRelease = isJumpOvertime || isJumpRelease;
     avatar.setJumping(isJumpPressed, isJumpRelease, dt);
 
-    if (input.getMeterActive()) {
-      meterCounter += dt;
-    isJumpPressedLastFrame = isJumpPressed;
 
 //
 //    // Set movement and jumping with the new parameter
@@ -385,26 +381,17 @@ public class GameController implements Screen {
 //    avatar.setJumping(isJumpPressed, isJumpPressedLastFrame);
     avatar.setMovement(input.getHorizontal() * avatar.getForce());
 
-    if (avatar.isJumping()) {
-      if (!IS_MUTED) {
-        jumpId = playSound(jumpSound, jumpId);
-      }
-    }
-    } else if (input.getTimerActive()){
+    if (input.getTimerActive()){
       timer-=dt;
       avatar.setFrozen(input.getFrozen());
       if (!isFailure() && timer<=1) {
         setFailure(true);
       }
-      if (complete || failed) {
-        timer = 0;
-      }
     }
     else {
       // Get input to see if f is just pressed and if so set frozen of the avatar to true
       // This method only works when the game is paused!
-      avatar.setFrozen(input.getFrozen());
-    }
+      avatar.setFrozen(input.getFrozen());}
 
 
     // Turn the physics engine crank.
@@ -437,7 +424,6 @@ public class GameController implements Screen {
       canvas.begin();
       String message="";
       if(input.getTimerActive()){ message = "Timer: " + (int) timer;}
-      if(input.getMeterActive()){message = "Meter: " + (int) meterCounter;}
 
       if (input.getShouldSlide()) {
         message += " d";

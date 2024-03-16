@@ -236,6 +236,8 @@ public class LevelModel {
         case "pheight":
           pSize[1] = property.getFloat("value");
           break;
+        case "timelimit":
+          timer=property.getFloat("value");
       }
       property = property.next();
     }

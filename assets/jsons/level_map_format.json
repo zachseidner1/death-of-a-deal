@@ -643,6 +643,11 @@
          "name":"pwidth",
          "type":"float",
          "value":16
+        }, 
+        {
+         "name":"timelimit",
+         "type":"string",
+         "value":"31"
         }],
  "renderorder":"right-down",
  "tiledversion":"1.10.2",
