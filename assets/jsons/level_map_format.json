@@ -360,7 +360,7 @@
                         {
                          "name":"maxspeed",
                          "type":"float",
-                         "value":5
+                         "value":6
                         }, 
                         {
                          "name":"restitution",

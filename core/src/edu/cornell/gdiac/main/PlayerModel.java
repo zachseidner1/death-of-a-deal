@@ -539,21 +539,15 @@ public class PlayerModel extends CapsuleObstacle {
       body.applyForce(forceCache, getPosition(), true);
     }
 
-    forceCache.set(getMovement() / 3F, 0);
+    float speedDif = maxspeed - Math.abs(getVX());
     /*
-    Check for:
-    We are at a low speed and the user is inputting a direction
-    We are at a somewhat low speed but going the opposite of where the user wants to go
+    Player could be moving faster than their max speed in which case we shouldn't apply force in the
+    opposite direction of where they want to move.
      */
-    if ((Math.abs(getVX()) <= 1
-        || (Math.abs(getVX()) < 5 && Math.signum(getVX()) != Math.signum(forceCache.x))
-        && forceCache.x != 0)) {
-      // Set player velocity in the direction of where the user wants to go
-      setVX(Math.signum(forceCache.x));
-    }
+
+    forceCache.set(getMovement() * speedDif * 0.3F, 0);
     // Jump!
     if (getIsJumping()) {
-      System.out.println("true");
       setVY(jumpVelocity);
     }
 
