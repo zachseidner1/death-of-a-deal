@@ -58,26 +58,18 @@ public class GameController implements Screen {
    * Number of position iterations for the constrain solvers
    */
   public static final int WORLD_POSIT = 2;
+  // Threshold for automatic jump release in seconds
+  private final float JUMP_RELEASE_THRESHOLD = 0.1f;
   /**
-   * How much the meter goes up when you're not moving
+   * Mute the game for convenience while testing
    */
-  private final float STATIONARY_RATE = 0.25f;
-  /**
-   * How much the meter goes up when you jump
-   */
-  private final float JUMP_METER_ADDITION = 10f;
-  /**
-   * When the meter goes above this value, the player will freeze
-   */
-  private final float FREEZE_SUSPICION_THRESHOLD = 100;
-  /**
-   * The time the player spends frozen in seconds
-   */
-  private final float FREEZE_TIME = 2;
+  private final boolean IS_MUTED = true;
   /**
    * Need an ongoing reference to the asset directory
    */
   protected AssetDirectory directory;
+
+  // THESE ARE CONSTANTS BECAUSE WE NEED THEM BEFORE THE LEVEL IS LOADED
   /**
    * The font for giving messages to the player
    */
@@ -135,6 +127,11 @@ public class GameController implements Screen {
    * Timer of the game
    */
   private float timer;
+
+  private boolean isJumpPressedLastFrame = false;
+  private boolean isJumpRelease = false;
+  private float jumpTimer = 0f;
+
   /**
    * Creates a new game world
    * <p>
@@ -268,7 +265,7 @@ public class GameController implements Screen {
     jumpSound = directory.getEntry("jump", SoundEffect.class);
 
     // This represents the level but does not BUILD it
-    levelFormat = directory.getEntry("level1", JsonValue.class);
+    levelFormat = directory.getEntry("leveltiled", JsonValue.class);
   }
 
   /**
@@ -288,6 +285,7 @@ public class GameController implements Screen {
 
     // Reload the json each time
     level.populate(directory, levelFormat);
+    canvas.startLevel();
     level.getWorld().setContactListener(collisionController);
   }
 
@@ -352,44 +350,46 @@ public class GameController implements Screen {
     InputController input = InputController.getInstance();
     PlayerModel avatar = level.getAvatar();
     avatar.setMovement(InputController.getInstance().getHorizontal() * avatar.getForce());
-    avatar.setJumping(InputController.getInstance().didPrimary());
 
-    avatar.applyForce();
-    if (avatar.isJumping()) {
-      jumpId = playSound(jumpSound, jumpId);
+    // Jump Mechanics
+    // Check for the transition from pressed to not pressed to detect a jump release
+    boolean isJumpPressed = InputController.getInstance().didPrimary();
+    boolean isJumpRelease = !isJumpPressed && isJumpPressedLastFrame;
+    boolean isJumpOvertime = false;
+
+    if (isJumpPressed) {
+      jumpTimer += dt;
+      if (jumpTimer >= JUMP_RELEASE_THRESHOLD) {
+        // Release jump automatically when threshold is reached
+        isJumpOvertime = true;
+        jumpTimer = 0; // Reset timer for next jump
+      } else {
+        isJumpOvertime = false;
+      }
+    } else {
+      jumpTimer = 0;
+      isJumpOvertime = false; // Ensure jump is released if key is not pressed
     }
 
-    // Turn the physics engine crank.
-    level.getWorld().step(WORLD_STEP, WORLD_VELOC, WORLD_POSIT);
+    // Mark jump release if jump is over time limit or the player let go of the jump key
+    isJumpRelease = isJumpOvertime || isJumpRelease;
+    avatar.setJumping(isJumpPressed, isJumpRelease, dt);
 
     if (input.getMeterActive()) {
       meterCounter += dt;
+    isJumpPressedLastFrame = isJumpPressed;
 
-      // If moving
-      if ((input.getHorizontal() != 0)
-          && meterCounter < FREEZE_SUSPICION_THRESHOLD) {
-        meterCounter += STATIONARY_RATE;
-      }
-      // If jumping
-      if (input.getVertical() != 0 && level.getAvatar().isJumping()
-          && meterCounter < FREEZE_SUSPICION_THRESHOLD) {
-        meterCounter += JUMP_METER_ADDITION;
-        // check if we've passed the freeze suspicion threshold, we want full freeze time
-        if (meterCounter >= FREEZE_SUSPICION_THRESHOLD) {
-          meterCounter = FREEZE_SUSPICION_THRESHOLD;
-        }
-      }
-      if (meterCounter >= FREEZE_SUSPICION_THRESHOLD) {
-        level.getAvatar().setFrozen(true);
-        if (meterCounter >= FREEZE_SUSPICION_THRESHOLD + FREEZE_TIME) {
-          meterCounter = 0;
-          level.getAvatar().setFrozen(false);
-        }
-      }
+//
+//    // Set movement and jumping with the new parameter
+//    avatar.setMovement(input.getHorizontal() * avatar.getForce());
+//    avatar.setJumping(isJumpPressed, isJumpPressedLastFrame);
+    avatar.setMovement(input.getHorizontal() * avatar.getForce());
 
-      if (complete || failed) {
-        meterCounter = 0;
+    if (avatar.isJumping()) {
+      if (!IS_MUTED) {
+        jumpId = playSound(jumpSound, jumpId);
       }
+    }
     } else if (input.getTimerActive()){
       timer-=dt;
       avatar.setFrozen(input.getFrozen());
@@ -405,7 +405,15 @@ public class GameController implements Screen {
       // This method only works when the game is paused!
       avatar.setFrozen(input.getFrozen());
     }
-    avatar.setShouldSlide(input.getShouldSlide());
+
+
+    // Turn the physics engine crank.
+    level.getWorld().step(WORLD_STEP, WORLD_VELOC, WORLD_POSIT);
+    // Apply air resistance to all objects in level
+    level.applyAirResistance();
+
+    avatar.setFrozen(input.getFrozen());
+    avatar.applyForce();
   }
 
   /**
@@ -420,8 +428,8 @@ public class GameController implements Screen {
    */
   public void draw(float delta) {
     canvas.clear();
-    InputController input = InputController.getInstance();
     level.draw(canvas);
+    InputController input=InputController.getInstance();
 
     // Display meter
     if (!complete && !failed) {

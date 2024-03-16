@@ -19,7 +19,7 @@
       0.61
     ],
     "bodytype": "dynamic",
-    "friction": 0.0,
+    "friction": 0.3,
     "restitution": 0.0,
     "force": 3.0,
     "damping": 10.0,

@@ -1,6 +1,5 @@
 package edu.cornell.gdiac.main;
 
-import com.badlogic.gdx.math.Vector;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Contact;
@@ -20,6 +19,7 @@ public class CollisionController implements ContactListener {
   protected ObjectSet<Fixture> sensorFixtures;
   private LevelModel level;
 
+
   /**
    * Set up the collision model based on Level Model & Create sensorFixtures to track active bodies
    *
@@ -30,6 +30,29 @@ public class CollisionController implements ContactListener {
     this.sensorFixtures = new ObjectSet<Fixture>();
   }
 
+  private static Vector2 getForceVector(SlopeModel slope) {
+    float slopeAngle = slope.getSlopeAngle();
+    float forceMagnitude = slope.getSlopeFrozenForce();
+
+    Vector2 force;
+    if (slopeAngle >= 0 && slopeAngle <= Math.PI) {
+      System.out.println("downleft");
+      // Slope is pointing down left
+      force = new Vector2(
+          (float) -Math.cos(slopeAngle) * forceMagnitude,
+          (float) -Math.sin(slopeAngle) * forceMagnitude
+      );
+      System.out.println(force);
+    } else {
+      // Slope is pointing down right
+      System.out.println("downright");
+      force = new Vector2((float) Math.cos(slopeAngle) * forceMagnitude,
+          (float) Math.sin(slopeAngle) * forceMagnitude);
+      System.out.println(force);
+    }
+    return force;
+  }
+
   /**
    * Called when two fixtures begin to touch. This method is triggered during the simulation step at
    * the start of a contact between two fixtures
@@ -38,7 +61,6 @@ public class CollisionController implements ContactListener {
    *                into contact
    */
   public void beginContact(Contact contact) {
-
     Fixture fix1 = contact.getFixtureA();
     Fixture fix2 = contact.getFixtureB();
 
@@ -116,8 +138,8 @@ public class CollisionController implements ContactListener {
     Body body2 = fix2.getBody();
     PlayerModel plyr = level.getAvatar();
     preSolveBounce(contact, plyr, body1, body2);
+    preSolveSlope(contact, plyr, body1, body2);
   }
-
 
   /**
    * Called after the physics engine has solved a contact
@@ -142,7 +164,7 @@ public class CollisionController implements ContactListener {
         if (bd2 instanceof BouncePlatformModel) {
           BouncePlatformModel bplt = (BouncePlatformModel) bd2;
           float c = bplt.getCoefficient();
-          if (plyr.isFrozen()) {
+          if (plyr.getIsFrozen()) {
             contact.setRestitution(c);
           }
         }
@@ -151,7 +173,7 @@ public class CollisionController implements ContactListener {
         if (bd1 instanceof BouncePlatformModel) {
           BouncePlatformModel bplt = (BouncePlatformModel) bd1;
           float c = bplt.getCoefficient();
-          if (plyr.isFrozen()) {
+          if (plyr.getIsFrozen()) {
             contact.setRestitution(c);
           }
         }
@@ -166,45 +188,41 @@ public class CollisionController implements ContactListener {
       Obstacle bd2 = (Obstacle) body2.getUserData();
       if (bd1.equals(plyr)) {
         if (bd2 instanceof BouncePlatformModel) {
-          if (plyr.isFrozen()){
-          BouncePlatformModel bplt = (BouncePlatformModel) bd2;
-          float maxSpeed = bplt.getMaxSpeed();
-          float xSpeed=plyr.getLinearVelocity().x;
-          float ySpeed=plyr.getLinearVelocity().y;
-            if (xSpeed>maxSpeed){
+          if (plyr.getIsFrozen()) {
+            BouncePlatformModel bplt = (BouncePlatformModel) bd2;
+            float maxSpeed = bplt.getMaxSpeed();
+            float xSpeed = plyr.getLinearVelocity().x;
+            float ySpeed = plyr.getLinearVelocity().y;
+            if (xSpeed > maxSpeed) {
               plyr.setVX(maxSpeed);
-            }
-            else if (xSpeed<-maxSpeed){
+            } else if (xSpeed < -maxSpeed) {
               plyr.setVX(-maxSpeed);
             }
-            if (ySpeed>maxSpeed){
+            if (ySpeed > maxSpeed) {
               plyr.setVY(maxSpeed);
-            }
-            else if (ySpeed<-maxSpeed){
+            } else if (ySpeed < -maxSpeed) {
               plyr.setVY(-maxSpeed);
             }
-        }
+          }
         }
       }
       if (bd2.equals(plyr)) {
         if (bd1 instanceof BouncePlatformModel) {
-          if(plyr.isFrozen()){
-          BouncePlatformModel bplt = (BouncePlatformModel) bd1;
-          float maxSpeed = bplt.getMaxSpeed();
-          float xSpeed=plyr.getLinearVelocity().x;
-          float ySpeed=plyr.getLinearVelocity().y;
-          if (xSpeed>maxSpeed){
-            plyr.setVX(maxSpeed);
-          }
-          else if (xSpeed<-maxSpeed){
-            plyr.setVX(-maxSpeed);
-          }
-          if (ySpeed>maxSpeed){
-            plyr.setVY(maxSpeed);
-          }
-          else if (ySpeed<-maxSpeed){
-            plyr.setVY(-maxSpeed);
-          }
+          if (plyr.getIsFrozen()) {
+            BouncePlatformModel bplt = (BouncePlatformModel) bd1;
+            float maxSpeed = bplt.getMaxSpeed();
+            float xSpeed = plyr.getLinearVelocity().x;
+            float ySpeed = plyr.getLinearVelocity().y;
+            if (xSpeed > maxSpeed) {
+              plyr.setVX(maxSpeed);
+            } else if (xSpeed < -maxSpeed) {
+              plyr.setVX(-maxSpeed);
+            }
+            if (ySpeed > maxSpeed) {
+              plyr.setVY(maxSpeed);
+            } else if (ySpeed < -maxSpeed) {
+              plyr.setVY(-maxSpeed);
+            }
           }
         }
       }
@@ -213,4 +231,24 @@ public class CollisionController implements ContactListener {
     }
   }
 
+  public void preSolveSlope(Contact contact, PlayerModel plyr, Body body1, Body body2) {
+    try {
+      Obstacle bd1 = (Obstacle) body1.getUserData();
+      Obstacle bd2 = (Obstacle) body2.getUserData();
+
+      if ((bd1.equals(plyr) && bd2 instanceof SlopeModel) || (bd2.equals(plyr)
+          && bd1 instanceof SlopeModel)) {
+        SlopeModel slope = (bd1 instanceof SlopeModel) ? (SlopeModel) bd1 : (SlopeModel) bd2;
+
+        // Only add extra force when player is frozen
+        if (plyr.getIsFrozen()) {
+          Vector2 force = getForceVector(slope);
+          System.out.println(force);
+          plyr.getBody().applyForce(force, plyr.getPosition(), true);
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
 }

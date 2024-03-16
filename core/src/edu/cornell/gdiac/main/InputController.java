@@ -113,6 +113,7 @@ public class InputController {
   private boolean isFrozen;
 
   /**
+<<<<<<< HEAD
    * The toggle representing whether the timer is paused
    */
   private boolean meterActive = false;
@@ -125,6 +126,8 @@ public class InputController {
    */
   private boolean timerActive=false;
   /**
+=======
+>>>>>>> 2134b0e0942575c00f4922552756445c77393653
    * Creates a new input controller
    * <p>
    * The input controller attempts to connect to the X-Box controller at device 0, if it exists.
@@ -147,7 +150,6 @@ public class InputController {
         switch (keycode) {
           case Keys.F:
               isFrozen = !isFrozen;
-            return timerActive;
           case Keys.X:
             meterActive = !meterActive;
             return true;
@@ -251,15 +253,15 @@ public class InputController {
   }
 
   /**
-   * Returns true if the primary action button was pressed.
+   * Returns true if the primary action button is being pressed.
    * <p>
-   * This is a one-press button. It only returns true at the moment it was pressed, and returns
-   * false at any frame afterwards.
+   * Unlike a one-press button that only returns true at the moment it was pressed, this method
+   * returns true as long as the button remains pressed, providing continuous detection.
    *
-   * @return true if the primary action button was pressed.
+   * @return true if the primary action button is being pressed.
    */
   public boolean didPrimary() {
-    return primePressed && !primePrevious;
+    return primePressed;
   }
 
   /**
