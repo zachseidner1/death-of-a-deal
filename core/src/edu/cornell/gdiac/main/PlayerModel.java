@@ -592,12 +592,10 @@ public class PlayerModel extends CapsuleObstacle {
 
     // Jump!
     if (isJumping()) {
-      System.out.println("is Jumping");
-      // Calculate chargedImpulse for release based on flyCharge
       float chargedImpulse = getJumpPulse();
       forceCache.set(0, chargedImpulse);
       body.applyLinearImpulse(forceCache, getPosition(), true);
-      // Reset jump charge
+      // Reset fly charge
       flyCharge = 0;
       // Reset jump status
       isJumping = false;
@@ -605,8 +603,6 @@ public class PlayerModel extends CapsuleObstacle {
 
     // Fly Boost
     if (isFlying()) {
-      System.out.println("is Flying");
-      System.out.println(flyCharge);
       // Calculate chargedImpulse for release based on flyCharge
       float chargedImpulse = (maxflyCharge * flyCharge);
       forceCache.set(0, chargedImpulse);
