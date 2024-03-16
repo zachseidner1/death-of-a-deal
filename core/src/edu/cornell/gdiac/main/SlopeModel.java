@@ -14,13 +14,11 @@ public class SlopeModel extends PolygonObstacle {
 
   /**
    * Arbitrary force applied to players if frozen and on slope
+   * <p></p>
+   * Default value is 0 unless explicitly specified in Tiled
    */
   private float slopeFrozenForce = 0;
 
-  /**
-   * Record the friction of the force, could be useful when dealing with frozen (not used)
-   */
-  private float frictionCoefficient;
 
   /**
    * Record the angle of the slope
@@ -72,7 +70,6 @@ public class SlopeModel extends PolygonObstacle {
           setDensity(properties.getFloat("value"));
           break;
         case "friction":
-          this.frictionCoefficient = properties.getFloat("value");
           setFriction(properties.getFloat("value"));
           break;
         case "restitution":
@@ -155,14 +152,5 @@ public class SlopeModel extends PolygonObstacle {
    */
   public float getSlopeFrozenForce() {
     return slopeFrozenForce;
-  }
-
-  /**
-   * Gets the friction coefficient of the slope.
-   *
-   * @return The friction coefficient.
-   */
-  public float getFrictionCoefficient() {
-    return this.frictionCoefficient;
   }
 }
