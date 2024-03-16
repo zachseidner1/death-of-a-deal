@@ -118,5 +118,5 @@ Thumbs.db
 /out
 
 ## Tiled
-*.tiled-session
+**/tiled/**.tiled-session
 **/tiled/**.json
