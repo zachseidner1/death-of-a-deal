@@ -144,7 +144,7 @@ public class GameController implements Screen {
     failed = false;
     active = false;
     countdown = -1;
-    timer=100;
+    timer = 100;
     // create CollisionController, which is extended from ContactListener
     collisionController = new CollisionController(level);
 
@@ -374,38 +374,25 @@ public class GameController implements Screen {
     // Mark jump release if jump is over time limit or the player let go of the jump key
     isJumpRelease = isJumpOvertime || isJumpRelease;
     avatar.setJumping(isJumpPressed, isJumpRelease, dt);
-
-    if (input.getMeterActive()) {
-      meterCounter += dt;
-    isJumpPressedLastFrame = isJumpPressed;
-
-//
-//    // Set movement and jumping with the new parameter
-//    avatar.setMovement(input.getHorizontal() * avatar.getForce());
-//    avatar.setJumping(isJumpPressed, isJumpPressedLastFrame);
-    avatar.setMovement(input.getHorizontal() * avatar.getForce());
-
     if (avatar.isJumping()) {
       if (!IS_MUTED) {
         jumpId = playSound(jumpSound, jumpId);
       }
     }
-    } else if (input.getTimerActive()){
-      timer-=dt;
+    if (input.getTimerActive()) {
+      timer -= dt;
       avatar.setFrozen(input.getFrozen());
-      if (!isFailure() && timer<=1) {
+      if (!isFailure() && timer <= 1) {
         setFailure(true);
       }
       if (complete || failed) {
         timer = 0;
       }
-    }
-    else {
+    } else {
       // Get input to see if f is just pressed and if so set frozen of the avatar to true
       // This method only works when the game is paused!
       avatar.setFrozen(input.getFrozen());
     }
-
 
     // Turn the physics engine crank.
     level.getWorld().step(WORLD_STEP, WORLD_VELOC, WORLD_POSIT);
@@ -429,18 +416,15 @@ public class GameController implements Screen {
   public void draw(float delta) {
     canvas.clear();
     level.draw(canvas);
-    InputController input=InputController.getInstance();
+    InputController input = InputController.getInstance();
 
     // Display meter
     if (!complete && !failed) {
       displayFont.setColor(Color.BLACK);
       canvas.begin();
-      String message="";
-      if(input.getTimerActive()){ message = "Timer: " + (int) timer;}
-      if(input.getMeterActive()){message = "Meter: " + (int) meterCounter;}
-
-      if (input.getShouldSlide()) {
-        message += " d";
+      String message = "";
+      if (input.getTimerActive()) {
+        message = "Timer: " + (int) timer;
       }
       canvas.drawText(message, displayFont, canvas.getWidth() / 2f - 92, canvas.getHeight() - 36);
       canvas.end();

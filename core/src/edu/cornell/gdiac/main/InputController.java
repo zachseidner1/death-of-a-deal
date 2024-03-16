@@ -113,21 +113,11 @@ public class InputController {
   private boolean isFrozen;
 
   /**
-<<<<<<< HEAD
-   * The toggle representing whether the timer is paused
-   */
-  private boolean meterActive = false;
-  /**
    * The toggle representing if the freezing mechanic increases density
    */
-  private boolean densityIncreased = false;
+  private boolean timerActive = false;
+
   /**
-   * The toggle representing if the freezing mechanic increases density
-   */
-  private boolean timerActive=false;
-  /**
-=======
->>>>>>> 2134b0e0942575c00f4922552756445c77393653
    * Creates a new input controller
    * <p>
    * The input controller attempts to connect to the X-Box controller at device 0, if it exists.
@@ -149,15 +139,11 @@ public class InputController {
       public boolean keyDown(int keycode) {
         switch (keycode) {
           case Keys.F:
-              isFrozen = !isFrozen;
-          case Keys.X:
-            meterActive = !meterActive;
-            return true;
-          case Keys.M:
-            densityIncreased = !densityIncreased;
+            isFrozen = !isFrozen;
             return true;
           case Keys.T:
-            timerActive=!timerActive;
+            timerActive = !timerActive;
+            return true;
         }
         return false;
       }
@@ -332,14 +318,7 @@ public class InputController {
   public boolean didExit() {
     return exitPressed && !exitPrevious;
   }
-
-  public boolean getMeterActive() {
-    return meterActive;
-  }
-
-  public boolean getShouldSlide() {
-    return densityIncreased;
-  }
+  
 
   public boolean getTimerActive() {
     return timerActive;
