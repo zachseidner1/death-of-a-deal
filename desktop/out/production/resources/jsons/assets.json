@@ -5,7 +5,6 @@
       "wrapU": "repeated",
       "wrapV": "repeated"
     },
-    "wind": "textures/wind.png",
     "dude": "textures/dude.png",
     "frozen": "textures/frozen.png",
     "goal": "textures/goaldoor.png",
