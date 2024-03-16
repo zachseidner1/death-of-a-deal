@@ -18,6 +18,8 @@ public class CollisionController implements ContactListener {
   protected ObjectSet<Fixture> sensorFixtures;
   private LevelModel level;
 
+  private BreakablePlatformModel[] brokenPlatforms;
+
   /**
    * Set up the collision model based on Level Model & Create sensorFixtures to track active bodies
    *
@@ -26,6 +28,7 @@ public class CollisionController implements ContactListener {
   public CollisionController(LevelModel levelModel) {
     this.level = levelModel;
     this.sensorFixtures = new ObjectSet<Fixture>();
+    this.brokenPlatforms = new BreakablePlatformModel[10];
   }
 
   /**
@@ -52,8 +55,8 @@ public class CollisionController implements ContactListener {
       BoxObstacle door = level.getExit();
 
       // See if we have landed on the ground
-      if ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
-          (avatar.getSensorName().equals(fd1) && avatar != bd2)) {
+      if ((avatar.getSensorName().equals(fd2) && avatar != bd1 ) ||
+          (avatar.getSensorName().equals(fd1) && avatar != bd2 )) {
         avatar.setGrounded(true);
         sensorFixtures.add(avatar == bd1 ? fix2 : fix1);
       }
@@ -113,6 +116,7 @@ public class CollisionController implements ContactListener {
     Body body2 = fix2.getBody();
     PlayerModel plyr = level.getAvatar();
     preSolveBounce(contact, plyr, body1, body2);
+    preSolveBreak(contact, plyr, body1, body2);
   }
 
 
@@ -145,6 +149,33 @@ public class CollisionController implements ContactListener {
           float c = bplt.getCoefficient();
           if (plyr.isFrozen()) {
             contact.setRestitution(c);
+          }
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void preSolveBreak(Contact contact, PlayerModel plyr, Body body1, Body body2) {
+    try {
+      Obstacle bd1 = (Obstacle) body1.getUserData();
+      Obstacle bd2 = (Obstacle) body2.getUserData();
+      if (bd1.equals(plyr)) {
+        if (bd1 instanceof BreakablePlatformModel) {
+          BreakablePlatformModel brplt = (BreakablePlatformModel) bd2;
+          if (plyr.getLinearVelocity().y > brplt.getBreakMinVelocity() && brplt.notBroken()) {
+            brplt.setBroken(true);
+            plyr.setGrounded(false);
+          }
+        }
+      }
+      if (bd2.equals(plyr)) {
+        if (bd1 instanceof BreakablePlatformModel) {
+          BreakablePlatformModel brplt = (BreakablePlatformModel) bd1;
+          if (plyr.getLinearVelocity().y > brplt.getBreakMinVelocity() && brplt.notBroken()){
+            brplt.setBroken(true);
+            plyr.setGrounded(false);
           }
         }
       }

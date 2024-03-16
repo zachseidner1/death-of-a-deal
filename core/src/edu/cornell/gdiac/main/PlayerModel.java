@@ -396,7 +396,9 @@ public class PlayerModel extends CapsuleObstacle {
     float y = (gSizeY - json.getFloat("y")) * (1 / drawScale.y);
 
     setPosition(x, y);
-    setDimension(json.getFloat("pwidth"), json.getFloat("pheight"));
+    float width = json.getFloat("width") * (1/drawScale.x);
+    float height = json.getFloat("height") * (1/drawScale.y);
+    setDimension(width, height);
 
     JsonValue properties = json.get("properties").child();
     Color debugColor = null;

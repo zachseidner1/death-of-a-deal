@@ -252,11 +252,11 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":160.134827701893,
-                 "y":156.317341001677
+                 "x":160.135,
+                 "y":156.317
                 }, 
                 {
-                 "height":4.32059448837765,
+                 "height":4.32059,
                  "id":6,
                  "name":"exit",
                  "properties":[
@@ -298,12 +298,12 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":6.23145202492211,
-                 "x":178.818614426072,
-                 "y":12.5608350730889
+                 "width":6.23145,
+                 "x":178.819,
+                 "y":12.5608
                 }, 
                 {
-                 "height":32,
+                 "height":19.1709,
                  "id":8,
                  "name":"player",
                  "properties":[
@@ -320,7 +320,7 @@
                         {
                          "name":"debugcolor",
                          "type":"color",
-                         "value":"yellow"
+                         "value":"#ffffffff"
                         }, 
                         {
                          "name":"force",
@@ -385,11 +385,61 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":32,
-                  "pwidth": 0.45,
-                  "pheight": 0.8,
-                 "x":37.143541816439,
-                 "y":383.417205847112
+                 "width":17.9727,
+                 "x":37.1435,
+                 "y":383.417
+                }, 
+                {
+                 "height":15.576323987539,
+                 "id":10,
+                 "name":"breakable",
+                 "properties":[
+                        {
+                         "name":"bodytype",
+                         "type":"string",
+                         "value":"static"
+                        }, 
+                        {
+                         "name":"breakminvelocity",
+                         "type":"float",
+                         "value": 0.2
+                        }, 
+                        {
+                         "name":"debugcolor",
+                         "type":"string",
+                         "value":"yellow"
+                        }, 
+                        {
+                         "name":"debugopacity",
+                         "type":"int",
+                         "value":200
+                        }, 
+                        {
+                         "name":"density",
+                         "type":"float",
+                         "value":0
+                        }, 
+                        {
+                         "name":"friction",
+                         "type":"float",
+                         "value":0.4
+                        }, 
+                        {
+                         "name":"restitution",
+                         "type":"float",
+                         "value":0.1
+                        }, 
+                        {
+                         "name":"texture",
+                         "type":"string",
+                         "value":"earth"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":51.5216870357057,
+                 "x":99.4488377665948,
+                 "y":427.749820273185
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -398,7 +448,7 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":10,
+ "nextobjectid":11,
  "orientation":"orthogonal",
  "properties":[
         {
