@@ -328,11 +328,6 @@
                          "value":"yellow"
                         }, 
                         {
-                         "name":"fallMultiplier",
-                         "type":"float",
-                         "value":1.1
-                        }, 
-                        {
                          "name":"force",
                          "type":"float",
                          "value":10
@@ -348,12 +343,7 @@
                          "value":30
                         }, 
                         {
-                         "name":"jumpvelocity",
-                         "type":"float",
-                         "value":10
-                        }, 
-                        {
-                         "name":"lowJumpMultiplier",
+                         "name":"jumppulse",
                          "type":"float",
                          "value":2
                         }, 
@@ -497,12 +487,17 @@
         {
          "name":"fallMultiplier",
          "type":"float",
-         "value":1.75
+         "value":2
         }, 
         {
          "name":"gravity",
          "type":"float",
-         "value":-12
+         "value":-9.8
+        }, 
+        {
+         "name":"lowJumpMultiplier",
+         "type":"float",
+         "value":2.5
         }, 
         {
          "name":"pheight",
@@ -520,7 +515,7 @@
  "tilesets":[
         {
          "firstgid":1,
-         "source":"..\/..\/tiled\/tile.tsx"
+         "source":"tile.tsx"
         }],
  "tilewidth":16,
  "type":"map",

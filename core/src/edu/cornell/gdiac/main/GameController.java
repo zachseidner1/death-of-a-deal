@@ -58,8 +58,6 @@ public class GameController implements Screen {
    * Number of position iterations for the constrain solvers
    */
   public static final int WORLD_POSIT = 2;
-  // Threshold for automatic jump release in seconds
-  private final float JUMP_RELEASE_THRESHOLD = 0.1f;
   /**
    * Mute the game for convenience while testing
    */
@@ -354,30 +352,23 @@ public class GameController implements Screen {
     // Jump Mechanics
     // Check for the transition from pressed to not pressed to detect a jump release
     boolean isJumpPressed = InputController.getInstance().didPrimary();
-    boolean isJumpRelease = !isJumpPressed && isJumpPressedLastFrame;
-    boolean isJumpOvertime = false;
 
-    if (isJumpPressed) {
-      jumpTimer += dt;
-      if (jumpTimer >= JUMP_RELEASE_THRESHOLD) {
-        // Release jump automatically when threshold is reached
-        isJumpOvertime = true;
-        jumpTimer = 0; // Reset timer for next jump
-      } else {
-        isJumpOvertime = false;
-      }
-    } else {
-      jumpTimer = 0;
-      isJumpOvertime = false; // Ensure jump is released if key is not pressed
+    avatar.setJumping(isJumpPressed);
+
+    // Change the gravity of the player only
+    float gravity = level.getWorld().getGravity().y;
+    // On fall, increase the gravity to add a more weighty feel
+    if (avatar.getVY() < 0 && !avatar.isGrounded()) {
+      avatar.setVY(
+          avatar.getVY() + gravity * (avatar.getFallMultiplier() - 1) * dt);
+    } else if (avatar.getVY() > 0 && !isJumpPressed && !avatar.isGrounded()) {
+      // On jump, increase the gravity only if the user is not pressing up
+      // Allows the player to exert more control over vertical motion
+      avatar.setVY(avatar.getVY() + gravity * (avatar.getLowJumpMultiplier() - 1) * dt);
     }
 
-    // Mark jump release if jump is over time limit or the player let go of the jump key
-    isJumpRelease = isJumpOvertime || isJumpRelease;
-    avatar.setJumping(isJumpPressed, isJumpRelease, dt);
-    if (avatar.isJumping()) {
-      if (!IS_MUTED) {
-        jumpId = playSound(jumpSound, jumpId);
-      }
+    if (avatar.getIsJumping() && !IS_MUTED) {
+      jumpId = playSound(jumpSound, jumpId);
     }
     if (input.getTimerActive()) {
       timer -= dt;
