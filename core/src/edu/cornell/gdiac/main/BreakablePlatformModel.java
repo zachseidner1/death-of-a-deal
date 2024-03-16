@@ -8,7 +8,7 @@ import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import java.lang.reflect.Field;
 
-public class BreakablePlatformModel extends PlatformModel{
+public class BreakablePlatformModel extends PlatformModel {
 
   /**
    * Min force required to break breakable platform
@@ -17,7 +17,7 @@ public class BreakablePlatformModel extends PlatformModel{
 
   private boolean broken;
 
-  public BreakablePlatformModel(){
+  public BreakablePlatformModel() {
     super();
     region = null;
     this.breakMinVelocity = 0f;
@@ -28,36 +28,38 @@ public class BreakablePlatformModel extends PlatformModel{
     return breakMinVelocity;
   }
 
-  public void setBreakMinVelocity(float value){
+  public void setBreakMinVelocity(float value) {
     breakMinVelocity = value;
   }
 
-  public boolean isBroken(){
-    return broken;
-  }
 
-  public boolean notBroken(){
+  public boolean notBroken() {
     return !broken;
   }
 
-  public void setBroken(boolean bool){
+  public boolean isBroken() {
+    return broken;
+  }
+
+  public void setBroken(boolean bool) {
     broken = bool;
   }
+
   public void initialize(AssetDirectory directory, JsonValue json, int gSizeY) {
     setName(json.getString("name"));
 
-    float x = json.getFloat("x") * (1/drawScale.x);
-    float y = (gSizeY - json.getFloat("y")) * (1/drawScale.y);
-    setPosition(x,y);
-    float width = json.getFloat("width") * (1/drawScale.x);
-    float height = json.getFloat("height") * (1/drawScale.y);
+    float x = json.getFloat("x") * (1 / drawScale.x);
+    float y = (gSizeY - json.getFloat("y")) * (1 / drawScale.y);
+    setPosition(x, y);
+    float width = json.getFloat("width") * (1 / drawScale.x);
+    float height = json.getFloat("height") * (1 / drawScale.y);
     setDimension(width, height);
 
     JsonValue properties = json.get("properties").child();
     Color debugColor = null;
     int debugOpacity = -1;
-    while (properties != null){
-      switch (properties.getString("name")){
+    while (properties != null) {
+      switch (properties.getString("name")) {
         case "bodytype":
           setBodyType(
               properties.getString("value").equals("static") ? BodyDef.BodyType.StaticBody
