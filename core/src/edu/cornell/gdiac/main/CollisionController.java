@@ -194,6 +194,7 @@ public class CollisionController implements ContactListener {
           BreakablePlatformModel breakablePlatform = (BreakablePlatformModel) bd1;
           if (MathUtil.getMagnitude(plyr.getLinearVelocity())
               > breakablePlatform.getBreakMinVelocity()
+              || breakablePlatform.isBroken()
           ) {
             breakablePlatform.setBroken(true);
             contact.setEnabled(false);
@@ -205,6 +206,7 @@ public class CollisionController implements ContactListener {
           BreakablePlatformModel breakablePlatform = (BreakablePlatformModel) bd1;
           if (MathUtil.getMagnitude(plyr.getLinearVelocity())
               > breakablePlatform.getBreakMinVelocity()
+              || breakablePlatform.isBroken()
           ) {
             breakablePlatform.setBroken(true);
             contact.setEnabled(false);
@@ -215,7 +217,6 @@ public class CollisionController implements ContactListener {
       e.printStackTrace();
     }
   }
-
 
 
   public void preSolveSlope(Contact contact, PlayerModel plyr, Body body1, Body body2) {

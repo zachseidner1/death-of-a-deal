@@ -55,6 +55,11 @@ public class BreakablePlatformModel extends PlatformModel {
     float height = json.getFloat("height") * (1 / drawScale.y);
     setDimension(width, height);
 
+    String key = json.getString("gid");
+    System.out.println("key = " + key);
+    TextureRegion texture = new TextureRegion(directory.getEntry(key, Texture.class));
+    setTexture(texture);
+
     JsonValue properties = json.get("properties").child();
     Color debugColor = null;
     int debugOpacity = -1;
@@ -89,10 +94,6 @@ public class BreakablePlatformModel extends PlatformModel {
         case "breakminvelocity":
           setBreakMinVelocity(properties.getFloat("value"));
           break;
-        case "texture":
-          String key = properties.getString("value");
-          TextureRegion texture = new TextureRegion(directory.getEntry(key, Texture.class));
-          setTexture(texture);
         default:
           break;
       }

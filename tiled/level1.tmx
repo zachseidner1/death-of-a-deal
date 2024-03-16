@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="40" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="12">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="40" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="19">
  <editorsettings>
-  <export target="../DeathOfADeal/assets/jsons/level_map_format.json" format="json"/>
+  <export target="../assets/jsons/level_map_format.json" format="json"/>
  </editorsettings>
  <properties>
   <property name="airresitance" type="float" value="1"/>
@@ -9,7 +9,7 @@
   <property name="pheight" type="float" value="12"/>
   <property name="pwidth" type="float" value="16"/>
  </properties>
- <tileset firstgid="1" source="../TiledProject2/tile.tsx"/>
+ <tileset firstgid="1" source="tile.tsx"/>
  <layer id="2" name="deco" width="40" height="30">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -159,6 +159,16 @@
     <property name="width" type="float" value="0"/>
    </properties>
    <polygon points="-64,0 -64,-32 64,0"/>
+  </object>
+  <object id="18" name="breakable" gid="1" x="128" y="208" width="48" height="16">
+   <properties>
+    <property name="bodytype" value="static"/>
+    <property name="breakminvelocity" type="float" value="6"/>
+    <property name="debugcolor" value="yellow"/>
+    <property name="density" type="float" value="0"/>
+    <property name="friction" type="float" value="0"/>
+    <property name="restitution" type="float" value="0"/>
+   </properties>
   </object>
  </objectgroup>
 </map>
