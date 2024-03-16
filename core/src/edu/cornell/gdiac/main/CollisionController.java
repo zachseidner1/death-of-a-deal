@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.utils.ObjectSet;
 import edu.cornell.gdiac.physics.obstacle.BoxObstacle;
 import edu.cornell.gdiac.physics.obstacle.Obstacle;
+import edu.cornell.gdiac.util.MathUtil;
 
 public class CollisionController implements ContactListener {
 
@@ -161,8 +162,10 @@ public class CollisionController implements ContactListener {
       Obstacle bd2 = (Obstacle) body2.getUserData();
       if (bd1.equals(plyr)) {
         if (bd1 instanceof BreakablePlatformModel) {
-          BreakablePlatformModel breakablePlatform = (BreakablePlatformModel) bd2;
-          if (plyr.getLinearVelocity().y > breakablePlatform.getBreakMinVelocity()) {
+          BreakablePlatformModel breakablePlatform = (BreakablePlatformModel) bd1;
+          if (MathUtil.getMagnitude(plyr.getLinearVelocity())
+              > breakablePlatform.getBreakMinVelocity()
+          ) {
             breakablePlatform.setBroken(true);
             contact.setEnabled(false);
           }
@@ -171,7 +174,7 @@ public class CollisionController implements ContactListener {
       if (bd2.equals(plyr)) {
         if (bd1 instanceof BreakablePlatformModel) {
           BreakablePlatformModel breakablePlatform = (BreakablePlatformModel) bd1;
-          if (plyr.getLinearVelocity().dot(plyr.getLinearVelocity())
+          if (MathUtil.getMagnitude(plyr.getLinearVelocity())
               > breakablePlatform.getBreakMinVelocity()
           ) {
             breakablePlatform.setBroken(true);

@@ -390,7 +390,7 @@
                  "y":383.417
                 }, 
                 {
-                 "height":15.576323987539,
+                 "height":16,
                  "id":10,
                  "name":"breakable",
                  "properties":[
@@ -402,7 +402,7 @@
                         {
                          "name":"breakminvelocity",
                          "type":"float",
-                         "value": 0.2
+                         "value": 10
                         }, 
                         {
                          "name":"debugcolor",
