@@ -44,6 +44,7 @@ public class WindModel {
   private FixtureDef windFixtureDef;
   private PolygonShape windShape;
   private float windRotation;
+  private Color windColor;
   private boolean isWindOn;
 
   WindModel() {
@@ -55,12 +56,25 @@ public class WindModel {
     windSource = new Vector2();
     windCenter = new Vector2();
     windForce = new Vector2();
+
+    // Default color
+    windColor = new Color(0.5f, 0.5f, 1f, 0.1f);
   }
 
   /**
    * Set wind fields
    */
-  public void initialize(float windSourceX, float windSourceY, float windBreadth, float windLength, float windStrength, float windRotation, WindSide windSide, WindType windType, TextureRegion windTexture) {
+  public void initialize(
+    float windSourceX,
+    float windSourceY,
+    float windBreadth,
+    float windLength,
+    float windStrength,
+    float windRotation,
+    WindSide windSide,
+    WindType windType,
+    TextureRegion windTexture) {
+
     this.windBreadth = windBreadth;
     this.windLength = windLength;
     this.windRotation = windRotation;
@@ -100,12 +114,15 @@ public class WindModel {
     }
 
     windShape = new PolygonShape();
-    windShape.setAsBox(breadthAsWidth ? breadth2 : length2, breadthAsWidth ? length2 : breadth2, windCenter, (float) (windRotation / (Math.PI / 2)));
+    float width2 = breadthAsWidth ? breadth2 : length2;
+    float height2 = breadthAsWidth ? length2 : breadth2;
+    windShape.setAsBox(
+      width2,
+      height2,
+      new Vector2(windCenter.x - windSource.x, windCenter.y - windSource.y),
+      (float) (windRotation / (Math.PI / 2))
+    );
     windFixtureDef.shape = windShape;
-
-    float width = breadthAsWidth ? windBreadth : windLength;
-    float height = breadthAsWidth ? windLength : windBreadth;
-    windTexture.setRegion(0, 0, width, height);
   }
 
   public FixtureDef getWindFixtureDef() {
@@ -131,19 +148,24 @@ public class WindModel {
       return windForce;
     }
 
+    // TODO: Figure why forces are not accurate here
     float normX = x - windSource.x;
     float normY = y - windSource.y;
     float norm = (float) Math.sqrt(normX * normX + normY * normY);
     normX /= norm;
     normY /= norm;
 
-    windForce.set(normX, normY);
+    // TODO: Temporarily set to pure directional force
+    windForce.set(
+      windSide == WindSide.LEFT ? -1 : windSide == WindSide.RIGHT ? 1 : 0,
+      windSide == WindSide.BOTTOM ? -1 : windSide == WindSide.TOP ? 1 : 0);
 
     switch (windType) {
       case Exponential:
-        float decayRate = 0.5f;
-        float decayScale = (float) Math.exp(-decayRate * norm / windLength);
-        windForce.scl(windStrength * decayScale);
+        // TODO: Implement
+//        float decayRate = 0.5f;
+//        float decayScale = (float) Math.exp(-decayRate * norm / windLength);
+//        windForce.scl(windStrength * decayScale);
         break;
       default:
         windForce.scl(windStrength);
@@ -154,6 +176,7 @@ public class WindModel {
   }
 
   /**
+   * // TODO: Can be refactored with binding drawing with wind region coordinates
    * Draws the wind
    */
   protected void draw(GameCanvas canvas, Vector2 drawScale) {
@@ -161,13 +184,26 @@ public class WindModel {
       return;
     }
 
-    float reflectX = windSide == WindSide.LEFT ? -1.0f : 1.0f;
+    boolean shouldFlipX = windSide == WindSide.LEFT;
+    boolean shouldFlipY = windSide == WindSide.BOTTOM;
+    windTexture.flip(shouldFlipX, false);
     float assetRotation = windSide == WindSide.TOP ? 90 : windSide == WindSide.BOTTOM ? -90 : 0;
     float width = breadthAsWidth ? windBreadth : windLength;
     float height = breadthAsWidth ? windLength : windBreadth;
+    windTexture.setRegion(0, 0, width / 2, height / 2);
 
+    // TODO: Figure out asset rotation
     // TODO: find how to set texture origin
-    canvas.draw(windTexture, Color.BLUE, 0, 0, windCenter.x * drawScale.x, windCenter.y * drawScale.y, windRotation, reflectX, 1);
+    canvas.draw(
+      windTexture,
+      windColor,
+      0,
+      0,
+      windSource.x * drawScale.x,
+      (windSource.y - height / 2) * drawScale.y,
+      (shouldFlipX ? -1 : 1) * width * drawScale.x,
+      (shouldFlipY ? -1 : 1) * height * drawScale.y
+    );
   }
 
   /**

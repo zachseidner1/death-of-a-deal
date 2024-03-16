@@ -11,13 +11,13 @@ import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.main.WindModel.WindSide;
 import edu.cornell.gdiac.main.WindModel.WindType;
-import edu.cornell.gdiac.physics.obstacle.PolygonObstacle;
 import java.lang.reflect.Field;
 
 /**
- * Contains simple state for whether the fan is applying wind force
+ * Contains simple state for whether the fan is applying wind force. Creates and owns ephemeral wind
+ * models to be created when the fan is on.
  */
-public class FanModel extends PolygonObstacle {
+public class FanModel extends PlatformModel {
   final private float DEFAULT_PERIOD = 10.0f;
   final private float DEFAULT_PERIOD_ON_RATIO = 1.0f;
   final private float DEFAULT_CURR_TIME = 0.0f;
@@ -50,14 +50,16 @@ public class FanModel extends PolygonObstacle {
 
   public FanModel() {
     // Since we do not know points yet, initialize to box
-    super(new float[]{0, 0, 1, 0, 1, 1, 0, 1}, 0, 0);
+    // TODO: Fix
+    // super(new float[]{0, 0, 1, 0, 1, 1, 0, 1}, 0, 0);
+    super();
 
     // Wind fixture creation
     wind = new WindModel();
   }
 
   /**
-   * Initializes the sloped platform via the given JSON value
+   * Initializes the fan platform via the given JSON value
    *
    * <p>The JSON value has been parsed and is part of a bigger level file. However, this JSON value
    * is limited to the platform subtree
@@ -71,17 +73,19 @@ public class FanModel extends PolygonObstacle {
     float scaleFactorX = 1 / drawScale.x;
     float scaleFactorY = 1 / drawScale.y;
 
+    float width = json.getFloat("width") * scaleFactorX;
+    float height = json.getFloat("height") * scaleFactorY;
+    setDimension(width, height);
+
     // Note: (x, y) is top-left most point
     float x = json.getFloat("x") * scaleFactorX;
     float y = (gSizeY - json.getFloat("y")) * scaleFactorY;
-    setPosition(x, y);
+    setPosition(x + width / 2, y - height / 2);
 
-    float width = json.getFloat("width") * scaleFactorX;
-    float height = json.getFloat("height") * scaleFactorY;
-
-    float[] points = {x, y, x + width, y, x + width, y - height, x, y - height};
-    initShapes(points);
-    initBounds();
+    // TODO: Fix
+//    float[] points = {x, y, x + width, y, x + width, y - height, x, y - height};
+//    initShapes(points);
+//    initBounds();
 
     // Wind wrapper fields
     Vector2 windSource = new Vector2();
@@ -179,18 +183,60 @@ public class FanModel extends PolygonObstacle {
       properties = properties.next();
     }
 
+    // TODO: Figure out fan and wind rotation
     // Configure shape and configure wind fixture
-    wind.initialize(windSource.x, windSource.y, windBreadth, windLength, windStrength, fanRotation, fanSide, windType, windTexture);
+    initializeWind(
+      windSource.x,
+      windSource.y,
+      windBreadth,
+      windLength,
+      windStrength,
+      fanRotation,
+      fanSide,
+      windType,
+      windTexture
+    );
+  }
+
+  /**
+   * // TODO: Creation and destruction of wind fixture (on/off status)
+   * Called whenever there should be a change in the behavior of the wind, as directed by this fan
+   */
+  public void initializeWind(
+    float windSourceX,
+    float windSourceY,
+    float windBreadth,
+    float windLength,
+    float windStrength,
+    float windRotation,
+    WindSide windSide,
+    WindType windType,
+    TextureRegion windTexture) {
+
+    wind.initialize(
+      windSourceX,
+      windSourceY,
+      windBreadth,
+      windLength,
+      windStrength,
+      windRotation,
+      windSide,
+      windType,
+      windTexture
+    );
   }
 
   @Override
   protected void createFixtures() {
     super.createFixtures();
 
+    // TODO: Need to figure out a way to make wind fixture creation/destruction more efficient here. Will likely factor out wind fixture creation/destruction logic so that it can be applied elsewhere (i.e. on set fan active)
     FixtureDef windFixtureDef = wind.getWindFixtureDef();
     // Create fixture
     if (wind != null && windFixtureDef != null) {
       windFixture = body.createFixture(windFixtureDef);
+      // Sets the user data to instance of Wind
+      windFixture.setUserData(wind);
     }
   }
 
@@ -205,18 +251,6 @@ public class FanModel extends PolygonObstacle {
   }
 
   /**
-   * Callback to be used on collision with wind fixture sensor, should not set active status of sensor.
-   * Returns the force to be acted on a non-static obstacle.
-   */
-  public Vector2 findWindForce(float x, float y) {
-    if (!isFanActive) {
-      wind.turnWindOn(false);
-    }
-
-    return wind.findWindForce(x, y);
-  }
-
-  /**
    * Get active status of fan
    */
   public boolean getFanActive() {
@@ -224,10 +258,14 @@ public class FanModel extends PolygonObstacle {
   }
 
   /**
+   * // TODO: Will likely need to figure out a way to abstract away wind as a temporary fixture that can be attached and destroyed in the existence of this model
    * Set whether the fan is active
    */
   public void setFanActive(boolean active) {
     isFanActive = active;
+    if (!isFanActive) {
+      wind.turnWindOn(false);
+    }
   }
 
   /**

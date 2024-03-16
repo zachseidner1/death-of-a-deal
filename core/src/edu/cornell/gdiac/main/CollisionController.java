@@ -67,27 +67,28 @@ public class CollisionController implements ContactListener {
       }
 
       // Determine if there is a "collision" with wind from fans
-      boolean isBody1Fan = body1.getUserData() instanceof FanModel;
-      boolean isBody2Fan = body2.getUserData() instanceof FanModel;
-      FanModel fan = null;
+      boolean is1WindFixture = fix1.getUserData() instanceof WindModel;
+      boolean is2WindFixture = fix2.getUserData() instanceof WindModel;
+      WindModel wind = null;
       Obstacle obj = null;
 
-      if (isBody1Fan) {
-        fan = (FanModel) body1.getUserData();
+      if (is1WindFixture) {
+        wind = (WindModel) fix1.getUserData();
         obj = bd2;
-      } else if (isBody2Fan) {
-        fan = (FanModel) body2.getUserData();
+      } else if (is2WindFixture) {
+        wind = (WindModel) fix2.getUserData();
         obj = bd1;
       }
 
       // On wind contact callback
-      if (fan != null && obj != null) {
+      // TODO: Player collision with wind does not work properly when falling onto the wind, but works when jumping up to the wind
+      if (wind != null && obj != null) {
         // Should not continue detection with static body
         if (obj.getBodyType() == BodyType.StaticBody) {
           contact.setEnabled(false);
         } else {
           // Apply wind force
-          Vector2 windForce = fan.findWindForce(obj.getX(), obj.getY());
+          Vector2 windForce = wind.findWindForce(obj.getX(), obj.getY());
           obj.getBody().applyForce(windForce, obj.getPosition(), true);
         }
       }

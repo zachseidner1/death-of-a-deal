@@ -440,7 +440,7 @@
                         {
                          "name":"Side",
                          "type":"string",
-                         "value":"right"
+                         "value":"left"
                         }, 
                         {
                          "name":"Type",
@@ -450,12 +450,12 @@
                         {
                          "name":"WindBreadth",
                          "type":"float",
-                         "value":40
+                         "value":100
                         }, 
                         {
                          "name":"WindLength",
                          "type":"float",
-                         "value":5
+                         "value":120
                         }, 
                         {
                          "name":"WindStrength",
@@ -471,8 +471,8 @@
                  "type":"Fan",
                  "visible":true,
                  "width":20,
-                 "x":92.4960917144346,
-                 "y":338.874413757165
+                 "x":137.488275143304,
+                 "y":286.294945284002
                 }],
          "opacity":1,
          "type":"objectgroup",
