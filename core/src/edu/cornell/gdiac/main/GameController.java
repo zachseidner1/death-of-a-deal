@@ -58,26 +58,18 @@ public class GameController implements Screen {
    * Number of position iterations for the constrain solvers
    */
   public static final int WORLD_POSIT = 2;
+  // Threshold for automatic jump release in seconds
+  private final float JUMP_RELEASE_THRESHOLD = 0.1f;
   /**
-   * How much the meter goes up when you're not moving
+   * Mute the game for convenience while testing
    */
-  private final float STATIONARY_RATE = 0.25f;
-  /**
-   * How much the meter goes up when you jump
-   */
-  private final float JUMP_METER_ADDITION = 10f;
-  /**
-   * When the meter goes above this value, the player will freeze
-   */
-  private final float FREEZE_SUSPICION_THRESHOLD = 100;
-  /**
-   * The time the player spends frozen in seconds
-   */
-  private final float FREEZE_TIME = 2;
+  private final boolean IS_MUTED = true;
   /**
    * Need an ongoing reference to the asset directory
    */
   protected AssetDirectory directory;
+
+  // THESE ARE CONSTANTS BECAUSE WE NEED THEM BEFORE THE LEVEL IS LOADED
   /**
    * The font for giving messages to the player
    */
@@ -131,6 +123,14 @@ public class GameController implements Screen {
    * Counter for keep track of meter
    */
   private float meterCounter;
+  /**
+   * Timer of the game
+   */
+  private float timer;
+
+  private boolean isJumpPressedLastFrame = false;
+  private boolean isJumpRelease = false;
+  private float jumpTimer = 0f;
 
   /**
    * Creates a new game world
@@ -144,6 +144,7 @@ public class GameController implements Screen {
     failed = false;
     active = false;
     countdown = -1;
+    timer = 100;
     // create CollisionController, which is extended from ContactListener
     collisionController = new  CollisionController(level);
 
@@ -280,6 +281,7 @@ public class GameController implements Screen {
     setFailure(false);
     countdown = -1;
     meterCounter = 0;
+    timer = level.getTimer();
 
     // Reload the json each time
     level.populate(directory, levelFormat);
@@ -351,51 +353,57 @@ public class GameController implements Screen {
     InputController input = InputController.getInstance();
     PlayerModel avatar = level.getAvatar();
     avatar.setMovement(InputController.getInstance().getHorizontal() * avatar.getForce());
-    avatar.setJumping(InputController.getInstance().didPrimary());
 
-    avatar.applyForce();
-    if (avatar.isJumping()) {
-      jumpId = playSound(jumpSound, jumpId);
+    // Jump Mechanics
+    // Check for the transition from pressed to not pressed to detect a jump release
+    boolean isJumpPressed = InputController.getInstance().didPrimary();
+    boolean isJumpRelease = !isJumpPressed && isJumpPressedLastFrame;
+    boolean isJumpOvertime = false;
+
+    if (isJumpPressed) {
+      jumpTimer += dt;
+      if (jumpTimer >= JUMP_RELEASE_THRESHOLD) {
+        // Release jump automatically when threshold is reached
+        isJumpOvertime = true;
+        jumpTimer = 0; // Reset timer for next jump
+      } else {
+        isJumpOvertime = false;
+      }
+    } else {
+      jumpTimer = 0;
+      isJumpOvertime = false; // Ensure jump is released if key is not pressed
     }
 
-    // Turn the physics engine crank.
-    level.getWorld().step(WORLD_STEP, WORLD_VELOC, WORLD_POSIT);
-
-    if (!input.getMeterPaused()) {
-      meterCounter += dt;
-
-      // If moving
-      if ((input.getHorizontal() != 0)
-          && meterCounter < FREEZE_SUSPICION_THRESHOLD) {
-        meterCounter += STATIONARY_RATE;
+    // Mark jump release if jump is over time limit or the player let go of the jump key
+    isJumpRelease = isJumpOvertime || isJumpRelease;
+    avatar.setJumping(isJumpPressed, isJumpRelease, dt);
+    if (avatar.isJumping()) {
+      if (!IS_MUTED) {
+        jumpId = playSound(jumpSound, jumpId);
       }
-      // If jumping
-      if (input.getVertical() != 0 && level.getAvatar().isJumping()
-          && meterCounter < FREEZE_SUSPICION_THRESHOLD) {
-        meterCounter += JUMP_METER_ADDITION;
-        // check if we've passed the freeze suspicion threshold, we want full freeze time
-        if (meterCounter >= FREEZE_SUSPICION_THRESHOLD) {
-          meterCounter = FREEZE_SUSPICION_THRESHOLD;
-        }
+    }
+    if (input.getTimerActive()) {
+      timer -= dt;
+      avatar.setFrozen(input.getFrozen());
+      if (!isFailure() && timer <= 1) {
+        setFailure(true);
       }
-      if (meterCounter >= FREEZE_SUSPICION_THRESHOLD) {
-        level.getAvatar().setFrozen(true);
-        if (meterCounter >= FREEZE_SUSPICION_THRESHOLD + FREEZE_TIME) {
-          meterCounter = 0;
-          level.getAvatar().setFrozen(false);
-        }
-      }
-
       if (complete || failed) {
-        meterCounter = 0;
+        timer = 0;
       }
     } else {
       // Get input to see if f is just pressed and if so set frozen of the avatar to true
       // This method only works when the game is paused!
-      avatar.setFrozen(InputController.getInstance().getFrozen());
+      avatar.setFrozen(input.getFrozen());
     }
 
-    avatar.setShouldSlide(input.getShouldSlide());
+    // Turn the physics engine crank.
+    level.getWorld().step(WORLD_STEP, WORLD_VELOC, WORLD_POSIT);
+    // Apply air resistance to all objects in level
+    level.applyAirResistance();
+
+    avatar.setFrozen(input.getFrozen());
+    avatar.applyForce();
   }
 
   /**
@@ -410,29 +418,23 @@ public class GameController implements Screen {
    */
   public void draw(float delta) {
     canvas.clear();
-    InputController input = InputController.getInstance();
     level.draw(canvas);
+    InputController input = InputController.getInstance();
 
     // Display meter
     if (!complete && !failed) {
       displayFont.setColor(Color.BLACK);
       canvas.begin();
-      String message = "Meter: " + (int) meterCounter;
-
-      if (input.getMeterPaused()) {
-        message = "";
-      }
-
-      if (input.getShouldSlide()) {
-        message += " d";
+      String message = "";
+      if (input.getTimerActive()) {
+        message = "Timer: " + (int) timer;
       }
       canvas.drawText(message, displayFont, canvas.getWidth() / 2f - 92, canvas.getHeight() - 36);
       canvas.end();
-
     }
 
     // Final message
-    if (complete && !failed) {
+    if (complete) {
       displayFont.setColor(Color.YELLOW);
       canvas.begin(); // DO NOT SCALE
       canvas.drawTextCentered("VICTORY!", displayFont, 0.0f);

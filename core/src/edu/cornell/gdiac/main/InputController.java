@@ -113,13 +113,9 @@ public class InputController {
   private boolean isFrozen;
 
   /**
-   * The toggle representing whether the timer is paused
-   */
-  private boolean meterPaused = true;
-  /**
    * The toggle representing if the freezing mechanic increases density
    */
-  private boolean densityIncreased = true;
+  private boolean timerActive = false;
 
   /**
    * Creates a new input controller
@@ -143,15 +139,10 @@ public class InputController {
       public boolean keyDown(int keycode) {
         switch (keycode) {
           case Keys.F:
-            if (meterPaused) {
-              isFrozen = !isFrozen;
-            }
-            return meterPaused;
-          case Keys.X:
-            meterPaused = !meterPaused;
+            isFrozen = !isFrozen;
             return true;
-          case Keys.M:
-            densityIncreased = !densityIncreased;
+          case Keys.T:
+            timerActive = !timerActive;
             return true;
         }
         return false;
@@ -248,15 +239,15 @@ public class InputController {
   }
 
   /**
-   * Returns true if the primary action button was pressed.
+   * Returns true if the primary action button is being pressed.
    * <p>
-   * This is a one-press button. It only returns true at the moment it was pressed, and returns
-   * false at any frame afterwards.
+   * Unlike a one-press button that only returns true at the moment it was pressed, this method
+   * returns true as long as the button remains pressed, providing continuous detection.
    *
-   * @return true if the primary action button was pressed.
+   * @return true if the primary action button is being pressed.
    */
   public boolean didPrimary() {
-    return primePressed && !primePrevious;
+    return primePressed;
   }
 
   /**
@@ -327,13 +318,10 @@ public class InputController {
   public boolean didExit() {
     return exitPressed && !exitPrevious;
   }
+  
 
-  public boolean getMeterPaused() {
-    return meterPaused;
-  }
-
-  public boolean getShouldSlide() {
-    return densityIncreased;
+  public boolean getTimerActive() {
+    return timerActive;
   }
 
   public boolean getFrozen() {

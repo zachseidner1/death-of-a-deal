@@ -8,6 +8,7 @@
     600
   ],
   "gravity": -9.8,
+  "timelimit": 16.0,
   "avatar": {
     "pos": [
       2.5,
@@ -18,9 +19,9 @@
       0.61
     ],
     "bodytype": "dynamic",
-    "friction": 0.0,
+    "friction": 0.3,
     "restitution": 0.0,
-    "force": 10.0,
+    "force": 3.0,
     "damping": 10.0,
     "maxspeed": 5.0,
     "jumppulse": 1.25,
@@ -311,7 +312,27 @@
       "texture": "earth",
       "debugcolor": "red",
       "debugopacity": 200,
-      "coefficient": 1.5
+      "coefficient": 1.5,
+      "maxspeed": 10
+    },
+    "bouncefloor2": {
+      "pos": [
+        1,
+        4
+      ],
+      "size": [
+        0.5,
+        2
+      ],
+      "bodytype": "static",
+      "density": 0.0,
+      "friction": 0.4,
+      "restitution": 0.1,
+      "texture": "earth",
+      "debugcolor": "red",
+      "debugopacity": 200,
+      "coefficient": 10,
+      "maxspeed": 500
     }
   }
 }

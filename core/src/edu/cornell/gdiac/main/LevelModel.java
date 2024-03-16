@@ -35,6 +35,11 @@ import edu.cornell.gdiac.util.PooledList;
 public class LevelModel {
 
   /**
+   * The initial air resistance of the level from the levels JSON
+   */
+  private final float INITIAL_AIR_RESISTANCE = 0.1f;
+
+  /**
    * The Box2D world
    */
   protected World world;
@@ -79,6 +84,18 @@ public class LevelModel {
    * Whether or not the level is completed
    */
   private boolean complete;
+  /**
+   * Time limit for the level
+   */
+  private float timer;
+  /**
+   * Air resistance scale to be applied to every obstacle in the level
+   */
+  private float airResistance = INITIAL_AIR_RESISTANCE;
+  /**
+   * Cache for internal force calculations
+   */
+  private Vector2 forceCache = new Vector2();
 
   /**
    * Creates a new LevelModel
@@ -181,7 +198,12 @@ public class LevelModel {
   public void setComplete(boolean value) {
     complete = value;
   }
-
+  /**
+   * Return the time limit
+   */
+  public float getTimer() {
+    return timer;
+  }
   /**
    * Lays out the game geography from the given JSON file
    *
@@ -200,6 +222,9 @@ public class LevelModel {
     // get map properties (applies to entire level)
     while (property != null) {
       switch (property.getString("name")) {
+        case "airresistance":
+          airResistance = property.getFloat("value");
+          break;
         case "gravity":
           gravity = property.getFloat("value");
           break;
@@ -293,7 +318,7 @@ public class LevelModel {
 
   private void makeObjects(AssetDirectory directory, JsonValue objects, int gSizeY) {
     while (objects != null) {
-      switch (objects.getString("name")){
+      switch (objects.getString("name")) {
         case "player":
           avatar = new PlayerModel();
           avatar.setDrawScale(scale);
@@ -312,12 +337,19 @@ public class LevelModel {
           slope.initialize(directory, objects, gSizeY);
           activate(slope);
           break;
+        case "Bounce":
+          BouncePlatformModel platform= new BouncePlatformModel();
+          platform.setDrawScale(scale);
+          platform.initialize(directory,objects,gSizeY);
+          activate(platform);
+          break;
         // Breakable platforms as game objects
         case "breakable":
           BreakablePlatformModel breakable = new BreakablePlatformModel();
           breakable.setDrawScale(scale);
           breakable.initialize(directory, objects, gSizeY);
           activate(breakable);
+          break;
       }
       objects = objects.next();
     }
@@ -343,6 +375,27 @@ public class LevelModel {
     assert inBounds(obj) : "Object is not in bounds";
     objects.add(obj);
     obj.activatePhysics(world);
+  }
+
+  /**
+   * Applies air resistance to all objects
+   * <p>
+   * TODO: Figure out rotational air resistance
+   */
+  public void applyAirResistance() {
+    for (Obstacle obj : objects) {
+      // TODO: Refactor (can have obstacles implement air resistance interface to determine whether this force should be applied
+
+      float velX = obj.getVX();
+      float velY = obj.getVY();
+
+      // Apply air resistance force opposite of velocity
+      float airResistanceX = -Math.signum(velX) * airResistance * velX * velX;
+      float airResistanceY = -Math.signum(velY) * airResistance * velY * velY;
+
+      forceCache.set(airResistanceX, airResistanceY);
+      obj.getBody().applyForce(forceCache, obj.getPosition(), true);
+    }
   }
 
   /**
