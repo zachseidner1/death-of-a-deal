@@ -121,8 +121,8 @@ public class InputController {
    * The toggle representing if the freezing mechanic increases density
    */
   private boolean timerActive = false;
-  private boolean nextLevel=false;
-  private boolean pastLevel=false;
+  private boolean nextLevel = false;
+  private boolean pastLevel = false;
 
   /**
    * Creates a new input controller
@@ -146,7 +146,7 @@ public class InputController {
       public boolean keyDown(int keycode) {
         switch (keycode) {
           case Keys.F:
-              isFrozen = !isFrozen;
+            isFrozen = !isFrozen;
           case Keys.M:
             densityIncreased = !densityIncreased;
             return true;
@@ -154,10 +154,10 @@ public class InputController {
             timerActive = !timerActive;
             return true;
           case Keys.N:
-            pastLevel=true;
+            pastLevel = true;
             return true;
           case Keys.P:
-            nextLevel=true;
+            nextLevel = true;
             return true;
         }
         return false;
@@ -217,18 +217,22 @@ public class InputController {
     return theController;
   }
 
-  public boolean getNextLevel(){
+  public boolean getNextLevel() {
     return nextLevel;
   }
-  public void setNextLevel(){
-    nextLevel=false;
+
+  public void setNextLevel() {
+    nextLevel = false;
   }
-  public boolean getPastLevel(){
+
+  public boolean getPastLevel() {
     return pastLevel;
   }
-  public void setPastLevel(){
-    pastLevel=false;
+
+  public void setPastLevel() {
+    pastLevel = false;
   }
+
   /**
    * Returns the amount of sideways movement.
    * <p>

@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="40" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="4" nextobjectid="5">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="40" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="4" nextobjectid="6">
  <editorsettings>
   <export target="../assets/jsons/level0.json" format="json"/>
  </editorsettings>
  <properties>
   <property name="airresitance" type="float" value="1"/>
-  <property name="gravity" type="float" value="-9.8"/>
+  <property name="gravity" type="float" value="-12"/>
   <property name="pheight" type="float" value="12"/>
   <property name="pwidth" type="float" value="16"/>
   <property name="timelimit" value="31"/>
  </properties>
- <tileset firstgid="1" source="../TiledProject2/tile.tsx"/>
+ <tileset firstgid="1" source="tile.tsx"/>
  <layer id="1" name="level" width="40" height="30">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -80,16 +80,18 @@
 </data>
  </layer>
  <objectgroup id="2" name="objects">
-  <object id="1" name="player" x="108.311" y="292.911" width="16" height="32">
+  <object id="1" name="player" x="96" y="240" width="16" height="32">
    <properties>
     <property name="bodytype" value="dynamic"/>
     <property name="damping" type="float" value="10"/>
     <property name="debugcolor" value="yellow"/>
+    <property name="fallMultiplier" type="float" value="1.1"/>
     <property name="force" type="float" value="10"/>
     <property name="friction" type="float" value="0"/>
     <property name="jumplimit" type="int" value="30"/>
-    <property name="jumppulse" type="float" value="2"/>
-    <property name="maxspeed" type="float" value="5"/>
+    <property name="jumpvelocity" type="float" value="10"/>
+    <property name="lowJumpMultiplier" type="float" value="2"/>
+    <property name="maxspeed" type="float" value="6"/>
     <property name="restitution" type="float" value="0"/>
     <property name="sensorcolor" value="red"/>
     <property name="sensorname" value="dudeGroundSensor"/>
@@ -97,36 +99,6 @@
     <property name="sensorsizex" type="float" value="0.183"/>
     <property name="sensorsizey" type="float" value="0.05"/>
     <property name="texture" value="dude"/>
-   </properties>
-  </object>
-  <object id="2" name="Bounce" x="253.882" y="397.707" width="231.371" height="15.0078">
-   <properties>
-    <property name="bodytype" value="static"/>
-    <property name="coefficient" value="2"/>
-    <property name="debugcolor" value="yellow"/>
-    <property name="debugopacity" type="int" value="255"/>
-    <property name="denisty" type="float" value="0"/>
-    <property name="friction" type="float" value="0.01"/>
-    <property name="height" type="float" value="0"/>
-    <property name="max_speed" value="50"/>
-    <property name="restitution" type="float" value="0"/>
-    <property name="texture" value="earth"/>
-    <property name="width" type="float" value="0"/>
-   </properties>
-  </object>
-  <object id="3" name="Bounce" x="258.885" y="222.616" width="223.867" height="15.0078">
-   <properties>
-    <property name="bodytype" value="static"/>
-    <property name="coefficient" value="2"/>
-    <property name="debugcolor" value="yellow"/>
-    <property name="debugopacity" type="int" value="255"/>
-    <property name="denisty" type="float" value="0"/>
-    <property name="friction" type="float" value="0.01"/>
-    <property name="height" type="float" value="0"/>
-    <property name="max_speed" value="50"/>
-    <property name="restitution" type="float" value="0"/>
-    <property name="texture" value="earth"/>
-    <property name="width" type="float" value="0"/>
    </properties>
   </object>
   <object id="4" name="exit" x="555.548" y="364.953" width="32" height="48">
@@ -138,6 +110,36 @@
     <property name="friction" type="float" value="0"/>
     <property name="restitution" type="float" value="0"/>
     <property name="texture" value="goal"/>
+   </properties>
+  </object>
+  <object id="5" name="bounce" gid="1" x="272" y="400" width="192" height="16">
+   <properties>
+    <property name="bodytype" value="static"/>
+    <property name="coefficient" value="3"/>
+    <property name="debugcolor" value="yellow"/>
+    <property name="debugopacity" type="int" value="255"/>
+    <property name="denisty" type="float" value="0"/>
+    <property name="friction" type="float" value="0.01"/>
+    <property name="height" type="float" value="0"/>
+    <property name="max_speed" value="50"/>
+    <property name="restitution" type="float" value="0"/>
+    <property name="texture" value="earth"/>
+    <property name="width" type="float" value="0"/>
+   </properties>
+  </object>
+  <object id="5" name="bounce" gid="1" x="272" y="256" width="192" height="16">
+   <properties>
+    <property name="bodytype" value="static"/>
+    <property name="coefficient" value="3"/>
+    <property name="debugcolor" value="yellow"/>
+    <property name="debugopacity" type="int" value="255"/>
+    <property name="denisty" type="float" value="0"/>
+    <property name="friction" type="float" value="0.01"/>
+    <property name="height" type="float" value="0"/>
+    <property name="max_speed" value="50"/>
+    <property name="restitution" type="float" value="0"/>
+    <property name="texture" value="earth"/>
+    <property name="width" type="float" value="0"/>
    </properties>
   </object>
  </objectgroup>

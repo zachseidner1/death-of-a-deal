@@ -118,8 +118,8 @@
                  "type":"",
                  "visible":true,
                  "width":32,
-                 "x":535.537258989057,
-                 "y":364.952579468473
+                 "x":535.537,
+                 "y":364.953
                 }, 
                 {
                  "height":32,
@@ -142,6 +142,11 @@
                          "value":"yellow"
                         }, 
                         {
+                         "name":"fallMultiplier",
+                         "type":"float",
+                         "value":1.1
+                        }, 
+                        {
                          "name":"force",
                          "type":"float",
                          "value":10
@@ -157,14 +162,19 @@
                          "value":30
                         }, 
                         {
-                         "name":"jumppulse",
+                         "name":"jumpvelocity",
+                         "type":"float",
+                         "value":10
+                        }, 
+                        {
+                         "name":"lowJumpMultiplier",
                          "type":"float",
                          "value":2
                         }, 
                         {
                          "name":"maxspeed",
                          "type":"float",
-                         "value":5
+                         "value":6
                         }, 
                         {
                          "name":"restitution",
@@ -205,13 +215,14 @@
                  "type":"",
                  "visible":true,
                  "width":16,
-                 "x":99.5560187597707,
-                 "y":265.396560708702
+                 "x":112,
+                 "y":256
                 }, 
                 {
-                 "height":121.313152475248,
-                 "id":3,
-                 "name":"Bounce",
+                 "gid":1,
+                 "height":96,
+                 "id":5,
+                 "name":"bounce",
                  "properties":[
                         {
                          "name":"bodytype",
@@ -251,7 +262,7 @@
                         {
                          "name":"max_speed",
                          "type":"string",
-                         "value":"50"
+                         "value":"10"
                         }, 
                         {
                          "name":"restitution",
@@ -271,14 +282,15 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":15.0078,
-                 "x":60.0312745700886,
-                 "y":325.794700468994
+                 "width":16,
+                 "x":400,
+                 "y":416
                 }, 
                 {
-                 "height":121.313,
-                 "id":4,
-                 "name":"Bounce",
+                 "gid":1,
+                 "height":96,
+                 "id":5,
+                 "name":"bounce",
                  "properties":[
                         {
                          "name":"bodytype",
@@ -318,7 +330,7 @@
                         {
                          "name":"max_speed",
                          "type":"string",
-                         "value":"50"
+                         "value":"10"
                         }, 
                         {
                          "name":"restitution",
@@ -338,9 +350,9 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":15.0078,
-                 "x":420.218872277228,
-                 "y":325.794776706618
+                 "width":16,
+                 "x":80,
+                 "y":416
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -390,7 +402,7 @@
          "y":0
         }],
  "nextlayerid":4,
- "nextobjectid":5,
+ "nextobjectid":6,
  "orientation":"orthogonal",
  "properties":[
         {
@@ -401,7 +413,7 @@
         {
          "name":"gravity",
          "type":"float",
-         "value":-9.8
+         "value":-12
         }, 
         {
          "name":"pheight",
@@ -424,7 +436,7 @@
  "tilesets":[
         {
          "firstgid":1,
-         "source":"..\/..\/TiledProject2\/tile.tsx"
+         "source":"..\/..\/tiled\/tile.tsx"
         }],
  "tilewidth":16,
  "type":"map",

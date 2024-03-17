@@ -56,7 +56,6 @@ public class BreakablePlatformModel extends PlatformModel {
     setDimension(width, height);
 
     String key = json.getString("gid");
-    System.out.println("key = " + key);
     TextureRegion texture = new TextureRegion(directory.getEntry(key, Texture.class));
     setTexture(texture);
 

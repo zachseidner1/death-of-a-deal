@@ -25,7 +25,6 @@ import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.audio.SoundEffect;
 import edu.cornell.gdiac.util.ScreenListener;
 import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -60,16 +59,17 @@ public class GameController implements Screen {
    * Number of position iterations for the constrain solvers
    */
   public static final int WORLD_POSIT = 2;
+  private static ArrayList<String> levels;
   /**
    * Mute the game for convenience while testing
    */
   private final boolean IS_MUTED = true;
+
+  // THESE ARE CONSTANTS BECAUSE WE NEED THEM BEFORE THE LEVEL IS LOADED
   /**
    * Need an ongoing reference to the asset directory
    */
   protected AssetDirectory directory;
-
-  // THESE ARE CONSTANTS BECAUSE WE NEED THEM BEFORE THE LEVEL IS LOADED
   /**
    * The font for giving messages to the player
    */
@@ -127,12 +127,10 @@ public class GameController implements Screen {
    * Timer of the game
    */
   private float timer;
-
   private boolean isJumpPressedLastFrame = false;
   private boolean isJumpRelease = false;
   private float jumpTimer = 0f;
-  private int levelNumber=1;
-  private static ArrayList<String> levels;
+  private int levelNumber = 1;
 
   /**
    * Creates a new game world
@@ -256,10 +254,10 @@ public class GameController implements Screen {
    * @param directory Reference to global asset manager.
    */
   public void gatherAssets(AssetDirectory directory) {
-    levels=new ArrayList<String>();
-    levels.add(0,"level0");
-    levels.add(1,"level1");
-    levels.add(2,"level2");
+    levels = new ArrayList<String>();
+    levels.add(0, "level0");
+    levels.add(1, "level1");
+    levels.add(2, "level2");
     // Access the assets used directly by this controller
     this.directory = directory;
     // Some assets may have not finished loading so this is a catch-all for those.
@@ -315,26 +313,24 @@ public class GameController implements Screen {
     if (input.didReset()) {
       reset();
     }
-    if(input.getNextLevel()){
-      if (levelNumber<levels.size()-1){
-        levelNumber+=1;
+    if (input.getNextLevel()) {
+      if (levelNumber < levels.size() - 1) {
+        levelNumber += 1;
         levelFormat = directory.getEntry(levels.get(levelNumber), JsonValue.class);
         reset();
         input.setNextLevel();
-      }
-      else{
+      } else {
         reset();
         input.setNextLevel();
       }
     }
-    if(input.getPastLevel()){
-      if (levelNumber!=0){
-        levelNumber-=1;
+    if (input.getPastLevel()) {
+      if (levelNumber != 0) {
+        levelNumber -= 1;
         levelFormat = directory.getEntry(levels.get(levelNumber), JsonValue.class);
         reset();
         input.setPastLevel();
-      }
-      else{
+      } else {
         reset();
         input.setPastLevel();
       }
@@ -412,7 +408,8 @@ public class GameController implements Screen {
     } else {
       // Get input to see if f is just pressed and if so set frozen of the avatar to true
       // This method only works when the game is paused!
-      avatar.setFrozen(input.getFrozen());}
+      avatar.setFrozen(input.getFrozen());
+    }
 
     // Turn the physics engine crank.
     level.getWorld().step(WORLD_STEP, WORLD_VELOC, WORLD_POSIT);
@@ -442,8 +439,10 @@ public class GameController implements Screen {
     if (!complete && !failed) {
       displayFont.setColor(Color.BLACK);
       canvas.begin();
-      String message="";
-      if(input.getTimerActive()){ message = "Timer: " + (int) timer;}
+      String message = "";
+      if (input.getTimerActive()) {
+        message = "Timer: " + (int) timer;
+      }
 
       if (input.getShouldSlide()) {
         message += " d";

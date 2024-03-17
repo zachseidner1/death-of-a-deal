@@ -239,7 +239,7 @@ public class LevelModel {
           pSize[1] = property.getFloat("value");
           break;
         case "timelimit":
-          timer=property.getFloat("value");
+          timer = property.getFloat("value");
       }
       property = property.next();
     }
@@ -328,7 +328,8 @@ public class LevelModel {
           slope.initialize(directory, objects, gSizeY);
           activate(slope);
           break;
-        case "Bounce":
+        case "bounce":
+          System.out.println("bounce found");
           BouncePlatformModel platform = new BouncePlatformModel();
           platform.setDrawScale(scale);
           platform.initialize(directory, objects, gSizeY);
@@ -429,10 +430,10 @@ public class LevelModel {
     }
   }
 
-  public void breakPlatforms(){
-    for (Obstacle obj : objects){
-      if (obj instanceof BreakablePlatformModel){
-        if (((BreakablePlatformModel) obj).isBroken()){
+  public void breakPlatforms() {
+    for (Obstacle obj : objects) {
+      if (obj instanceof BreakablePlatformModel) {
+        if (((BreakablePlatformModel) obj).isBroken()) {
           objects.remove(obj);
           obj.deactivatePhysics(world);
         }

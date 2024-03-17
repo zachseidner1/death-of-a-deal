@@ -110,6 +110,11 @@
                          "value":"yellow"
                         }, 
                         {
+                         "name":"fallMultiplier",
+                         "type":"float",
+                         "value":1.1
+                        }, 
+                        {
                          "name":"force",
                          "type":"float",
                          "value":10
@@ -125,14 +130,19 @@
                          "value":30
                         }, 
                         {
-                         "name":"jumppulse",
+                         "name":"jumpvelocity",
+                         "type":"float",
+                         "value":10
+                        }, 
+                        {
+                         "name":"lowJumpMultiplier",
                          "type":"float",
                          "value":2
                         }, 
                         {
                          "name":"maxspeed",
                          "type":"float",
-                         "value":5
+                         "value":6
                         }, 
                         {
                          "name":"restitution",
@@ -173,142 +183,8 @@
                  "type":"",
                  "visible":true,
                  "width":16,
-                 "x":108.310578426264,
-                 "y":292.910891089109
-                }, 
-                {
-                 "height":15.0078,
-                 "id":2,
-                 "name":"Bounce",
-                 "properties":[
-                        {
-                         "name":"bodytype",
-                         "type":"string",
-                         "value":"static"
-                        }, 
-                        {
-                         "name":"coefficient",
-                         "type":"string",
-                         "value":"2"
-                        }, 
-                        {
-                         "name":"debugcolor",
-                         "type":"string",
-                         "value":"yellow"
-                        }, 
-                        {
-                         "name":"debugopacity",
-                         "type":"int",
-                         "value":255
-                        }, 
-                        {
-                         "name":"denisty",
-                         "type":"float",
-                         "value":0
-                        }, 
-                        {
-                         "name":"friction",
-                         "type":"float",
-                         "value":0.01
-                        }, 
-                        {
-                         "name":"height",
-                         "type":"float",
-                         "value":0
-                        }, 
-                        {
-                         "name":"max_speed",
-                         "type":"string",
-                         "value":"50"
-                        }, 
-                        {
-                         "name":"restitution",
-                         "type":"float",
-                         "value":0
-                        }, 
-                        {
-                         "name":"texture",
-                         "type":"string",
-                         "value":"earth"
-                        }, 
-                        {
-                         "name":"width",
-                         "type":"float",
-                         "value":0
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":231.370500521105,
-                 "x":253.882232803544,
-                 "y":397.707147420532
-                }, 
-                {
-                 "height":15.0078,
-                 "id":3,
-                 "name":"Bounce",
-                 "properties":[
-                        {
-                         "name":"bodytype",
-                         "type":"string",
-                         "value":"static"
-                        }, 
-                        {
-                         "name":"coefficient",
-                         "type":"string",
-                         "value":"2"
-                        }, 
-                        {
-                         "name":"debugcolor",
-                         "type":"string",
-                         "value":"yellow"
-                        }, 
-                        {
-                         "name":"debugopacity",
-                         "type":"int",
-                         "value":255
-                        }, 
-                        {
-                         "name":"denisty",
-                         "type":"float",
-                         "value":0
-                        }, 
-                        {
-                         "name":"friction",
-                         "type":"float",
-                         "value":0.01
-                        }, 
-                        {
-                         "name":"height",
-                         "type":"float",
-                         "value":0
-                        }, 
-                        {
-                         "name":"max_speed",
-                         "type":"string",
-                         "value":"50"
-                        }, 
-                        {
-                         "name":"restitution",
-                         "type":"float",
-                         "value":0
-                        }, 
-                        {
-                         "name":"texture",
-                         "type":"string",
-                         "value":"earth"
-                        }, 
-                        {
-                         "name":"width",
-                         "type":"float",
-                         "value":0
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":223.866592235539,
-                 "x":258.884838327254,
-                 "y":222.615954090672
+                 "x":96,
+                 "y":240
                 }, 
                 {
                  "height":48,
@@ -354,8 +230,144 @@
                  "type":"",
                  "visible":true,
                  "width":32,
-                 "x":555.547681083898,
-                 "y":364.952579468473
+                 "x":555.548,
+                 "y":364.953
+                }, 
+                {
+                 "gid":1,
+                 "height":16,
+                 "id":5,
+                 "name":"bounce",
+                 "properties":[
+                        {
+                         "name":"bodytype",
+                         "type":"string",
+                         "value":"static"
+                        }, 
+                        {
+                         "name":"coefficient",
+                         "type":"string",
+                         "value":"3"
+                        }, 
+                        {
+                         "name":"debugcolor",
+                         "type":"string",
+                         "value":"yellow"
+                        }, 
+                        {
+                         "name":"debugopacity",
+                         "type":"int",
+                         "value":255
+                        }, 
+                        {
+                         "name":"denisty",
+                         "type":"float",
+                         "value":0
+                        }, 
+                        {
+                         "name":"friction",
+                         "type":"float",
+                         "value":0.01
+                        }, 
+                        {
+                         "name":"height",
+                         "type":"float",
+                         "value":0
+                        }, 
+                        {
+                         "name":"max_speed",
+                         "type":"string",
+                         "value":"50"
+                        }, 
+                        {
+                         "name":"restitution",
+                         "type":"float",
+                         "value":0
+                        }, 
+                        {
+                         "name":"texture",
+                         "type":"string",
+                         "value":"earth"
+                        }, 
+                        {
+                         "name":"width",
+                         "type":"float",
+                         "value":0
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":192,
+                 "x":272,
+                 "y":400
+                }, 
+                {
+                 "gid":1,
+                 "height":16,
+                 "id":5,
+                 "name":"bounce",
+                 "properties":[
+                        {
+                         "name":"bodytype",
+                         "type":"string",
+                         "value":"static"
+                        }, 
+                        {
+                         "name":"coefficient",
+                         "type":"string",
+                         "value":"3"
+                        }, 
+                        {
+                         "name":"debugcolor",
+                         "type":"string",
+                         "value":"yellow"
+                        }, 
+                        {
+                         "name":"debugopacity",
+                         "type":"int",
+                         "value":255
+                        }, 
+                        {
+                         "name":"denisty",
+                         "type":"float",
+                         "value":0
+                        }, 
+                        {
+                         "name":"friction",
+                         "type":"float",
+                         "value":0.01
+                        }, 
+                        {
+                         "name":"height",
+                         "type":"float",
+                         "value":0
+                        }, 
+                        {
+                         "name":"max_speed",
+                         "type":"string",
+                         "value":"50"
+                        }, 
+                        {
+                         "name":"restitution",
+                         "type":"float",
+                         "value":0
+                        }, 
+                        {
+                         "name":"texture",
+                         "type":"string",
+                         "value":"earth"
+                        }, 
+                        {
+                         "name":"width",
+                         "type":"float",
+                         "value":0
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":192,
+                 "x":272,
+                 "y":256
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -364,7 +376,7 @@
          "y":0
         }],
  "nextlayerid":4,
- "nextobjectid":5,
+ "nextobjectid":6,
  "orientation":"orthogonal",
  "properties":[
         {
@@ -375,7 +387,7 @@
         {
          "name":"gravity",
          "type":"float",
-         "value":-9.8
+         "value":-12
         }, 
         {
          "name":"pheight",
@@ -398,7 +410,7 @@
  "tilesets":[
         {
          "firstgid":1,
-         "source":"..\/..\/TiledProject2\/tile.tsx"
+         "source":"..\/..\/tiled\/tile.tsx"
         }],
  "tilewidth":16,
  "type":"map",
