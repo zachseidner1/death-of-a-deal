@@ -42,10 +42,6 @@ public class PlayerModel extends CapsuleObstacle {
    */
   private final float FROZEN_DENSITY = 50.0f;
   /**
-   * Whether the character has a higher density in the frozen state which causes them to slide
-   */
-  private boolean shouldSlide;
-  /**
    * The factor to multiply by the input
    */
   private float force;
@@ -58,15 +54,13 @@ public class PlayerModel extends CapsuleObstacle {
    */
   private float maxspeed;
   /**
-   * The impulse for the character jump
-   */
-  private float jumppulse;
-  /**
    * Cooldown (in animation frames) for jumping
    */
   private int jumpLimit;
   /**
-   * The current horizontal movement of the character
+   * The current horizontal movement of the character.
+   * <p></p>
+   * Is 1 if the player is moving right, and -1 otherwise
    */
   private float movement;
   /**
@@ -78,11 +72,6 @@ public class PlayerModel extends CapsuleObstacle {
    */
   private boolean isGrounded;
 
-  /**
-   * Whether during a jump and is flying
-   */
-  private boolean isFlying;
-
   // SENSOR FIELDS
   /**
    * How long until we can jump again
@@ -93,18 +82,9 @@ public class PlayerModel extends CapsuleObstacle {
    */
   private boolean isJumping;
   /**
-   * Record how much jump charge have we built up
+   * The velocity the character initially gains on jump
    */
-  private float flyCharge = 0;
-  /**
-   * Cap for jump charge
-   */
-  private float maxflyCharge = 2.0f;
-  /**
-   * Rate of charging jumps
-   */
-  private float flyChargeRate = 20.0f;
-
+  private float jumpVelocity;
   // SENSOR FIELDS
   /**
    * Whether we are currently frozen
@@ -142,6 +122,15 @@ public class PlayerModel extends CapsuleObstacle {
   private float sensorSizeX;
 
   /**
+   * The multiplier gravity receives down for a low jump (short hop)
+   */
+  private float lowJumpMultiplier;
+  /**
+   * The multiplier gravity receives when the player is falling
+   */
+  private float fallMultiplier;
+
+  /**
    * Creates a new player with degenerate settings
    * <p>
    * The main purpose of this constructor is to set the initial capsule orientation.
@@ -155,13 +144,28 @@ public class PlayerModel extends CapsuleObstacle {
     isJumping = false;
     isFrozen = false;
     faceRight = true;
-    shouldSlide = false;
     color = Color.WHITE;
     sensorSizeX = 0;
     setDensity(1);
 
     jumpCooldown = 0;
   }
+
+  /**
+   * @return The multiplier gravity receives for a low jump (short hop), when the player is moving
+   * upwards but not holding the jump button
+   */
+  public float getLowJumpMultiplier() {
+    return lowJumpMultiplier;
+  }
+
+  /**
+   * @return The multiplier gravity receives as the player is falling
+   */
+  public float getFallMultiplier() {
+    return fallMultiplier;
+  }
+
 
   /**
    * Returns left/right movement of this character.
@@ -182,7 +186,7 @@ public class PlayerModel extends CapsuleObstacle {
    * @param value left/right movement of this character.
    */
   public void setMovement(float value) {
-    movement = value;
+    movement = value / 10F;
     if (isFrozen) {
       movement = 0;
     }
@@ -194,6 +198,10 @@ public class PlayerModel extends CapsuleObstacle {
     }
   }
 
+  public void setJumpVelocity(float value) {
+    jumpVelocity = value;
+  }
+
   /**
    * Returns true if
    */
@@ -203,12 +211,8 @@ public class PlayerModel extends CapsuleObstacle {
    *
    * @return true if the player is actively jumping.
    */
-  public boolean isJumping() {
+  public boolean getIsJumping() {
     return isJumping && jumpCooldown <= 0 && isGrounded;
-  }
-
-  public boolean isFlying() {
-    return isFlying;
   }
 
   /**
@@ -217,33 +221,8 @@ public class PlayerModel extends CapsuleObstacle {
    * @param value whether the player is actively jumping.
    */
 
-  public void setJumping(boolean value, boolean isReleasingJump, float dt) {
-
-    if (value) {                 // When holding down the jump button
-      // Calculate Fly Charge
-      flyCharge = Math.min(flyCharge + flyChargeRate * dt, maxflyCharge);
-    } else {
-      flyCharge = 0;
-    }
-
-    if (value && isGrounded) {  // When hit the jump button and player is on the ground
-      isJumping = true;
-      isFlying = false;
-    } else if (value && !isGrounded
-        && isJumping) {        // The moment after player jumps (start flying, stop jumping)
-      flyCharge = 0;           // Reset flyCharge to 0
-      isJumping = false;
-      isFlying = true;
-    }
-
-    if (isReleasingJump) {    // When you let go of the jump button or hold down for too long
-      isJumping = false;
-      isFlying = false;
-      flyCharge = 0;
-    }
-
-    isJumping = isJumping && !isFrozen;
-
+  public void setJumping(boolean value) {
+    isJumping = value;
   }
 
   /**
@@ -344,24 +323,6 @@ public class PlayerModel extends CapsuleObstacle {
   }
 
   /**
-   * Returns the upward impulse for a jump.
-   *
-   * @return the upward impulse for a jump.
-   */
-  public float getJumpPulse() {
-    return jumppulse;
-  }
-
-  /**
-   * Sets the upward impulse for a jump.
-   *
-   * @param value the upward impulse for a jump.
-   */
-  public void setJumpPulse(float value) {
-    jumppulse = value;
-  }
-
-  /**
    * Returns the cooldown limit between jumps
    *
    * @return the cooldown limit between jumps
@@ -427,8 +388,9 @@ public class PlayerModel extends CapsuleObstacle {
     float y = (gSizeY - json.getFloat("y")) * (1 / drawScale.y);
 
     setPosition(x, y);
-    setDimension(json.getFloat("width") * (1 / drawScale.x),
-        json.getFloat("height") * (1 / drawScale.y));
+    float width = json.getFloat("width") * (1/drawScale.x);
+    float height = json.getFloat("height") * (1/drawScale.y);
+    setDimension(width, height);
 
     JsonValue properties = json.get("properties").child();
     Color debugColor = null;
@@ -458,8 +420,8 @@ public class PlayerModel extends CapsuleObstacle {
         case "maxspeed":
           setMaxSpeed(properties.getFloat("value"));
           break;
-        case "jumppulse":
-          setJumpPulse(properties.getFloat("value"));
+        case "jumpvelocity":
+          setJumpVelocity(properties.getFloat("value"));
           break;
         case "jumplimit":
           setJumpLimit(properties.getInt("value"));
@@ -513,6 +475,10 @@ public class PlayerModel extends CapsuleObstacle {
         case "sensorname":
           setSensorName(properties.getString("value"));
           break;
+        case "fallMultiplier":
+          fallMultiplier = properties.getFloat("value");
+        case "lowJumpMultiplier":
+          lowJumpMultiplier = properties.getFloat("value");
         default:
           break;
       }
@@ -568,47 +534,30 @@ public class PlayerModel extends CapsuleObstacle {
     if (!isActive()) {
       return;
     }
+    // The speed the player wants to be at, indicated by their movement
+    float targetSpeed = maxspeed * movement;
 
-    // Damp dramatically on the ground
-    // FIXME if slide doesn't work only damp when not frozen
-    if (getMovement() == 0f && isGrounded()) {
-      forceCache.set(getDamping() * -getVX(), 0);
-      body.applyForce(forceCache, getPosition(), true);
+    float accelRate = 1.2F;
+    // If the player is traveling faster than their target speed, do not change movement
+    if (Math.abs(getVX()) > Math.abs(targetSpeed) && Math.signum(getVX()) == Math.signum(
+        targetSpeed) && Math.abs(targetSpeed) > 0.01F) {
+      accelRate = 0;
+    }
+    // If the player is trying to go to 0 speed, apply deceleration rate (faster in air)
+    if (Math.abs(targetSpeed) < 0.01F) {
+      accelRate = isGrounded() ? 1.5F : 1.2F;
     }
 
-
-    forceCache.set(getMovement() / 2.5F, 0);
-    /*
-    Check for:
-    We are at a low speed and the user is inputting a direction
-    We are at a somewhat low speed but going the opposite of where the user wants to go
-     */
-    if ((Math.abs(getVX()) <= 1
-        || (Math.abs(getVX()) < 5 && Math.signum(getVX()) != Math.signum(forceCache.x))
-        && forceCache.x != 0)) {
-      // Set player velocity in the direction of where the user wants to go
-      setVX(Math.signum(forceCache.x));
-    }
-    body.applyForce(forceCache, getPosition(), true);
-
+    // We move the player based on how far they are from their target speed
+    float speedDif = targetSpeed - (getVX());
+    float movement = speedDif * accelRate;
+    forceCache.set(movement, 0);
     // Jump!
-    if (isJumping()) {
-      float chargedImpulse = getJumpPulse();
-      forceCache.set(0, chargedImpulse);
-      body.applyLinearImpulse(forceCache, getPosition(), true);
-      // Reset fly charge
-      flyCharge = 0;
-      // Reset jump status
-      isJumping = false;
+    if (getIsJumping()) {
+      setVY(jumpVelocity);
     }
 
-    // Fly Boost
-    if (isFlying()) {
-      // Calculate chargedImpulse for release based on flyCharge
-      float chargedImpulse = (maxflyCharge * flyCharge);
-      forceCache.set(0, chargedImpulse);
-      body.applyLinearImpulse(forceCache, getPosition(), true);
-    }
+    body.applyForce(forceCache, getPosition(), true);
   }
 
   /**
@@ -619,12 +568,6 @@ public class PlayerModel extends CapsuleObstacle {
    * @param dt Number of seconds since last animation frame
    */
   public void update(float dt) {
-    // Apply cooldowns
-    if (isJumping() || isFlying()) {
-      jumpCooldown = getJumpLimit();
-    } else {
-      jumpCooldown = Math.max(0, jumpCooldown - 1);
-    }
     super.update(dt);
   }
 
