@@ -40,10 +40,6 @@ public class LevelModel {
    */
   private final float INITIAL_AIR_RESISTANCE = 0.1f;
   /**
-   * Cache for internal force calculations
-   */
-  final private Vector2 forceCache = new Vector2();
-  /**
    * Keeps track of all fan objects
    */
   final private ObjectSet<FanModel> fans = new ObjectSet<>();
@@ -51,36 +47,46 @@ public class LevelModel {
    * The Box2D world
    */
   protected World world;
+  /**
+   * The boundary of the world
+   */
+  protected Rectangle bounds;
 
   // Physics objects for the game
   /**
-   * The boundary of the world (defined in world coordinates / physics units)
-   */
-  protected Rectangle bounds;
-  /**
-   * The world scale (scale factor to convert from world coordinate to pixels)
+   * The world scale
    */
   protected Vector2 scale;
+
+  // Decoration objects for the game
   /**
    * All the objects in the world.
    */
   protected PooledList<Obstacle> objects = new PooledList<Obstacle>();
   /**
+   * All the decorational objects in the world.
+   */
+  protected PooledList<DecorationModel> decoobjects = new PooledList<DecorationModel>();
+  /**
    * Reference to the character avatar
    */
   private PlayerModel avatar;
+
   /**
    * Reference to the bounce pad (for collision detection)
    */
   private BouncePlatformModel bouncePlatformModel;
+
   /**
    * Reference to the goalDoor (for collision detection)
    */
   private ExitModel goalDoor;
+
   /**
    * Whether or not the level is in debug more (showing off physics)
    */
   private boolean debug;
+
   /**
    * Whether or not the level is completed
    */
@@ -93,6 +99,10 @@ public class LevelModel {
    * Air resistance scale to be applied to every obstacle in the level
    */
   private float airResistance = INITIAL_AIR_RESISTANCE;
+  /**
+   * Cache for internal force calculations
+   */
+  private Vector2 forceCache = new Vector2();
 
   /**
    * Creates a new LevelModel
@@ -143,13 +153,6 @@ public class LevelModel {
    */
   public PlayerModel getAvatar() {
     return avatar;
-  }
-
-  /**
-   * Returns reference to fans
-   */
-  public ObjectSet<FanModel> getFans() {
-    return fans;
   }
 
   /**
@@ -211,6 +214,13 @@ public class LevelModel {
   }
 
   /**
+   * @return list of fan objects in the level
+   */
+  public ObjectSet<FanModel> getFans() {
+    return fans;
+  }
+
+  /**
    * Lays out the game geography from the given JSON file
    *
    * @param directory   the asset manager
@@ -223,7 +233,7 @@ public class LevelModel {
     int numTilesHorizontal = levelFormat.getInt("width");
 
     float gravity = 0;
-    float[] pSize = new float[2]; // World coordinate system (physics units in meters)
+    float[] pSize = new float[2];
     JsonValue property = levelFormat.get("properties").child();
     // get map properties (applies to entire level)
     while (property != null) {
@@ -249,7 +259,7 @@ public class LevelModel {
     }
 
     // graphics size is tile width * the number of tiles horizontally
-    // by the tile height * the number of tiles vertically (i.e. canvas dimensions in pixels)
+    // by the tile height * the number of tiles vertically
     int[] gSize = {numTilesHorizontal * tileWidth, numTilesVertical * tileHeight};
 
     world = new World(new Vector2(0, gravity), false);
@@ -275,7 +285,13 @@ public class LevelModel {
           }
           break;
         case "deco":
-          // TODO make decorations
+          System.out.println("case deco");
+          if (layer.get("data") != null) {
+            makeDecoTiles(numTilesHorizontal, numTilesVertical, layer.get("data").asIntArray(),
+                tileWidth,
+                tileHeight,
+                directory);
+          }
           break;
       }
       layer = layer.next();
@@ -307,6 +323,27 @@ public class LevelModel {
         obj.initializeAsTile(xPos, yPos, (float) tileHeight, directory, "" + data[i],
             tileProperties);
         activate(obj);
+      }
+    }
+  }
+
+  private void makeDecoTiles(int cols, int rows, int[] data, int tileWidth, int tileHeight,
+      AssetDirectory directory) {
+    System.out.println("making deco tiles");
+    for (int i = 0; i < data.length; i++) {
+      if (data[i] != 0) {
+        // i % numCols = how deep in x
+        // i / numCols = how deep in y
+        int xPos = (i % cols) * tileWidth;
+        // subtract from full height since data starts at the top
+        int yPos = tileHeight * rows - (i / cols) * tileHeight;
+
+        DecorationModel obj = new DecorationModel();
+        obj.setDrawScale(scale);
+        // we have 19 textures so we offset the gid by 19
+        // TODO make a better fix for this
+        obj.initialize(xPos, yPos, (float) tileHeight, directory, "" + (data[i] - 19));
+        decoobjects.add(obj);
       }
     }
   }
@@ -363,7 +400,6 @@ public class LevelModel {
       obj.deactivatePhysics(world);
     }
     objects.clear();
-    fans.clear();
     if (world != null) {
       world.dispose();
       world = null;
@@ -430,6 +466,11 @@ public class LevelModel {
     canvas.begin();
     for (Obstacle obj : objects) {
       obj.draw(canvas);
+    }
+    // Added decoration draw
+    for (DecorationModel obj : decoobjects) {
+      obj.draw(canvas);
+      //System.out.println("drawing decoration");
     }
     canvas.end();
 
