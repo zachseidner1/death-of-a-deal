@@ -553,7 +553,7 @@ public class PlayerModel extends CapsuleObstacle {
     float movement = speedDif * accelRate;
     forceCache.set(movement, 0);
     // Jump!
-    if (getIsJumping()) {
+    if (getIsJumping() && !getIsFrozen()) {
       setVY(jumpVelocity);
     }
 
