@@ -18,6 +18,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.JsonValue;
+import com.badlogic.gdx.utils.ObjectSet;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.physics.obstacle.Obstacle;
 import edu.cornell.gdiac.util.PooledList;
@@ -38,29 +39,30 @@ public class LevelModel {
    * The initial air resistance of the level from the levels JSON
    */
   private final float INITIAL_AIR_RESISTANCE = 0.1f;
-
+  /**
+   * Keeps track of all fan objects
+   */
+  final private ObjectSet<FanModel> fans = new ObjectSet<>();
   /**
    * The Box2D world
    */
   protected World world;
-
   /**
    * The boundary of the world
    */
   protected Rectangle bounds;
 
+  // Physics objects for the game
   /**
    * The world scale
    */
   protected Vector2 scale;
 
-  // Physics objects for the game
+  // Decoration objects for the game
   /**
    * All the objects in the world.
    */
   protected PooledList<Obstacle> objects = new PooledList<Obstacle>();
-
-  // Decoration objects for the game
   /**
    * All the decorational objects in the world.
    */
@@ -212,6 +214,13 @@ public class LevelModel {
   }
 
   /**
+   * @return list of fan objects in the level
+   */
+  public ObjectSet<FanModel> getFans() {
+    return fans;
+  }
+
+  /**
    * Lays out the game geography from the given JSON file
    *
    * @param directory   the asset manager
@@ -331,7 +340,9 @@ public class LevelModel {
 
         DecorationModel obj = new DecorationModel();
         obj.setDrawScale(scale);
-        obj.initialize(xPos, yPos, (float) tileHeight, directory, "" + data[i]);
+        // we have 19 textures so we offset the gid by 19
+        // TODO make a better fix for this
+        obj.initialize(xPos, yPos, (float) tileHeight, directory, "" + (data[i] - 19));
         decoobjects.add(obj);
       }
     }

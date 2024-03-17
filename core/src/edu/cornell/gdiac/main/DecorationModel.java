@@ -20,7 +20,7 @@ public class DecorationModel extends BoxObstacle {
    * The texture anchor upon region initialization
    */
   protected Vector2 anchor;
-  
+
 
   /**
    * Create a new DecorationModel with default settings
@@ -124,13 +124,11 @@ public class DecorationModel extends BoxObstacle {
 
   public void initialize(float x, float y, float tileSize, AssetDirectory directory,
       String tilekey) {
-    System.out.println("Initializing Deco Platform");
     setPosition(x * (1 / drawScale.x), y * (1 / drawScale.y));
     setDimension(tileSize * ((float) 1 / drawScale.x), tileSize * ((float) 1 / (drawScale.y)));
     setBodyType(BodyType.StaticBody);
     TextureRegion textureRegion = new TextureRegion(directory.getEntry(tilekey, Texture.class));
     setTexture(textureRegion);
-
   }
 
 
