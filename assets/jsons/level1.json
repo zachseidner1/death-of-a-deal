@@ -407,7 +407,7 @@
                  "y":96
                 }, 
                 {
-                 "height":120,
+                 "height":90,
                  "id":10,
                  "name":"fan",
                  "properties":[
@@ -464,7 +464,7 @@
                         {
                          "name":"WindBreadth",
                          "type":"float",
-                         "value":100
+                         "value":60
                         }, 
                         {
                          "name":"WindBreadthParticleGrids",
@@ -474,7 +474,7 @@
                         {
                          "name":"WindLength",
                          "type":"float",
-                         "value":300
+                         "value":120
                         }, 
                         {
                          "name":"WindLengthParticleGrids",
@@ -489,7 +489,7 @@
                         {
                          "name":"WindStrength",
                          "type":"float",
-                         "value":5
+                         "value":2
                         }, 
                         {
                          "name":"WindTexture",
@@ -500,8 +500,8 @@
                  "type":"Fan",
                  "visible":true,
                  "width":16,
-                 "x":17.0348355323793,
-                 "y":268.975560918425
+                 "x":32,
+                 "y":300
                 }, 
                 {
                  "gid":1,
@@ -545,6 +545,103 @@
                  "width":48,
                  "x":160,
                  "y":288
+                }, 
+                {
+                 "height":90,
+                 "id":22,
+                 "name":"fan",
+                 "properties":[
+                        {
+                         "name":"Active",
+                         "type":"bool",
+                         "value":true
+                        }, 
+                        {
+                         "name":"BodyType",
+                         "type":"string",
+                         "value":"static"
+                        }, 
+                        {
+                         "name":"DebugColor",
+                         "type":"string",
+                         "value":"yellow"
+                        }, 
+                        {
+                         "name":"DebugOpacity",
+                         "type":"int",
+                         "value":255
+                        }, 
+                        {
+                         "name":"FanTexture",
+                         "type":"string",
+                         "value":"1"
+                        }, 
+                        {
+                         "name":"NumWindParticles",
+                         "type":"string",
+                         "value":"200"
+                        }, 
+                        {
+                         "name":"Period",
+                         "type":"float",
+                         "value":0
+                        }, 
+                        {
+                         "name":"PeriodOnRatio",
+                         "type":"float",
+                         "value":1
+                        }, 
+                        {
+                         "name":"Side",
+                         "type":"string",
+                         "value":"left"
+                        }, 
+                        {
+                         "name":"Type",
+                         "type":"string",
+                         "value":"constant"
+                        }, 
+                        {
+                         "name":"WindBreadth",
+                         "type":"float",
+                         "value":60
+                        }, 
+                        {
+                         "name":"WindBreadthParticleGrids",
+                         "type":"string",
+                         "value":"10"
+                        }, 
+                        {
+                         "name":"WindLength",
+                         "type":"float",
+                         "value":120
+                        }, 
+                        {
+                         "name":"WindLengthParticleGrids",
+                         "type":"string",
+                         "value":"20"
+                        }, 
+                        {
+                         "name":"WindParticleTexture",
+                         "type":"string",
+                         "value":"1"
+                        }, 
+                        {
+                         "name":"WindStrength",
+                         "type":"float",
+                         "value":2
+                        }, 
+                        {
+                         "name":"WindTexture",
+                         "type":"string",
+                         "value":"1"
+                        }],
+                 "rotation":0,
+                 "type":"Fan",
+                 "visible":true,
+                 "width":16,
+                 "x":320,
+                 "y":300
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -553,7 +650,7 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":22,
+ "nextobjectid":23,
  "orientation":"orthogonal",
  "properties":[
         {

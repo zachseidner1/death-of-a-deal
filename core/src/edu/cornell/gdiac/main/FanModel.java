@@ -264,6 +264,9 @@ public class FanModel extends PlatformModel {
     assert windParticleFixtures != null;
     for (int i = 0; i < windParticles.length; i++) {
       WindParticleModel particle = windParticles[i];
+
+      assert particle != null;
+
       Fixture windParticleFixture = body.createFixture(particle.getFixtureDef());
       windParticleFixture.setUserData(particle);
       windParticleFixtures[i] = windParticleFixture;
@@ -280,9 +283,9 @@ public class FanModel extends PlatformModel {
     }
 
     if (windParticleFixtures != null) {
-      for (int i = 0; i < windParticleFixtures.length; i++) {
-        if (windParticleFixtures[i] != null) {
-          body.destroyFixture(windParticleFixtures[i]);
+      for (Fixture windParticleFixture : windParticleFixtures) {
+        if (windParticleFixture != null) {
+          body.destroyFixture(windParticleFixture);
         }
       }
     }
