@@ -328,11 +328,6 @@
                          "value":"yellow"
                         }, 
                         {
-                         "name":"fallMultiplier",
-                         "type":"float",
-                         "value":1.1
-                        }, 
-                        {
                          "name":"force",
                          "type":"float",
                          "value":10
@@ -348,19 +343,14 @@
                          "value":30
                         }, 
                         {
-                         "name":"jumpvelocity",
-                         "type":"float",
-                         "value":10
-                        }, 
-                        {
-                         "name":"lowJumpMultiplier",
+                         "name":"jumppulse",
                          "type":"float",
                          "value":2
                         }, 
                         {
                          "name":"maxspeed",
                          "type":"float",
-                         "value":6
+                         "value":5
                         }, 
                         {
                          "name":"restitution",
@@ -482,8 +472,8 @@
                 {
                  "gid":1,
                  "height":16,
-                 "id":18,
-                 "name":"breakable",
+                 "id":13,
+                 "name":"",
                  "properties":[
                         {
                          "name":"bodytype",
@@ -493,7 +483,7 @@
                         {
                          "name":"breakminvelocity",
                          "type":"float",
-                         "value":6
+                         "value":10
                         }, 
                         {
                          "name":"debugcolor",
@@ -518,15 +508,15 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":48,
-                 "x":128,
+                 "width":16,
+                 "x":144,
                  "y":208
                 }, 
                 {
                  "gid":1,
-                 "height":48,
-                 "id":19,
-                 "name":"bounce",
+                 "height":16,
+                 "id":18,
+                 "name":"",
                  "properties":[
                         {
                          "name":"bodytype",
@@ -534,9 +524,9 @@
                          "value":"static"
                         }, 
                         {
-                         "name":"coefficient",
-                         "type":"string",
-                         "value":"3"
+                         "name":"breakminvelocity",
+                         "type":"float",
+                         "value":10
                         }, 
                         {
                          "name":"debugcolor",
@@ -544,42 +534,17 @@
                          "value":"yellow"
                         }, 
                         {
-                         "name":"debugopacity",
-                         "type":"int",
-                         "value":255
-                        }, 
-                        {
-                         "name":"denisty",
+                         "name":"density",
                          "type":"float",
                          "value":0
                         }, 
                         {
                          "name":"friction",
                          "type":"float",
-                         "value":0.01
-                        }, 
-                        {
-                         "name":"height",
-                         "type":"float",
                          "value":0
-                        }, 
-                        {
-                         "name":"max_speed",
-                         "type":"string",
-                         "value":"50"
                         }, 
                         {
                          "name":"restitution",
-                         "type":"float",
-                         "value":0
-                        }, 
-                        {
-                         "name":"texture",
-                         "type":"string",
-                         "value":"earth"
-                        }, 
-                        {
-                         "name":"width",
                          "type":"float",
                          "value":0
                         }],
@@ -587,14 +552,14 @@
                  "type":"",
                  "visible":true,
                  "width":16,
-                 "x":16,
-                 "y":288
+                 "x":128,
+                 "y":208
                 }, 
                 {
                  "gid":1,
                  "height":16,
-                 "id":20,
-                 "name":"bounce",
+                 "id":16,
+                 "name":"",
                  "properties":[
                         {
                          "name":"bodytype",
@@ -602,9 +567,9 @@
                          "value":"static"
                         }, 
                         {
-                         "name":"coefficient",
-                         "type":"string",
-                         "value":"3"
+                         "name":"breakminvelocity",
+                         "type":"float",
+                         "value":10
                         }, 
                         {
                          "name":"debugcolor",
@@ -612,51 +577,26 @@
                          "value":"yellow"
                         }, 
                         {
-                         "name":"debugopacity",
-                         "type":"int",
-                         "value":255
-                        }, 
-                        {
-                         "name":"denisty",
+                         "name":"density",
                          "type":"float",
                          "value":0
                         }, 
                         {
                          "name":"friction",
                          "type":"float",
-                         "value":0.01
-                        }, 
-                        {
-                         "name":"height",
-                         "type":"float",
                          "value":0
-                        }, 
-                        {
-                         "name":"max_speed",
-                         "type":"string",
-                         "value":"50"
                         }, 
                         {
                          "name":"restitution",
-                         "type":"float",
-                         "value":0
-                        }, 
-                        {
-                         "name":"texture",
-                         "type":"string",
-                         "value":"earth"
-                        }, 
-                        {
-                         "name":"width",
                          "type":"float",
                          "value":0
                         }],
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":48,
-                 "x":352,
-                 "y":400
+                 "width":16,
+                 "x":160,
+                 "y":208
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -665,7 +605,7 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":21,
+ "nextobjectid":19,
  "orientation":"orthogonal",
  "properties":[
         {
@@ -676,7 +616,7 @@
         {
          "name":"gravity",
          "type":"float",
-         "value":-12
+         "value":-9.8
         }, 
         {
          "name":"pheight",
@@ -687,11 +627,6 @@
          "name":"pwidth",
          "type":"float",
          "value":16
-        }, 
-        {
-         "name":"timelimit",
-         "type":"string",
-         "value":"31"
         }],
  "renderorder":"right-down",
  "tiledversion":"1.10.2",
@@ -699,7 +634,7 @@
  "tilesets":[
         {
          "firstgid":1,
-         "source":"..\/..\/tiled\/tile.tsx"
+         "source":"tile.tsx"
         }],
  "tilewidth":16,
  "type":"map",

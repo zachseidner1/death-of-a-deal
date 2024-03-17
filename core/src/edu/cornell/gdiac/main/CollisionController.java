@@ -11,6 +11,7 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.utils.ObjectSet;
 import edu.cornell.gdiac.physics.obstacle.BoxObstacle;
 import edu.cornell.gdiac.physics.obstacle.Obstacle;
+import edu.cornell.gdiac.util.MathUtil;
 
 public class CollisionController implements ContactListener {
 
@@ -37,19 +38,15 @@ public class CollisionController implements ContactListener {
 
     Vector2 force;
     if (slopeAngle >= 0 && slopeAngle <= Math.PI) {
-      System.out.println("downleft");
       // Slope is pointing down left
       force = new Vector2(
         (float) -Math.cos(slopeAngle) * forceMagnitude,
         (float) -Math.sin(slopeAngle) * forceMagnitude
       );
-      System.out.println(force);
     } else {
       // Slope is pointing down right
-      System.out.println("downright");
       force = new Vector2((float) Math.cos(slopeAngle) * forceMagnitude,
-        (float) Math.sin(slopeAngle) * forceMagnitude);
-      System.out.println(force);
+          (float) Math.sin(slopeAngle) * forceMagnitude);
     }
     return force;
   }
@@ -168,6 +165,7 @@ public class CollisionController implements ContactListener {
     PlayerModel plyr = level.getAvatar();
     preSolveBounce(contact, plyr, body1, body2);
     preSolveSlope(contact, plyr, body1, body2);
+    preSolveBreak(contact, plyr, body1, body2);
   }
 
   /**
@@ -212,6 +210,60 @@ public class CollisionController implements ContactListener {
     }
   }
 
+  public void preSolveBreak(Contact contact, PlayerModel plyr, Body body1, Body body2) {
+    try {
+      Obstacle bd1 = (Obstacle) body1.getUserData();
+      Obstacle bd2 = (Obstacle) body2.getUserData();
+      if (bd1.equals(plyr)) {
+        if (bd1 instanceof BreakablePlatformModel) {
+          BreakablePlatformModel breakablePlatform = (BreakablePlatformModel) bd1;
+          if (MathUtil.getMagnitude(plyr.getLinearVelocity())
+              > breakablePlatform.getBreakMinVelocity()
+              || breakablePlatform.isBroken()
+          ) {
+            breakablePlatform.setBroken(true);
+            contact.setEnabled(false);
+          }
+        }
+      }
+      if (bd2.equals(plyr)) {
+        if (bd1 instanceof BreakablePlatformModel) {
+          BreakablePlatformModel breakablePlatform = (BreakablePlatformModel) bd1;
+          if (MathUtil.getMagnitude(plyr.getLinearVelocity())
+              > breakablePlatform.getBreakMinVelocity()
+              || breakablePlatform.isBroken()
+          ) {
+            breakablePlatform.setBroken(true);
+            contact.setEnabled(false);
+          }
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+
+  public void preSolveSlope(Contact contact, PlayerModel plyr, Body body1, Body body2) {
+    try {
+      Obstacle bd1 = (Obstacle) body1.getUserData();
+      Obstacle bd2 = (Obstacle) body2.getUserData();
+
+      if ((bd1.equals(plyr) && bd2 instanceof SlopeModel) || (bd2.equals(plyr)
+          && bd1 instanceof SlopeModel)) {
+        SlopeModel slope = (bd1 instanceof SlopeModel) ? (SlopeModel) bd1 : (SlopeModel) bd2;
+
+        // Only add extra force when player is frozen
+        if (plyr.getIsFrozen()) {
+          Vector2 force = getForceVector(slope);
+          plyr.getBody().applyForce(force, plyr.getPosition(), true);
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
   public void postSolveBounce(Contact contact, PlayerModel plyr, Body body1, Body body2) {
     try {
       Obstacle bd1 = (Obstacle) body1.getUserData();
@@ -243,27 +295,6 @@ public class CollisionController implements ContactListener {
           }
         }
       }
-    }
-  }
-
-  public void preSolveSlope(Contact contact, PlayerModel plyr, Body body1, Body body2) {
-    try {
-      Obstacle bd1 = (Obstacle) body1.getUserData();
-      Obstacle bd2 = (Obstacle) body2.getUserData();
-
-      if ((bd1.equals(plyr) && bd2 instanceof SlopeModel) || (bd2.equals(plyr)
-        && bd1 instanceof SlopeModel)) {
-        SlopeModel slope = (bd1 instanceof SlopeModel) ? (SlopeModel) bd1 : (SlopeModel) bd2;
-
-        // Only add extra force when player is frozen
-        if (plyr.getIsFrozen()) {
-          Vector2 force = getForceVector(slope);
-          System.out.println(force);
-          plyr.getBody().applyForce(force, plyr.getPosition(), true);
-        }
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
     }
   }
 }

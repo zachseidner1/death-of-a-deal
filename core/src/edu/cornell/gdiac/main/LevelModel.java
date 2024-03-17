@@ -242,6 +242,8 @@ public class LevelModel {
         case "pheight":
           pSize[1] = property.getFloat("value");
           break;
+        case "timelimit":
+          timer = property.getFloat("value");
       }
       property = property.next();
     }
@@ -254,12 +256,6 @@ public class LevelModel {
     bounds = new Rectangle(0, 0, pSize[0], pSize[1]);
     scale.x = gSize[0] / pSize[0];
     scale.y = gSize[1] / pSize[1];
-
-    // Add level goal
-//    goalDoor = new ExitModel();
-//    goalDoor.initialize(directory, levelFormat.get("exit"));
-//    goalDoor.setDrawScale(scale);
-//    activate(goalDoor);
 
     JsonValue layer = levelFormat.get("layers").child();
     while (layer != null) {
@@ -284,13 +280,6 @@ public class LevelModel {
       }
       layer = layer.next();
     }
-
-    // Create dude
-    // Does this need to change now?
-//    avatar = new PlayerModel();
-//    avatar.initialize(directory, levelFormat.get("avatar"));
-//    avatar.setDrawScale(scale);
-//    activate(avatar);
   }
 
   /**
@@ -343,20 +332,25 @@ public class LevelModel {
           slope.initialize(directory, objects, gSizeY);
           activate(slope);
           break;
-        case "Fan":
+        case "fan":
           FanModel fan = new FanModel();
           fan.setDrawScale(scale);
           fan.initialize(directory, objects, gSizeY);
           activate(fan);
           fans.add(fan);
           break;
-        case "Bounce":
+        case "bounce":
           BouncePlatformModel platform = new BouncePlatformModel();
           platform.setDrawScale(scale);
           platform.initialize(directory, objects, gSizeY);
           activate(platform);
           break;
-        default:
+        // Breakable platforms as game objects
+        case "breakable":
+          BreakablePlatformModel breakable = new BreakablePlatformModel();
+          breakable.setDrawScale(scale);
+          breakable.initialize(directory, objects, gSizeY);
+          activate(breakable);
           break;
       }
       objects = objects.next();
@@ -444,6 +438,17 @@ public class LevelModel {
         obj.drawDebug(canvas);
       }
       canvas.endDebug();
+    }
+  }
+
+  public void breakPlatforms() {
+    for (Obstacle obj : objects) {
+      if (obj instanceof BreakablePlatformModel) {
+        if (((BreakablePlatformModel) obj).isBroken()) {
+          objects.remove(obj);
+          obj.deactivatePhysics(world);
+        }
+      }
     }
   }
 }
