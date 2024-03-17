@@ -113,8 +113,11 @@ public class FanModel extends PlatformModel {
             case "EXPONENTIAL":
               windType = WindType.Exponential;
               break;
-            default:
+            case "CONSTANT":
               windType = WindType.Constant;
+              break;
+            default:
+              windType = WindType.Default;
               break;
           }
           break;
@@ -125,14 +128,6 @@ public class FanModel extends PlatformModel {
             case "LEFT":
               fanSide = WindSide.LEFT;
               windSource.set(x, y - height / 2);
-              break;
-            case "TOP":
-              fanSide = WindSide.TOP;
-              windSource.set(x + width / 2, y);
-              break;
-            case "BOTTOM":
-              fanSide = WindSide.BOTTOM;
-              windSource.set(x + width / 2, y - height);
               break;
             default:
               fanSide = WindSide.RIGHT;
@@ -262,7 +257,7 @@ public class FanModel extends PlatformModel {
       return;
     }
 
-    FixtureDef windFixtureDef = wind.getWindFixtureDef();
+    FixtureDef windFixtureDef = wind.getFixtureDef();
     // Create fixture
     if (windFixtureDef != null) {
       windFixture = body.createFixture(windFixtureDef);
@@ -276,7 +271,7 @@ public class FanModel extends PlatformModel {
     for (WindModel particle : windParticles) {
       assert particle != null;
 
-      Fixture windParticleFixture = body.createFixture(particle.getWindFixtureDef());
+      Fixture windParticleFixture = body.createFixture(particle.getFixtureDef());
       windParticleFixture.setUserData(particle);
       windParticleFixtures[index] = windParticleFixture;
     }

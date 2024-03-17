@@ -7,8 +7,8 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 
 /**
- * Wrapper around wind fixture that holds wind force behavior. Note that this is not concerned with
- * when to apply the force and merely contains logic for what kind of wind force is applied
+ * Wrapper around wind particle initialization and organization.
+ * Contains state of the wind as a collection of particles, including the wind container texture.
  */
 public class WindModel {
   final private float DEFAULT_WIND_STRENGTH = 10.0f;
@@ -16,7 +16,7 @@ public class WindModel {
   /**
    * Wind force cache
    */
-  final private Vector2 windForce;
+  final private Vector2 windForceCache;
   /**
    * Origin from which the wind is applied (in world coordinates)
    */
@@ -27,10 +27,6 @@ public class WindModel {
   final private Vector2 windCenter;
   final private FixtureDef windFixtureDef;
   final private Color windColor;
-  /**
-   * Whether breadth should be set as the texture width
-   */
-  boolean breadthAsWidth;
   private float windStrength = DEFAULT_WIND_STRENGTH;
   private WindType windType = DEFAULT_WIND_TYPE;
   private WindSide windSide;
@@ -60,7 +56,7 @@ public class WindModel {
     // Initialize force and origins
     windSource = new Vector2();
     windCenter = new Vector2();
-    windForce = new Vector2();
+    windForceCache = new Vector2();
 
     // Default wind color
     windColor = new Color((float) Math.random() * 0.5f, (float) Math.random() * 0.5f, (float) Math.random(), 0.1f);
@@ -98,10 +94,10 @@ public class WindModel {
     this.numWindParticles = numWindParticles;
     this.windLengthParticleGrids = windLengthParticleGrids;
     this.windBreadthParticleGrids = windBreadthParticleGrids;
+    this.windSource.set(windSourceX, windSourceY);
 
     float breadth2 = windBreadth / 2;
     float length2 = windLength / 2;
-    windSource.set(windSourceX, windSourceY);
 
     { // Calculate wind area of effect center
       float centerX = windSourceX;
@@ -109,20 +105,10 @@ public class WindModel {
 
       switch (windSide) {
         case LEFT:
-          breadthAsWidth = false;
           centerX -= length2;
           break;
         case RIGHT:
-          breadthAsWidth = false;
           centerX += length2;
-          break;
-        case TOP:
-          breadthAsWidth = true;
-          centerY += length2;
-          break;
-        default:
-          breadthAsWidth = true;
-          centerY -= length2;
           break;
       }
 
@@ -130,11 +116,9 @@ public class WindModel {
     }
 
     windShape = new PolygonShape();
-    float width2 = breadthAsWidth ? breadth2 : length2;
-    float height2 = breadthAsWidth ? length2 : breadth2;
     windShape.setAsBox(
-      width2,
-      height2,
+      length2,
+      breadth2,
       new Vector2(windCenter.x - windSource.x + offsetX, windCenter.y - windSource.y + offsetY),
       (float) (windRotation / (Math.PI / 2))
     );
@@ -208,7 +192,7 @@ public class WindModel {
     }
   }
 
-  public FixtureDef getWindFixtureDef() {
+  public FixtureDef getFixtureDef() {
     return windFixtureDef;
   }
 
@@ -219,9 +203,10 @@ public class WindModel {
   public void turnWindOn(boolean turnOn) {
     isWindOn = turnOn;
     if (!turnOn) {
-      windForce.set(0, 0);
+      windForceCache.set(0, 0);
     }
 
+    // TODO: Remove in the future (since particles do not need this)
     if (windParticles != null) {
       for (int i = 0; i < windParticles.length; i++) {
         windParticles[i].turnWindOn(turnOn);
@@ -229,7 +214,7 @@ public class WindModel {
     }
   }
 
-  // TODO: Make private and figure out how out wind particles can utilize this method (by simply calling it)
+  // TODO: Remove
 
   /**
    * Returns the wind force applied at a contact position
@@ -239,8 +224,9 @@ public class WindModel {
    */
   public Vector2 findWindForce(float x, float y) {
     if (!isWindOn) {
-      assert windForce.x == 0 && windForce.y == 0;
-      return windForce;
+      System.out.println("THis should not happen ");
+      assert windForceCache.x == 0 && windForceCache.y == 0;
+      return windForceCache;
     }
 
     // TODO: Figure why forces are not accurate here
@@ -251,26 +237,26 @@ public class WindModel {
     normY /= norm;
 
     // TODO: Temporarily set to pure directional force (will need to change if rotation exists)
-    windForce.set(
+    windForceCache.set(
       windSide == WindSide.LEFT ? -1 : windSide == WindSide.RIGHT ? 1 : 0,
-      windSide == WindSide.BOTTOM ? -1 : windSide == WindSide.TOP ? 1 : 0);
+      0);
 
     switch (windType) {
       case Constant:
-        windForce.scl(windStrength);
+        windForceCache.scl(windStrength);
         break;
       case Exponential:
         // TODO: Implement
         // float decayRate = 0.5f;
 //        float decayScale = (float) Math.exp(-decayRate * norm / windLength);
-//        windForce.scl(windStrength * decayScale);
+//        windForceCache.scl(windStrength * decayScale);
       default:
         // TODO: Implement
 //
         break;
     }
 
-    return windForce;
+    return windForceCache;
   }
 
   /**
@@ -283,12 +269,8 @@ public class WindModel {
     }
 
     boolean shouldFlipX = windSide == WindSide.LEFT;
-    boolean shouldFlipY = windSide == WindSide.BOTTOM;
     windTexture.flip(shouldFlipX, false);
-    float assetRotation = windSide == WindSide.TOP ? 90 : windSide == WindSide.BOTTOM ? -90 : 0;
-    float width = breadthAsWidth ? windBreadth : windLength;
-    float height = breadthAsWidth ? windLength : windBreadth;
-    windTexture.setRegion(0, 0, width / 2, height / 2);
+    windTexture.setRegion(0, 0, windLength / 2, windBreadth / 2);
 
     // TODO: Figure out asset rotation
     // TODO: find how to set texture origin
@@ -298,9 +280,9 @@ public class WindModel {
       0,
       0,
       windSource.x * drawScale.x,
-      (windSource.y - height / 2) * drawScale.y,
-      (shouldFlipX ? -1 : 1) * width * drawScale.x,
-      (shouldFlipY ? -1 : 1) * height * drawScale.y
+      (windSource.y - windBreadth / 2) * drawScale.y,
+      (shouldFlipX ? -1 : 1) * windLength * drawScale.x,
+      windBreadth * drawScale.y
     );
 
     // Draw particles
@@ -319,8 +301,6 @@ public class WindModel {
    * Enumeration representing the side out of which wind direction is applied from the fan
    */
   public enum WindSide {
-    TOP,
-    BOTTOM,
     LEFT,
     RIGHT
   }
@@ -332,5 +312,111 @@ public class WindModel {
     Constant, // Constant force
     Exponential, // Exponential decay
     Default, // Simulate realistic wind physics
+  }
+
+  /**
+   * Wrapper around wind particle fixture def that holds wind force behavior. Note that this is not concerned
+   * with when to apply the force and merely contains logic for what kind of wind force is applied.
+   */
+  public class WindParticleModel {
+    /**
+     * Separate wind type and texture parameter sas different particles can potentially have different behaviors
+     */
+    private WindType windType;
+    private TextureRegion particleTexture;
+    private float width, height;
+    /**
+     * The center of this particle; relative to containing wind source
+     */
+    private float posX, posY;
+    private FixtureDef particleFixtureDef;
+    private PolygonShape particleShape;
+
+    public WindParticleModel(WindType windType, TextureRegion particleTexture, float width, float height, float posX, float posY) {
+      this.windType = windType;
+      this.particleTexture = particleTexture;
+      this.width = width;
+      this.height = height;
+      this.posX = posX;
+      this.posY = posY;
+
+      particleShape = new PolygonShape();
+      particleShape.setAsBox(
+        width / 2,
+        height / 2,
+        new Vector2(posX - windSource.x, posY - windSource.y),
+        (float) (windRotation / (Math.PI / 2))
+      );
+      particleFixtureDef.shape = particleShape;
+    }
+
+    /**
+     * Returns the wind force applied at a contact position
+     *
+     * @param (x,y) the point of contact in world coordinates, used for determining wind force
+     * @return wind force applied to the object at contact position
+     */
+    public Vector2 findWindForce(float x, float y) {
+      // TODO: Calculate difference between x, y and wind source + depending on wind type --> find force
+      if (!isWindOn) {
+        assert windForceCache.x == 0 && windForceCache.y == 0;
+        return windForceCache;
+      }
+
+      // TODO: Figure why forces are not accurate here
+      float normX = x - windSource.x;
+      float normY = y - windSource.y;
+      float norm = (float) Math.sqrt(normX * normX + normY * normY);
+      normX /= norm;
+      normY /= norm;
+
+      // TODO: Temporarily set to pure directional force (will need to change if rotation exists)
+      windForceCache.set(
+        windSide == WindSide.LEFT ? -1 : windSide == WindSide.RIGHT ? 1 : 0,
+        1);
+
+      switch (windType) {
+        case Constant:
+          windForceCache.scl(windStrength);
+          break;
+        case Exponential:
+          // TODO: Implement
+          // float decayRate = 0.5f;
+//        float decayScale = (float) Math.exp(-decayRate * norm / windLength);
+//        windForceCache.scl(windStrength * decayScale);
+        default:
+          // TODO: Implement
+//
+          break;
+      }
+
+      return windForceCache;
+    }
+
+    protected FixtureDef getFixtureDef() {
+      return particleFixtureDef;
+    }
+
+    protected void draw(GameCanvas canvas, Vector2 drawScale) {
+      if (!isWindOn) {
+        return;
+      }
+
+      boolean shouldFlipX = windSide == WindSide.LEFT;
+      particleTexture.flip(shouldFlipX, false);
+      particleTexture.setRegion(0, 0, width / 2, height / 2);
+
+      // TODO: Figure out asset rotation (how to set texture origin)
+      canvas.draw(
+        windTexture,
+        windColor,
+        0,
+        0,
+        (windSource.x + posX) * drawScale.x,
+        (windSource.y + posY) * drawScale.y,
+        (shouldFlipX ? -1 : 1) * width * drawScale.x,
+        height * drawScale.y
+      );
+    }
   }
 }
