@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="40" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="22">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="40" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="25">
  <editorsettings>
   <export target="../assets/jsons/level1.json" format="json"/>
  </editorsettings>
@@ -108,6 +108,7 @@
     <property name="debugopacity" type="int" value="255"/>
     <property name="denisty" type="float" value="0"/>
     <property name="friction" type="float" value="0.01"/>
+    <property name="frozenimpulse" type="float" value="7"/>
     <property name="height" type="float" value="0"/>
     <property name="restitution" type="float" value="0.1"/>
     <property name="texture" value="earth"/>
@@ -220,6 +221,21 @@
     <property name="WindStrength" type="float" value="50"/>
     <property name="WindTexture" value="earth"/>
    </properties>
+  </object>
+  <object id="24" name="slope" type="Slope" x="224" y="288">
+   <properties>
+    <property name="bodytype" value="static"/>
+    <property name="debugcolor" value="yellow"/>
+    <property name="debugopacity" type="int" value="255"/>
+    <property name="denisty" type="float" value="0"/>
+    <property name="friction" type="float" value="0.01"/>
+    <property name="frozenimpulse" type="float" value="7"/>
+    <property name="height" type="float" value="0"/>
+    <property name="restitution" type="float" value="0.1"/>
+    <property name="texture" value="earth"/>
+    <property name="width" type="float" value="0"/>
+   </properties>
+   <polygon points="0,0 0,-32 112,0"/>
   </object>
  </objectgroup>
 </map>

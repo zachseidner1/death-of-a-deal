@@ -9,6 +9,7 @@ import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.physics.obstacle.PolygonObstacle;
 import java.lang.reflect.Field;
+import java.util.Arrays;
 
 public class SlopeModel extends PolygonObstacle {
 
@@ -17,7 +18,7 @@ public class SlopeModel extends PolygonObstacle {
    * <p></p>
    * Default value is 0 unless explicitly specified in Tiled
    */
-  private float slopeFrozenForce = 0;
+  private float frozenImpulse = 0;
 
 
   /**
@@ -56,6 +57,7 @@ public class SlopeModel extends PolygonObstacle {
       index++;
       polygon = polygon.next();
     }
+    System.out.println("points: " + Arrays.toString(points));
     initShapes(points);
     initBounds();
 
@@ -64,7 +66,7 @@ public class SlopeModel extends PolygonObstacle {
       switch (properties.getString("name")) {
         case "bodytype":
           setBodyType(properties.getString("value").equals("static") ? BodyDef.BodyType.StaticBody
-            : BodyDef.BodyType.DynamicBody);
+              : BodyDef.BodyType.DynamicBody);
           break;
         case "density":
           setDensity(properties.getFloat("value"));
@@ -93,8 +95,8 @@ public class SlopeModel extends PolygonObstacle {
           TextureRegion texture = new TextureRegion(directory.getEntry(key, Texture.class));
           setTexture(texture);
           break;
-        case "frozenforce":
-          this.slopeFrozenForce = properties.getFloat("value");
+        case "frozenimpulse":
+          this.frozenImpulse = properties.getFloat("value");
           break;
         default:
           break;
@@ -121,7 +123,7 @@ public class SlopeModel extends PolygonObstacle {
       Vector2 startPoint = new Vector2(vertices[i], vertices[i + 1]);
       // Connect the last vertex with the first to close the shape
       Vector2 endPoint = (i + 2 < vertices.length) ? new Vector2(vertices[i + 2], vertices[i + 3])
-        : new Vector2(vertices[0], vertices[1]);
+          : new Vector2(vertices[0], vertices[1]);
 
       Vector2 edgeVector = new Vector2(endPoint.x - startPoint.x, endPoint.y - startPoint.y);
       float edgeLength = edgeVector.len2();
@@ -150,7 +152,7 @@ public class SlopeModel extends PolygonObstacle {
    * @return the force applied to the player when they touch the slope, in the direction opposite of
    * the hypotenuse
    */
-  public float getSlopeFrozenForce() {
-    return slopeFrozenForce;
+  public float getSlopeFrozenImpulse() {
+    return frozenImpulse;
   }
 }

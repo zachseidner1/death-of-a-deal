@@ -16,11 +16,14 @@ import edu.cornell.gdiac.util.MathUtil;
 public class CollisionController implements ContactListener {
 
   /**
+   * A cache vector for calculations and applying forces
+   */
+  private final Vector2 v2Cache;
+  /**
    * Mark set to handle more sophisticated collision callbacks
    */
   protected ObjectSet<Fixture> sensorFixtures;
   private LevelModel level;
-
 
   /**
    * Set up the collision model based on Level Model & Create sensorFixtures to track active bodies
@@ -30,48 +33,30 @@ public class CollisionController implements ContactListener {
   public CollisionController(LevelModel levelModel) {
     this.level = levelModel;
     this.sensorFixtures = new ObjectSet<Fixture>();
+    v2Cache = new Vector2();
   }
 
-  private static Vector2 getForceVector(SlopeModel slope) {
+  /**
+   * Sets v2cache to contain the impulse vector from the slope collision
+   *
+   * @param slope the slope model involved in the collision
+   */
+  private void prepareImpulse(SlopeModel slope) {
     float slopeAngle = slope.getSlopeAngle();
-    float forceMagnitude = slope.getSlopeFrozenForce();
+    float forceMagnitude = slope.getSlopeFrozenImpulse();
+    System.out.println("force mag" + forceMagnitude);
 
-    Vector2 force;
     if (slopeAngle >= 0 && slopeAngle <= Math.PI) {
       // Slope is pointing down left
-      force = new Vector2(
+      v2Cache.set(
           (float) -Math.cos(slopeAngle) * forceMagnitude,
           (float) -Math.sin(slopeAngle) * forceMagnitude
       );
     } else {
       // Slope is pointing down right
-      force = new Vector2((float) Math.cos(slopeAngle) * forceMagnitude,
+      v2Cache.set((float) Math.cos(slopeAngle) * forceMagnitude,
           (float) Math.sin(slopeAngle) * forceMagnitude);
     }
-    return force;
-  }
-
-  private static Vector2 getImpulseVector(SlopeModel slope) {
-    float slopeAngle = slope.getSlopeAngle();
-    float forceMagnitude = slope.getSlopefrozenimpulse();
-
-    Vector2 force;
-    if (slopeAngle >= 0 && slopeAngle <= Math.PI) {
-      System.out.println("downleft");
-      // Slope is pointing down left
-      force = new Vector2(
-          (float) -Math.cos(slopeAngle) * forceMagnitude,
-          (float) -Math.sin(slopeAngle) * forceMagnitude
-      );
-      System.out.println(force);
-    } else {
-      // Slope is pointing down right
-      System.out.println("downright");
-      force = new Vector2((float) Math.cos(slopeAngle) * forceMagnitude,
-          (float) Math.sin(slopeAngle) * forceMagnitude);
-      System.out.println(force);
-    }
-    return force;
   }
 
   /**
@@ -314,13 +299,14 @@ public class CollisionController implements ContactListener {
 
       if ((bd1.equals(plyr) && bd2 instanceof SlopeModel) || (bd2.equals(plyr)
           && bd1 instanceof SlopeModel)) {
+        System.out.println("solving slope");
         SlopeModel slope = (bd1 instanceof SlopeModel) ? (SlopeModel) bd1 : (SlopeModel) bd2;
 
         // Only add extra force when player is frozen
         if (plyr.getIsFrozen()) {
-          Vector2 impulse = getImpulseVector(slope);
-          System.out.println(impulse);
-          plyr.setFrozenImpulse(impulse);
+          prepareImpulse(slope);
+          System.out.println("impulse: " + v2Cache);
+          plyr.getBody().applyLinearImpulse(v2Cache, plyr.getPosition(), true);
         }
       }
     } catch (Exception e) {

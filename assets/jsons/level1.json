@@ -229,6 +229,11 @@
                          "value":0.01
                         }, 
                         {
+                         "name":"frozenimpulse",
+                         "type":"float",
+                         "value":7
+                        }, 
+                        {
                          "name":"height",
                          "type":"float",
                          "value":0
@@ -731,6 +736,81 @@
                  "width":16,
                  "x":304,
                  "y":320
+                }, 
+                {
+                 "height":0,
+                 "id":24,
+                 "name":"slope",
+                 "polygon":[
+                        {
+                         "x":0,
+                         "y":0
+                        }, 
+                        {
+                         "x":0,
+                         "y":-32
+                        }, 
+                        {
+                         "x":112,
+                         "y":0
+                        }],
+                 "properties":[
+                        {
+                         "name":"bodytype",
+                         "type":"string",
+                         "value":"static"
+                        }, 
+                        {
+                         "name":"debugcolor",
+                         "type":"string",
+                         "value":"yellow"
+                        }, 
+                        {
+                         "name":"debugopacity",
+                         "type":"int",
+                         "value":255
+                        }, 
+                        {
+                         "name":"denisty",
+                         "type":"float",
+                         "value":0
+                        }, 
+                        {
+                         "name":"friction",
+                         "type":"float",
+                         "value":0.01
+                        }, 
+                        {
+                         "name":"frozenimpulse",
+                         "type":"float",
+                         "value":7
+                        }, 
+                        {
+                         "name":"height",
+                         "type":"float",
+                         "value":0
+                        }, 
+                        {
+                         "name":"restitution",
+                         "type":"float",
+                         "value":0.1
+                        }, 
+                        {
+                         "name":"texture",
+                         "type":"string",
+                         "value":"earth"
+                        }, 
+                        {
+                         "name":"width",
+                         "type":"float",
+                         "value":0
+                        }],
+                 "rotation":0,
+                 "type":"Slope",
+                 "visible":true,
+                 "width":0,
+                 "x":224,
+                 "y":288
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -739,7 +819,7 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":22,
+ "nextobjectid":25,
  "orientation":"orthogonal",
  "properties":[
         {
