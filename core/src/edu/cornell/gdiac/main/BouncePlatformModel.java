@@ -58,7 +58,7 @@ public class BouncePlatformModel extends PlatformModel {
       switch (properties.getString("name")) {
         case "bodytype":
           setBodyType(properties.getString("value").equals("static") ? BodyDef.BodyType.StaticBody
-              : BodyDef.BodyType.DynamicBody);
+            : BodyDef.BodyType.DynamicBody);
           break;
         case "density":
           setDensity(properties.getFloat("value"));
@@ -98,7 +98,7 @@ public class BouncePlatformModel extends PlatformModel {
   public void draw(GameCanvas canvas) {
     if (region != null) {
       canvas.draw(region, Color.RED, 0, 0, (getX() - anchor.x) * drawScale.x,
-          (getY() - anchor.y) * drawScale.y, getAngle(), 1, 1);
+        (getY() - anchor.y) * drawScale.y, getAngle(), 1, 1);
     }
   }
 }

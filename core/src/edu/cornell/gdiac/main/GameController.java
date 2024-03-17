@@ -411,10 +411,13 @@ public class GameController implements Screen {
       avatar.setFrozen(input.getFrozen());
     }
 
-    // Turn the physics engine crank.
+    // Turn the physics engine crank
     level.getWorld().step(WORLD_STEP, WORLD_VELOC, WORLD_POSIT);
-    // Apply air resistance to all objects in level
     level.applyAirResistance();
+    // Update each fanModel with the current time
+    level.getFans().forEach((fanModel) -> {
+      fanModel.update(WORLD_STEP);
+    });
 
     avatar.setFrozen(input.getFrozen());
     avatar.applyForce();

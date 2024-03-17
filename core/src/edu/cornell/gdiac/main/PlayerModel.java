@@ -399,8 +399,8 @@ public class PlayerModel extends CapsuleObstacle {
       switch (properties.getString("name")) {
         case "bodytype":
           setBodyType(
-              properties.get("value").asString().equals("static") ? BodyDef.BodyType.StaticBody
-                  : BodyDef.BodyType.DynamicBody);
+            properties.get("value").asString().equals("static") ? BodyDef.BodyType.StaticBody
+              : BodyDef.BodyType.DynamicBody);
           break;
         case "density":
           setDensity(properties.getFloat("value"));
@@ -580,8 +580,8 @@ public class PlayerModel extends CapsuleObstacle {
     if (texture != null) {
       float effect = faceRight ? 1.0f : -1.0f;
       canvas.draw(isFrozen ? frozenTexture : texture, color, origin.x, origin.y,
-          getX() * drawScale.x,
-          getY() * drawScale.y, getAngle(), effect, 1.0f);
+        getX() * drawScale.x,
+        getY() * drawScale.y, getAngle(), effect, 1.0f);
     }
   }
 }

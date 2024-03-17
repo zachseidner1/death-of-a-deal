@@ -64,7 +64,7 @@ public class SlopeModel extends PolygonObstacle {
       switch (properties.getString("name")) {
         case "bodytype":
           setBodyType(properties.getString("value").equals("static") ? BodyDef.BodyType.StaticBody
-              : BodyDef.BodyType.DynamicBody);
+            : BodyDef.BodyType.DynamicBody);
           break;
         case "density":
           setDensity(properties.getFloat("value"));
@@ -121,7 +121,7 @@ public class SlopeModel extends PolygonObstacle {
       Vector2 startPoint = new Vector2(vertices[i], vertices[i + 1]);
       // Connect the last vertex with the first to close the shape
       Vector2 endPoint = (i + 2 < vertices.length) ? new Vector2(vertices[i + 2], vertices[i + 3])
-          : new Vector2(vertices[0], vertices[1]);
+        : new Vector2(vertices[0], vertices[1]);
 
       Vector2 edgeVector = new Vector2(endPoint.x - startPoint.x, endPoint.y - startPoint.y);
       float edgeLength = edgeVector.len2();

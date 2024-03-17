@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="40" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="21">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="40" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="22">
  <editorsettings>
   <export target="../assets/jsons/level1.json" format="json"/>
  </editorsettings>
@@ -87,7 +87,7 @@
 </data>
  </layer>
  <objectgroup id="3" name="objects">
-  <object id="2" name="slope" x="544" y="256">
+  <object id="2" name="slope" type="Slope" x="544" y="256">
    <properties>
     <property name="bodytype" value="static"/>
     <property name="debugcolor" value="yellow"/>
@@ -101,22 +101,21 @@
    </properties>
    <polygon points="1.89093,1.01864 81.4335,-30.5682 81.4335,1.05408"/>
   </object>
-  <object id="9" name="slope" x="256" y="352">
+  <object id="9" name="slope" type="Slope" x="136.914" y="207.483">
    <properties>
     <property name="bodytype" value="static"/>
     <property name="debugcolor" value="yellow"/>
     <property name="debugopacity" type="int" value="255"/>
     <property name="denisty" type="float" value="0"/>
     <property name="friction" type="float" value="0.01"/>
-    <property name="frozenforce" type="float" value="0"/>
     <property name="height" type="float" value="0"/>
-    <property name="restitution" type="float" value="0"/>
+    <property name="restitution" type="float" value="0.1"/>
     <property name="texture" value="earth"/>
     <property name="width" type="float" value="0"/>
    </properties>
-   <polygon points="0,0 16,-16 16,0"/>
+   <polygon points="2.7234,1.01864 117.284,-30.5682 117.284,1.05408"/>
   </object>
-  <object id="6" name="exit" x="16" y="0" width="32" height="48">
+  <object id="6" name="exit" type="Exit" x="16" y="0" width="32" height="48">
    <properties>
     <property name="bodytype" value="static"/>
     <property name="debugcolor" value="yellow"/>
@@ -127,7 +126,7 @@
     <property name="texture" value="goal"/>
    </properties>
   </object>
-  <object id="8" name="player" x="48" y="96" width="16" height="32">
+  <object id="8" name="player" type="Player" x="48" y="96" width="16" height="30">
    <properties>
     <property name="bodytype" value="dynamic"/>
     <property name="damping" type="float" value="10"/>
@@ -148,22 +147,24 @@
     <property name="texture" value="dude"/>
    </properties>
   </object>
-  <object id="10" name="slope" x="192" y="352">
+  <object id="10" name="fan" type="Fan" x="16" y="320" width="16" height="80">
    <properties>
-    <property name="bodytype" value="static"/>
-    <property name="debugcolor" value="yellow"/>
-    <property name="debugopacity" type="int" value="255"/>
-    <property name="denisty" type="float" value="0"/>
-    <property name="friction" type="float" value="0.01"/>
-    <property name="frozenforce" type="float" value="10"/>
-    <property name="height" type="float" value="0"/>
-    <property name="restitution" type="float" value="0"/>
-    <property name="texture" value="earth"/>
-    <property name="width" type="float" value="0"/>
+    <property name="Active" type="bool" value="true"/>
+    <property name="BodyType" value="static"/>
+    <property name="DebugColor" value="yellow"/>
+    <property name="DebugOpacity" type="int" value="255"/>
+    <property name="FanTexture" value="earth"/>
+    <property name="Period" type="float" value="0"/>
+    <property name="PeriodOnRatio" type="float" value="1"/>
+    <property name="Side" value="right"/>
+    <property name="Type" value="constant"/>
+    <property name="WindBreadth" type="float" value="70"/>
+    <property name="WindLength" type="float" value="120"/>
+    <property name="WindStrength" type="float" value="50"/>
+    <property name="WindTexture" value="earth"/>
    </properties>
-   <polygon points="-64,0 -64,-32 64,0"/>
   </object>
-  <object id="18" name="breakable" gid="1" x="128" y="208" width="48" height="16">
+  <object id="18" name="breakable" type="Breakable" gid="1" x="160" y="288" width="48" height="16">
    <properties>
     <property name="bodytype" value="static"/>
     <property name="breakminvelocity" type="float" value="6"/>
@@ -173,7 +174,7 @@
     <property name="restitution" type="float" value="0"/>
    </properties>
   </object>
-  <object id="19" name="bounce" gid="1" x="16" y="288" width="16" height="48">
+  <object id="19" name="bounce" type="Bounce" gid="1" x="16" y="288" width="16" height="48">
    <properties>
     <property name="bodytype" value="static"/>
     <property name="coefficient" value="3"/>
@@ -188,7 +189,7 @@
     <property name="width" type="float" value="0"/>
    </properties>
   </object>
-  <object id="20" name="bounce" gid="1" x="352" y="400" width="48" height="16">
+  <object id="20" name="bounce" type="Bounce" gid="1" x="352" y="400" width="48" height="16">
    <properties>
     <property name="bodytype" value="static"/>
     <property name="coefficient" value="3"/>
@@ -201,6 +202,23 @@
     <property name="restitution" type="float" value="0"/>
     <property name="texture" value="earth"/>
     <property name="width" type="float" value="0"/>
+   </properties>
+  </object>
+  <object id="21" name="fan" type="Fan" x="304" y="320" width="16" height="80">
+   <properties>
+    <property name="Active" type="bool" value="true"/>
+    <property name="BodyType" value="static"/>
+    <property name="DebugColor" value="yellow"/>
+    <property name="DebugOpacity" type="int" value="255"/>
+    <property name="FanTexture" value="earth"/>
+    <property name="Period" type="float" value="0"/>
+    <property name="PeriodOnRatio" type="float" value="1"/>
+    <property name="Side" value="left"/>
+    <property name="Type" value="constant"/>
+    <property name="WindBreadth" type="float" value="70"/>
+    <property name="WindLength" type="float" value="120"/>
+    <property name="WindStrength" type="float" value="50"/>
+    <property name="WindTexture" value="earth"/>
    </properties>
   </object>
  </objectgroup>
