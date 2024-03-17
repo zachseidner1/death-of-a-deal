@@ -543,9 +543,9 @@ public class PlayerModel extends CapsuleObstacle {
         targetSpeed) && Math.abs(targetSpeed) > 0.01F) {
       accelRate = 0;
     }
-    // If the player is trying to go to 0 speed, apply deceleration rate (faster in air)
+    // If the player is trying to go to 0 speed, apply deceleration rate (faster)
     if (Math.abs(targetSpeed) < 0.01F) {
-      accelRate = isGrounded() ? 1.5F : 1.2F;
+      accelRate = 1.8F;
     }
 
     // We move the player based on how far they are from their target speed
