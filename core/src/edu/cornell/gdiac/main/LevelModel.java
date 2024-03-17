@@ -243,6 +243,8 @@ public class LevelModel {
         case "pheight":
           pSize[1] = property.getFloat("value");
           break;
+        case "timelimit":
+          timer = property.getFloat("value");
       }
       property = property.next();
     }
@@ -337,7 +339,8 @@ public class LevelModel {
 
   private void makeObjects(AssetDirectory directory, JsonValue objects, int gSizeY) {
     while (objects != null) {
-      switch (objects.getString("name")) {
+      String name = objects.getString("name");
+      switch (name) {
         case "player":
           avatar = new PlayerModel();
           avatar.setDrawScale(scale);
@@ -356,7 +359,14 @@ public class LevelModel {
           slope.initialize(directory, objects, gSizeY);
           activate(slope);
           break;
-        case "Bounce":
+        case "fan":
+          FanModel fan = new FanModel();
+          fan.setDrawScale(scale);
+          fan.initialize(directory, objects, gSizeY);
+          activate(fan);
+          fans.add(fan);
+          break;
+        case "bounce":
           BouncePlatformModel platform = new BouncePlatformModel();
           platform.setDrawScale(scale);
           platform.initialize(directory, objects, gSizeY);

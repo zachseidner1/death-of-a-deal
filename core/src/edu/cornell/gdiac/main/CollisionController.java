@@ -11,15 +11,19 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.utils.ObjectSet;
 import edu.cornell.gdiac.physics.obstacle.BoxObstacle;
 import edu.cornell.gdiac.physics.obstacle.Obstacle;
+import edu.cornell.gdiac.util.MathUtil;
 
 public class CollisionController implements ContactListener {
 
+  /**
+   * A cache vector for calculations and applying forces
+   */
+  private final Vector2 v2Cache;
   /**
    * Mark set to handle more sophisticated collision callbacks
    */
   protected ObjectSet<Fixture> sensorFixtures;
   private LevelModel level;
-
 
   /**
    * Set up the collision model based on Level Model & Create sensorFixtures to track active bodies
@@ -29,29 +33,30 @@ public class CollisionController implements ContactListener {
   public CollisionController(LevelModel levelModel) {
     this.level = levelModel;
     this.sensorFixtures = new ObjectSet<Fixture>();
+    v2Cache = new Vector2();
   }
 
-  private static Vector2 getImpulseVector(SlopeModel slope) {
+  /**
+   * Sets v2cache to contain the impulse vector from the slope collision
+   *
+   * @param slope the slope model involved in the collision
+   */
+  private void prepareImpulse(SlopeModel slope) {
     float slopeAngle = slope.getSlopeAngle();
-    float forceMagnitude = slope.getSlopefrozenimpulse();
+    float forceMagnitude = slope.getSlopeFrozenImpulse();
+    System.out.println("force mag" + forceMagnitude);
 
-    Vector2 force;
     if (slopeAngle >= 0 && slopeAngle <= Math.PI) {
-      System.out.println("downleft");
       // Slope is pointing down left
-      force = new Vector2(
+      v2Cache.set(
           (float) -Math.cos(slopeAngle) * forceMagnitude,
           (float) -Math.sin(slopeAngle) * forceMagnitude
       );
-      System.out.println(force);
     } else {
       // Slope is pointing down right
-      System.out.println("downright");
-      force = new Vector2((float) Math.cos(slopeAngle) * forceMagnitude,
+      v2Cache.set((float) Math.cos(slopeAngle) * forceMagnitude,
           (float) Math.sin(slopeAngle) * forceMagnitude);
-      System.out.println(force);
     }
-    return force;
   }
 
   /**
@@ -77,40 +82,7 @@ public class CollisionController implements ContactListener {
       PlayerModel avatar = level.getAvatar();
       BoxObstacle door = level.getExit();
 
-      // Determine if there is a "collision" with wind from fans
-      boolean is1WindFixture = fix1.getUserData() instanceof WindModel;
-      boolean is2WindFixture = fix2.getUserData() instanceof WindModel;
-      WindModel wind = null;
-      Obstacle obj = null;
-
-      if (is1WindFixture) {
-        wind = (WindModel) fix1.getUserData();
-        obj = bd2;
-      } else if (is2WindFixture) {
-        wind = (WindModel) fix2.getUserData();
-        obj = bd1;
-      }
-
-      // On wind contact callback
-      // TODO: Collisions are detected passively (i.e. moving player in wind results in more collisions and wind force feedback)
-      if (wind != null && obj != null) {
-        // Should not continue detection with static body
-        if (obj.getBodyType() == BodyType.StaticBody) {
-          contact.setEnabled(false);
-        } else {
-          // Apply wind force
-          Vector2 windForce = wind.findWindForce(obj.getX(), obj.getY());
-          obj.getBody().applyForce(windForce, obj.getPosition(), true);
-        }
-      }
-
-      // See if we have landed on the ground
-      if (!is1WindFixture && !is2WindFixture && (
-          (avatar.getSensorName().equals(fd2) && avatar != bd1) ||
-              (avatar.getSensorName().equals(fd1) && avatar != bd2))) {
-        avatar.setGrounded(true);
-        sensorFixtures.add(avatar == bd1 ? fix2 : fix1);
-      }
+      handleWindContact(contact, fix1, fix2, bd2, bd1, avatar, fd2, fd1);
 
       // Check for win condition
       if ((bd1 == avatar && bd2 == door) ||
@@ -120,6 +92,45 @@ public class CollisionController implements ContactListener {
 
     } catch (Exception e) {
       e.printStackTrace();
+    }
+  }
+
+  private void handleWindContact(Contact contact, Fixture fix1, Fixture fix2, Obstacle bd2,
+      Obstacle bd1,
+      PlayerModel avatar, Object fd2, Object fd1) {
+    // Determine if there is a "collision" with wind from fans
+    boolean is1WindFixture = fix1.getUserData() instanceof WindModel;
+    boolean is2WindFixture = fix2.getUserData() instanceof WindModel;
+    WindModel wind = null;
+    Obstacle obj = null;
+
+    if (is1WindFixture) {
+      wind = (WindModel) fix1.getUserData();
+      obj = bd2;
+    } else if (is2WindFixture) {
+      wind = (WindModel) fix2.getUserData();
+      obj = bd1;
+    }
+
+    // On wind contact callback
+    // TODO: Collisions are detected passively (i.e. moving player in wind results in more collisions and wind force feedback)
+    if (wind != null && obj != null) {
+      // Should not continue detection with static body
+      if (obj.getBodyType() == BodyType.StaticBody) {
+        contact.setEnabled(false);
+      } else {
+        // Apply wind force
+        Vector2 windForce = wind.findWindForce(obj.getX(), obj.getY());
+        obj.getBody().applyForce(windForce, obj.getPosition(), true);
+      }
+    }
+
+    // See if we have landed on the ground
+    if (!is1WindFixture && !is2WindFixture && ((avatar.getSensorName().equals(fd2) && avatar != bd1)
+        ||
+        (avatar.getSensorName().equals(fd1) && avatar != bd2))) {
+      avatar.setGrounded(true);
+      sensorFixtures.add(avatar == bd1 ? fix2 : fix1);
     }
   }
 
@@ -169,6 +180,7 @@ public class CollisionController implements ContactListener {
     PlayerModel plyr = level.getAvatar();
     preSolveBounce(contact, plyr, body1, body2);
     preSolveSlope(contact, plyr, body1, body2);
+    preSolveBreak(contact, plyr, body1, body2);
   }
 
   /**
@@ -213,7 +225,40 @@ public class CollisionController implements ContactListener {
     }
   }
 
-  public void postSolveBounce(Contact contact, PlayerModel plyr, Body body1, Body body2) {
+  public void preSolveBreak(Contact contact, PlayerModel plyr, Body body1, Body body2) {
+    try {
+      Obstacle bd1 = (Obstacle) body1.getUserData();
+      Obstacle bd2 = (Obstacle) body2.getUserData();
+      if (bd1.equals(plyr)) {
+        if (bd1 instanceof BreakablePlatformModel) {
+          BreakablePlatformModel breakablePlatform = (BreakablePlatformModel) bd1;
+          if (MathUtil.getMagnitude(plyr.getLinearVelocity())
+              > breakablePlatform.getBreakMinVelocity()
+              || breakablePlatform.isBroken()
+          ) {
+            breakablePlatform.setBroken(true);
+            contact.setEnabled(false);
+          }
+        }
+      }
+      if (bd2.equals(plyr)) {
+        if (bd1 instanceof BreakablePlatformModel) {
+          BreakablePlatformModel breakablePlatform = (BreakablePlatformModel) bd1;
+          if (MathUtil.getMagnitude(plyr.getLinearVelocity())
+              > breakablePlatform.getBreakMinVelocity()
+              || breakablePlatform.isBroken()
+          ) {
+            breakablePlatform.setBroken(true);
+            contact.setEnabled(false);
+          }
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  private void postSolveBounce(Contact contact, PlayerModel plyr, Body body1, Body body2) {
     try {
       Obstacle bd1 = (Obstacle) body1.getUserData();
       Obstacle bd2 = (Obstacle) body2.getUserData();
@@ -247,20 +292,21 @@ public class CollisionController implements ContactListener {
     }
   }
 
-  public void preSolveSlope(Contact contact, PlayerModel plyr, Body body1, Body body2) {
+  private void preSolveSlope(Contact contact, PlayerModel plyr, Body body1, Body body2) {
     try {
       Obstacle bd1 = (Obstacle) body1.getUserData();
       Obstacle bd2 = (Obstacle) body2.getUserData();
 
       if ((bd1.equals(plyr) && bd2 instanceof SlopeModel) || (bd2.equals(plyr)
           && bd1 instanceof SlopeModel)) {
+        System.out.println("solving slope");
         SlopeModel slope = (bd1 instanceof SlopeModel) ? (SlopeModel) bd1 : (SlopeModel) bd2;
 
         // Only add extra force when player is frozen
         if (plyr.getIsFrozen()) {
-          Vector2 impulse = getImpulseVector(slope);
-          System.out.println(impulse);
-          plyr.setFrozenImpulse(impulse);
+          prepareImpulse(slope);
+          System.out.println("impulse: " + v2Cache);
+          plyr.getBody().applyLinearImpulse(v2Cache, plyr.getPosition(), true);
         }
       }
     } catch (Exception e) {

@@ -40,11 +40,11 @@ public class PlayerModel extends CapsuleObstacle {
   /**
    * frozen density
    */
-  private final float FROZEN_DENSITY = 30.0f;
+  private final float FROZEN_DENSITY = 50.0f;
   /**
-   * Whether the character has a higher density in the frozen state which causes them to slide
+   * Cache for internal force calculations
    */
-  private boolean shouldSlide;
+  private final Vector2 v2Cache = new Vector2();
   /**
    * The factor to multiply by the input
    */
@@ -71,12 +71,12 @@ public class PlayerModel extends CapsuleObstacle {
    * Which direction is the character facing
    */
   private boolean faceRight;
+
+  // SENSOR FIELDS
   /**
    * Whether our feet are on the ground
    */
   private boolean isGrounded;
-
-  // SENSOR FIELDS
   /**
    * How long until we can jump again
    */
@@ -85,11 +85,11 @@ public class PlayerModel extends CapsuleObstacle {
    * Whether we are actively jumping
    */
   private boolean isJumping;
+  // SENSOR FIELDS
   /**
    * The velocity the character initially gains on jump
    */
   private float jumpVelocity;
-  // SENSOR FIELDS
   /**
    * Whether we are currently frozen
    */
@@ -107,10 +107,6 @@ public class PlayerModel extends CapsuleObstacle {
    * The color to paint the sensor in debug mode
    */
   private Color sensorColor;
-  /**
-   * Cache for internal force calculations
-   */
-  private Vector2 forceCache = new Vector2();
   /**
    * Tint for drawing the color (blue if isFrozen)
    */
@@ -134,8 +130,6 @@ public class PlayerModel extends CapsuleObstacle {
    */
   private float fallMultiplier;
 
-  private Vector2 frozenImpulse = new Vector2(0.0f, 0.0f);
-
   /**
    * Creates a new player with degenerate settings
    * <p>
@@ -150,7 +144,6 @@ public class PlayerModel extends CapsuleObstacle {
     isJumping = false;
     isFrozen = false;
     faceRight = true;
-    shouldSlide = false;
     color = Color.WHITE;
     sensorSizeX = 0;
     setDensity(1);
@@ -207,14 +200,6 @@ public class PlayerModel extends CapsuleObstacle {
 
   public void setJumpVelocity(float value) {
     jumpVelocity = value;
-  }
-
-  public Vector2 getFrozenImpulse() {
-    return frozenImpulse;
-  }
-
-  public void setFrozenImpulse(Vector2 impulse) {
-    frozenImpulse = impulse;
   }
 
   /**
@@ -403,8 +388,8 @@ public class PlayerModel extends CapsuleObstacle {
     float y = (gSizeY - json.getFloat("y")) * (1 / drawScale.y);
 
     setPosition(x, y);
-    float width = json.getFloat("width") * (1/drawScale.x);
-    float height = json.getFloat("height") * (1/drawScale.y);
+    float width = json.getFloat("width") * (1 / drawScale.x);
+    float height = json.getFloat("height") * (1 / drawScale.y);
     setDimension(width, height);
 
     JsonValue properties = json.get("properties").child();
@@ -566,17 +551,13 @@ public class PlayerModel extends CapsuleObstacle {
     // We move the player based on how far they are from their target speed
     float speedDif = targetSpeed - (getVX());
     float movement = speedDif * accelRate;
-    forceCache.set(movement, 0);
+    v2Cache.set(movement, 0);
     // Jump!
-    if (getIsJumping()) {
+    if (getIsJumping() && !getIsFrozen()) {
       setVY(jumpVelocity);
     }
 
-    body.applyForce(forceCache, getPosition(), true);
-
-    // Apply Frozen Impulse
-    body.applyLinearImpulse(getFrozenImpulse(), getPosition(), true);
-    setFrozenImpulse(new Vector2(0.0f, 0.0f));
+    body.applyForce(v2Cache, getPosition(), true);
   }
 
   /**

@@ -17,7 +17,7 @@ public class SlopeModel extends PolygonObstacle {
    * <p></p>
    * Default value is 0 unless explicitly specified in Tiled
    */
-  private float slopefrozenimpulse = 0;
+  private float frozenImpulse = 0;
 
 
   /**
@@ -94,7 +94,7 @@ public class SlopeModel extends PolygonObstacle {
           setTexture(texture);
           break;
         case "frozenimpulse":
-          this.slopefrozenimpulse = properties.getFloat("value");
+          this.frozenImpulse = properties.getFloat("value");
           break;
         default:
           break;
@@ -150,7 +150,7 @@ public class SlopeModel extends PolygonObstacle {
    * @return the force applied to the player when they touch the slope, in the direction opposite of
    * the hypotenuse
    */
-  public float getSlopefrozenimpulse() {
-    return slopefrozenimpulse;
+  public float getSlopeFrozenImpulse() {
+    return frozenImpulse;
   }
 }
