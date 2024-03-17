@@ -144,7 +144,7 @@ public class GameController implements Screen {
     countdown = -1;
     timer = 100;
     // create CollisionController, which is extended from ContactListener
-    collisionController = new  CollisionController(level);
+    collisionController = new CollisionController(level);
 
     setComplete(false);
     setFailure(false);
@@ -391,10 +391,6 @@ public class GameController implements Screen {
     // Turn the physics engine crank
     level.getWorld().step(WORLD_STEP, WORLD_VELOC, WORLD_POSIT);
     level.applyAirResistance();
-    // Update each fanModel with the current time
-    level.getFans().forEach((fanModel) -> {
-      fanModel.update(WORLD_STEP);
-    });
 
     avatar.setFrozen(input.getFrozen());
     avatar.applyForce();
