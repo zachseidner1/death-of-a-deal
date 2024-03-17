@@ -179,7 +179,7 @@
                          "value":0
                         }],
                  "rotation":0,
-                 "type":"",
+                 "type":"Slope",
                  "visible":true,
                  "width":0,
                  "x":544,
@@ -191,16 +191,16 @@
                  "name":"slope",
                  "polygon":[
                         {
-                         "x":0,
-                         "y":0
+                         "x":2.7234,
+                         "y":1.01864
                         }, 
                         {
-                         "x":16,
-                         "y":-16
+                         "x":117.284,
+                         "y":-30.5682
                         }, 
                         {
-                         "x":16,
-                         "y":0
+                         "x":117.284,
+                         "y":1.05408
                         }],
                  "properties":[
                         {
@@ -229,11 +229,6 @@
                          "value":0.01
                         }, 
                         {
-                         "name":"frozenforce",
-                         "type":"float",
-                         "value":0
-                        }, 
-                        {
                          "name":"height",
                          "type":"float",
                          "value":0
@@ -241,7 +236,7 @@
                         {
                          "name":"restitution",
                          "type":"float",
-                         "value":0
+                         "value":0.1
                         }, 
                         {
                          "name":"texture",
@@ -254,11 +249,11 @@
                          "value":0
                         }],
                  "rotation":0,
-                 "type":"",
+                 "type":"Slope",
                  "visible":true,
                  "width":0,
-                 "x":256,
-                 "y":352
+                 "x":136.914,
+                 "y":207.483
                 }, 
                 {
                  "height":48,
@@ -301,14 +296,14 @@
                          "value":"goal"
                         }],
                  "rotation":0,
-                 "type":"",
+                 "type":"Exit",
                  "visible":true,
                  "width":32,
                  "x":16,
                  "y":0
                 }, 
                 {
-                 "height":32,
+                 "height":30,
                  "id":8,
                  "name":"player",
                  "properties":[
@@ -398,86 +393,88 @@
                          "value":"dude"
                         }],
                  "rotation":0,
-                 "type":"",
+                 "type":"Player",
                  "visible":true,
                  "width":16,
                  "x":48,
                  "y":96
                 }, 
                 {
-                 "height":0,
+                 "height":80,
                  "id":10,
-                 "name":"slope",
-                 "polygon":[
-                        {
-                         "x":-64,
-                         "y":0
-                        }, 
-                        {
-                         "x":-64,
-                         "y":-32
-                        }, 
-                        {
-                         "x":64,
-                         "y":0
-                        }],
+                 "name":"fan",
                  "properties":[
                         {
-                         "name":"bodytype",
+                         "name":"Active",
+                         "type":"bool",
+                         "value":true
+                        }, 
+                        {
+                         "name":"BodyType",
                          "type":"string",
                          "value":"static"
                         }, 
                         {
-                         "name":"debugcolor",
+                         "name":"DebugColor",
                          "type":"string",
                          "value":"yellow"
                         }, 
                         {
-                         "name":"debugopacity",
+                         "name":"DebugOpacity",
                          "type":"int",
                          "value":255
                         }, 
                         {
-                         "name":"denisty",
-                         "type":"float",
-                         "value":0
-                        }, 
-                        {
-                         "name":"friction",
-                         "type":"float",
-                         "value":0.01
-                        }, 
-                        {
-                         "name":"frozenforce",
-                         "type":"float",
-                         "value":10
-                        }, 
-                        {
-                         "name":"height",
-                         "type":"float",
-                         "value":0
-                        }, 
-                        {
-                         "name":"restitution",
-                         "type":"float",
-                         "value":0
-                        }, 
-                        {
-                         "name":"texture",
+                         "name":"FanTexture",
                          "type":"string",
                          "value":"earth"
                         }, 
                         {
-                         "name":"width",
+                         "name":"Period",
                          "type":"float",
                          "value":0
+                        }, 
+                        {
+                         "name":"PeriodOnRatio",
+                         "type":"float",
+                         "value":1
+                        }, 
+                        {
+                         "name":"Side",
+                         "type":"string",
+                         "value":"right"
+                        }, 
+                        {
+                         "name":"Type",
+                         "type":"string",
+                         "value":"constant"
+                        }, 
+                        {
+                         "name":"WindBreadth",
+                         "type":"float",
+                         "value":70
+                        }, 
+                        {
+                         "name":"WindLength",
+                         "type":"float",
+                         "value":120
+                        }, 
+                        {
+                         "name":"WindStrength",
+                         "type":"float",
+                         "value":50
+                        }, 
+                        {
+                         "name":"WindTexture",
+                         "type":"string",
+                         "value":"earth"
                         }],
                  "rotation":0,
-                 "type":"",
+                 "type":"Fan",
                  "visible":true,
-                 "width":0,
-                 "x":192,
-                 "y":352
+                 "width":16,
+                 "x":16,
+                 "y":320
                 }, 
                 {
                  "gid":1,
@@ -516,11 +513,11 @@
                          "value":0
                         }],
                  "rotation":0,
-                 "type":"",
+                 "type":"Breakable",
                  "visible":true,
                  "width":48,
-                 "x":128,
-                 "y":208
+                 "x":160,
+                 "y":288
                 }, 
                 {
                  "gid":1,
@@ -584,7 +581,7 @@
                          "value":0
                         }],
                  "rotation":0,
-                 "type":"",
+                 "type":"Bounce",
                  "visible":true,
                  "width":16,
                  "x":16,
@@ -652,11 +649,88 @@
                          "value":0
                         }],
                  "rotation":0,
-                 "type":"",
+                 "type":"Bounce",
                  "visible":true,
                  "width":48,
                  "x":352,
                  "y":400
+                }, 
+                {
+                 "height":80,
+                 "id":21,
+                 "name":"fan",
+                 "properties":[
+                        {
+                         "name":"Active",
+                         "type":"bool",
+                         "value":true
+                        }, 
+                        {
+                         "name":"BodyType",
+                         "type":"string",
+                         "value":"static"
+                        }, 
+                        {
+                         "name":"DebugColor",
+                         "type":"string",
+                         "value":"yellow"
+                        }, 
+                        {
+                         "name":"DebugOpacity",
+                         "type":"int",
+                         "value":255
+                        }, 
+                        {
+                         "name":"FanTexture",
+                         "type":"string",
+                         "value":"earth"
+                        }, 
+                        {
+                         "name":"Period",
+                         "type":"float",
+                         "value":0
+                        }, 
+                        {
+                         "name":"PeriodOnRatio",
+                         "type":"float",
+                         "value":1
+                        }, 
+                        {
+                         "name":"Side",
+                         "type":"string",
+                         "value":"left"
+                        }, 
+                        {
+                         "name":"Type",
+                         "type":"string",
+                         "value":"constant"
+                        }, 
+                        {
+                         "name":"WindBreadth",
+                         "type":"float",
+                         "value":70
+                        }, 
+                        {
+                         "name":"WindLength",
+                         "type":"float",
+                         "value":120
+                        }, 
+                        {
+                         "name":"WindStrength",
+                         "type":"float",
+                         "value":50
+                        }, 
+                        {
+                         "name":"WindTexture",
+                         "type":"string",
+                         "value":"earth"
+                        }],
+                 "rotation":0,
+                 "type":"Fan",
+                 "visible":true,
+                 "width":16,
+                 "x":304,
+                 "y":320
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -665,7 +739,7 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":21,
+ "nextobjectid":22,
  "orientation":"orthogonal",
  "properties":[
         {

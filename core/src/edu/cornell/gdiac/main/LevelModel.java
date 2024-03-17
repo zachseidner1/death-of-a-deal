@@ -266,8 +266,8 @@ public class LevelModel {
       switch (layer.getString("name")) {
         case "level":
           makeTiles(numTilesHorizontal, numTilesVertical, layer.get("data").asIntArray(), tileWidth,
-            tileHeight,
-            directory, tileProperties);
+              tileHeight,
+              directory, tileProperties);
           break;
         case "objects":
           if (layer.get("objects") != null) {
@@ -294,7 +294,7 @@ public class LevelModel {
    * @param tileProperties additional tile properties
    */
   private void makeTiles(int cols, int rows, int[] data, int tileWidth, int tileHeight,
-                         AssetDirectory directory, JsonValue tileProperties) {
+      AssetDirectory directory, JsonValue tileProperties) {
     for (int i = 0; i < data.length; i++) {
       if (data[i] != 0) {
         // i % numCols = how deep in x
@@ -305,7 +305,7 @@ public class LevelModel {
         PlatformModel obj = new PlatformModel();
         obj.setDrawScale(scale);
         obj.initializeAsTile(xPos, yPos, (float) tileHeight, directory, "" + data[i],
-          tileProperties);
+            tileProperties);
         activate(obj);
       }
     }
@@ -313,20 +313,21 @@ public class LevelModel {
 
   private void makeObjects(AssetDirectory directory, JsonValue objects, int gSizeY) {
     while (objects != null) {
-      switch (objects.getString("type")) {
-        case "Player":
+      String name = objects.getString("name");
+      switch (name) {
+        case "player":
           avatar = new PlayerModel();
           avatar.setDrawScale(scale);
           avatar.initialize(directory, objects, gSizeY);
           activate(avatar);
           break;
-        case "Exit":
+        case "exit":
           goalDoor = new ExitModel();
           goalDoor.setDrawScale(scale);
           goalDoor.initialize(directory, objects, gSizeY);
           activate(goalDoor);
           break;
-        case "Slope":
+        case "slope":
           SlopeModel slope = new SlopeModel();
           slope.setDrawScale(scale);
           slope.initialize(directory, objects, gSizeY);
