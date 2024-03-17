@@ -199,8 +199,8 @@ public class PlatformModel extends BoxObstacle {
    * @param tileProperties the properties of the tile as a JSON value
    */
   public void initializeAsTile(float x, float y, float tileSize, AssetDirectory directory,
-                               String tilekey,
-                               JsonValue tileProperties) {
+      String tilekey,
+      JsonValue tileProperties) {
     // Use the scale to convert pixel positions to box 2D positions
     setPosition(x * (1 / drawScale.x), y * (1 / drawScale.y));
     setDimension(tileSize * ((float) 1 / drawScale.x), tileSize * ((float) 1 / (drawScale.y)));
@@ -248,17 +248,10 @@ public class PlatformModel extends BoxObstacle {
    * @param canvas Drawing context
    */
   public void draw(GameCanvas canvas) {
+    // draw must be offset by 8 both ways, not really sure why right now
     if (region != null) {
       canvas.draw(
-        region,
-        Color.WHITE,
-        0,
-        0,
-        (getX() - anchor.x) * drawScale.x,
-        (getY() - anchor.y) * drawScale.y,
-        getAngle(),
-        1,
-        1);
+          texture, (getX()) * drawScale.x - 8, (getY() * drawScale.y) - 8);
     }
   }
 }

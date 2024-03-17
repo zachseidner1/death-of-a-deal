@@ -446,11 +446,9 @@ public class GameController implements Screen {
       if (input.getTimerActive()) {
         message = "Timer: " + (int) timer;
       }
-
-      if (input.getShouldSlide()) {
-        message += " d";
-      }
-      canvas.drawText(message, displayFont, canvas.getWidth() / 2f - 180, canvas.getHeight() - 120);
+      canvas.drawText(message, displayFont, canvas.getWidth() / 2f - 380, canvas.getHeight() - 120);
+      canvas.drawText("L" + levelNumber, displayFont, canvas.getWidth() / 1.75f,
+          canvas.getHeight() - 120);
       canvas.end();
     }
 

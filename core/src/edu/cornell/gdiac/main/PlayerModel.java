@@ -42,6 +42,10 @@ public class PlayerModel extends CapsuleObstacle {
    */
   private final float FROZEN_DENSITY = 50.0f;
   /**
+   * Cache for internal force calculations
+   */
+  private final Vector2 v2Cache = new Vector2();
+  /**
    * The factor to multiply by the input
    */
   private float force;
@@ -67,12 +71,12 @@ public class PlayerModel extends CapsuleObstacle {
    * Which direction is the character facing
    */
   private boolean faceRight;
+
+  // SENSOR FIELDS
   /**
    * Whether our feet are on the ground
    */
   private boolean isGrounded;
-
-  // SENSOR FIELDS
   /**
    * How long until we can jump again
    */
@@ -81,11 +85,11 @@ public class PlayerModel extends CapsuleObstacle {
    * Whether we are actively jumping
    */
   private boolean isJumping;
+  // SENSOR FIELDS
   /**
    * The velocity the character initially gains on jump
    */
   private float jumpVelocity;
-  // SENSOR FIELDS
   /**
    * Whether we are currently frozen
    */
@@ -103,10 +107,6 @@ public class PlayerModel extends CapsuleObstacle {
    * The color to paint the sensor in debug mode
    */
   private Color sensorColor;
-  /**
-   * Cache for internal force calculations
-   */
-  private Vector2 forceCache = new Vector2();
   /**
    * Tint for drawing the color (blue if isFrozen)
    */
@@ -399,8 +399,8 @@ public class PlayerModel extends CapsuleObstacle {
       switch (properties.getString("name")) {
         case "bodytype":
           setBodyType(
-            properties.get("value").asString().equals("static") ? BodyDef.BodyType.StaticBody
-              : BodyDef.BodyType.DynamicBody);
+              properties.get("value").asString().equals("static") ? BodyDef.BodyType.StaticBody
+                  : BodyDef.BodyType.DynamicBody);
           break;
         case "density":
           setDensity(properties.getFloat("value"));
@@ -543,21 +543,21 @@ public class PlayerModel extends CapsuleObstacle {
         targetSpeed) && Math.abs(targetSpeed) > 0.01F) {
       accelRate = 0;
     }
-    // If the player is trying to go to 0 speed, apply deceleration rate (faster in air)
+    // If the player is trying to go to 0 speed, apply deceleration rate (faster)
     if (Math.abs(targetSpeed) < 0.01F) {
-      accelRate = isGrounded() ? 1.5F : 1.2F;
+      accelRate = 1.8F;
     }
 
     // We move the player based on how far they are from their target speed
     float speedDif = targetSpeed - (getVX());
     float movement = speedDif * accelRate;
-    forceCache.set(movement, 0);
+    v2Cache.set(movement, 0);
     // Jump!
     if (getIsJumping() && !getIsFrozen()) {
       setVY(jumpVelocity);
     }
 
-    body.applyForce(forceCache, getPosition(), true);
+    body.applyForce(v2Cache, getPosition(), true);
   }
 
   /**
@@ -580,8 +580,8 @@ public class PlayerModel extends CapsuleObstacle {
     if (texture != null) {
       float effect = faceRight ? 1.0f : -1.0f;
       canvas.draw(isFrozen ? frozenTexture : texture, color, origin.x, origin.y,
-        getX() * drawScale.x,
-        getY() * drawScale.y, getAngle(), effect, 1.0f);
+          getX() * drawScale.x,
+          getY() * drawScale.y, getAngle(), effect, 1.0f);
     }
   }
 }
