@@ -112,10 +112,17 @@ public class InputController {
    */
   private boolean isFrozen;
 
+
+  /**
+   * The toggle representing if the freezing mechanic increases density
+   */
+  private boolean densityIncreased = false;
   /**
    * The toggle representing if the freezing mechanic increases density
    */
   private boolean timerActive = false;
+  private boolean nextLevel = false;
+  private boolean pastLevel = false;
 
   /**
    * Creates a new input controller
@@ -140,9 +147,17 @@ public class InputController {
         switch (keycode) {
           case Keys.F:
             isFrozen = !isFrozen;
+          case Keys.M:
+            densityIncreased = !densityIncreased;
             return true;
           case Keys.T:
             timerActive = !timerActive;
+            return true;
+          case Keys.N:
+            pastLevel = true;
+            return true;
+          case Keys.P:
+            nextLevel = true;
             return true;
         }
         return false;
@@ -200,6 +215,22 @@ public class InputController {
       theController = new InputController();
     }
     return theController;
+  }
+
+  public boolean getNextLevel() {
+    return nextLevel;
+  }
+
+  public void setNextLevel() {
+    nextLevel = false;
+  }
+
+  public boolean getPastLevel() {
+    return pastLevel;
+  }
+
+  public void setPastLevel() {
+    pastLevel = false;
   }
 
   /**
@@ -318,7 +349,11 @@ public class InputController {
   public boolean didExit() {
     return exitPressed && !exitPrevious;
   }
-  
+
+
+  public boolean getShouldSlide() {
+    return densityIncreased;
+  }
 
   public boolean getTimerActive() {
     return timerActive;

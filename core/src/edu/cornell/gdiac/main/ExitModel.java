@@ -17,7 +17,6 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.physics.obstacle.BoxObstacle;
-import com.badlogic.gdx.math.Rectangle;
 import java.lang.reflect.Field;
 
 /**
@@ -48,18 +47,18 @@ public class ExitModel extends BoxObstacle {
   public void initialize(AssetDirectory directory, JsonValue json, int gSizeY) {
     setName(json.getString("name"));
     // Set position and dimension
-    float x = json.getFloat("x") * (1/drawScale.x);
-    float y = (gSizeY - json.getFloat("y")) * (1/drawScale.y);
-    setPosition(x,y);
-    float width = json.getFloat("width") * (1/drawScale.x);
-    float height = json.getFloat("height") * (1/drawScale.y);
+    float x = json.getFloat("x") * (1 / drawScale.x);
+    float y = (gSizeY - json.getFloat("y")) * (1 / drawScale.y);
+    setPosition(x, y);
+    float width = json.getFloat("width") * (1 / drawScale.x);
+    float height = json.getFloat("height") * (1 / drawScale.y);
     setDimension(width, height);
 
-    JsonValue properties = json.get("properties").child() ;
+    JsonValue properties = json.get("properties").child();
     Color debugColor = null;
     int debugOpacity = -1;
-    while (properties != null){
-      switch (properties.getString("name")){
+    while (properties != null) {
+      switch (properties.getString("name")) {
         case "bodytype":
           setBodyType(properties.getString("value").equals("static") ? BodyDef.BodyType.StaticBody
               : BodyDef.BodyType.DynamicBody);
