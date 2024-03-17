@@ -340,9 +340,7 @@ public class LevelModel {
 
         DecorationModel obj = new DecorationModel();
         obj.setDrawScale(scale);
-        // we have 19 textures so we offset the gid by 19
-        // TODO make a better fix for this
-        obj.initialize(xPos, yPos, (float) tileHeight, directory, "" + (data[i] - 19));
+        obj.initialize(xPos, yPos, (float) tileHeight, directory, "" + (data[i]));
         decoobjects.add(obj);
       }
     }

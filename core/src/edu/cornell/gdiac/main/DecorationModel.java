@@ -1,6 +1,5 @@
 package edu.cornell.gdiac.main;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.PolygonRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -124,6 +123,7 @@ public class DecorationModel extends BoxObstacle {
 
   public void initialize(float x, float y, float tileSize, AssetDirectory directory,
       String tilekey) {
+    System.out.println("tilekey: " + tilekey);
     setPosition(x * (1 / drawScale.x), y * (1 / drawScale.y));
     setDimension(tileSize * ((float) 1 / drawScale.x), tileSize * ((float) 1 / (drawScale.y)));
     setBodyType(BodyType.StaticBody);
@@ -159,18 +159,10 @@ public class DecorationModel extends BoxObstacle {
    * @param canvas The canvas to draw onto
    */
   public void draw(GameCanvas canvas) {
-    if (region != null) {
-
+    // draw must be offset by 8 both ways, not really sure why right now
+    if (texture != null) {
       canvas.draw(
-          region,
-          Color.WHITE,
-          0,
-          0,
-          (getX() - anchor.x) * drawScale.x,
-          (getY() - anchor.y) * drawScale.y,
-          getAngle(),
-          1,
-          1);
+          texture, (getX()) * drawScale.x - 8, (getY() * drawScale.y) - 8);
     }
   }
 }
