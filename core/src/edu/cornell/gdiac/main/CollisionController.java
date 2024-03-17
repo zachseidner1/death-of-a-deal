@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.utils.ObjectSet;
+import edu.cornell.gdiac.main.WindModel.WindParticleModel;
 import edu.cornell.gdiac.physics.obstacle.BoxObstacle;
 import edu.cornell.gdiac.physics.obstacle.Obstacle;
 import edu.cornell.gdiac.util.MathUtil;
@@ -90,70 +91,35 @@ public class CollisionController implements ContactListener {
   private void handleWindContact(Contact contact, Fixture fix1, Fixture fix2, Obstacle bd2,
                                  Obstacle bd1,
                                  PlayerModel avatar, Object fd2, Object fd1) {
-//    boolean is1WindFixture = fix1.getUserData() instanceof WindParticleModel;
-//    boolean is2WindFixture = fix2.getUserData() instanceof WindParticleModel;
-//    WindParticleModel wind = null;
-//    Obstacle obj = null;
-//
-//    if (is1WindFixture) {
-//      wind = (WindParticleModel) fix1.getUserData();
-//      obj = bd2;
-//    } else if (is2WindFixture) {
-//      wind = (WindParticleModel) fix2.getUserData();
-//      obj = bd1;
-//    }
-//
-//    // On wind contact callback
-//    if (wind != null && obj != null) {
-//      // Should not continue detection with static body
-//      if (obj.getBodyType() == BodyType.StaticBody) {
-//        contact.setEnabled(false);
-//      } else {
-//        // Apply wind force
-//        Vector2 windForce = wind.getForce(obj.getX(), obj.getY());
-//        obj.getBody().applyForce(windForce, obj.getPosition(), true);
-//      }
-//    }
-//
-//    // See if we have landed on the ground
-//    if (!is1WindFixture && !is2WindFixture &&
-//      ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
-//        (avatar.getSensorName().equals(fd1) && avatar != bd2))) {
-//      avatar.setGrounded(true);
-//      sensorFixtures.add(avatar == bd1 ? fix2 : fix1);
-//    }
-    // TODO: Replace the below with the above
-    // Determine if there is a "collision" with wind from fans
-    boolean is1WindFixture = fix1.getUserData() instanceof WindModel;
-    boolean is2WindFixture = fix2.getUserData() instanceof WindModel;
-    WindModel wind = null;
+    boolean is1WindFixture = fix1.getUserData() instanceof WindParticleModel;
+    boolean is2WindFixture = fix2.getUserData() instanceof WindParticleModel;
+    WindParticleModel windParticle = null;
     Obstacle obj = null;
 
     if (is1WindFixture) {
-      wind = (WindModel) fix1.getUserData();
+      windParticle = (WindParticleModel) fix1.getUserData();
       obj = bd2;
     } else if (is2WindFixture) {
-      wind = (WindModel) fix2.getUserData();
+      windParticle = (WindParticleModel) fix2.getUserData();
       obj = bd1;
     }
 
     // On wind contact callback
-    // TODO: Collisions are detected passively (i.e. moving player in wind results in more collisions and wind force feedback)
-    if (wind != null && obj != null) {
+    if (windParticle != null && obj != null) {
       // Should not continue detection with static body
       if (obj.getBodyType() == BodyType.StaticBody) {
         contact.setEnabled(false);
       } else {
         // Apply wind force
-        Vector2 windForce = wind.findWindForce(obj.getX(), obj.getY());
-        System.out.println("Wind force: ( " + windForce.x + ", " + windForce.y + " )");
+        Vector2 windForce = windParticle.getForce(obj.getX(), obj.getY());
         obj.getBody().applyForce(windForce, obj.getPosition(), true);
       }
     }
 
+    boolean isWind = is1WindFixture || is2WindFixture || fix1.getUserData() instanceof WindModel || fix2.getUserData() instanceof WindModel;
+
     // See if we have landed on the ground
-    if (!is1WindFixture && !is2WindFixture && ((avatar.getSensorName().equals(fd2) && avatar != bd1)
-      ||
+    if (!isWind && ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
       (avatar.getSensorName().equals(fd1) && avatar != bd2))) {
       avatar.setGrounded(true);
       sensorFixtures.add(avatar == bd1 ? fix2 : fix1);

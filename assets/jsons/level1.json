@@ -439,7 +439,7 @@
                         {
                          "name":"NumWindParticles",
                          "type":"string",
-                         "value":"500"
+                         "value":"200"
                         }, 
                         {
                          "name":"Period",
@@ -469,7 +469,7 @@
                         {
                          "name":"WindBreadthParticleGrids",
                          "type":"string",
-                         "value":"20"
+                         "value":"10"
                         }, 
                         {
                          "name":"WindLength",
@@ -479,7 +479,7 @@
                         {
                          "name":"WindLengthParticleGrids",
                          "type":"string",
-                         "value":"25"
+                         "value":"20"
                         }, 
                         {
                          "name":"WindParticleTexture",
@@ -489,7 +489,7 @@
                         {
                          "name":"WindStrength",
                          "type":"float",
-                         "value":1
+                         "value":5
                         }, 
                         {
                          "name":"WindTexture",

@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.assets.AssetDirectory;
+import edu.cornell.gdiac.main.WindModel.WindParticleModel;
 import edu.cornell.gdiac.main.WindModel.WindSide;
 import edu.cornell.gdiac.main.WindModel.WindType;
 import java.lang.reflect.Field;
@@ -203,9 +204,7 @@ public class FanModel extends PlatformModel {
       fanSide,
       windType,
       windTexture,
-      windParticleTexture,
-      0f,
-      0f
+      windParticleTexture
     );
   }
 
@@ -225,9 +224,7 @@ public class FanModel extends PlatformModel {
     WindSide windSide,
     WindType windType,
     TextureRegion windTexture,
-    TextureRegion windParticleTexture,
-    float offsetX,
-    float offsetY
+    TextureRegion windParticleTexture
   ) {
 
     wind.initialize(
@@ -243,9 +240,7 @@ public class FanModel extends PlatformModel {
       windSide,
       windType,
       windTexture,
-      windParticleTexture,
-      offsetX,
-      offsetY
+      windParticleTexture
     );
   }
 
@@ -265,15 +260,13 @@ public class FanModel extends PlatformModel {
       windFixture.setUserData(wind);
     }
 
-    WindModel[] windParticles = wind.getWindParticles();
+    WindParticleModel[] windParticles = wind.getWindParticles();
     assert windParticleFixtures != null;
-    int index = 0;
-    for (WindModel particle : windParticles) {
-      assert particle != null;
-
+    for (int i = 0; i < windParticles.length; i++) {
+      WindParticleModel particle = windParticles[i];
       Fixture windParticleFixture = body.createFixture(particle.getFixtureDef());
       windParticleFixture.setUserData(particle);
-      windParticleFixtures[index] = windParticleFixture;
+      windParticleFixtures[i] = windParticleFixture;
     }
   }
 
