@@ -60,6 +60,11 @@ public class LevelModel {
    */
   protected PooledList<Obstacle> objects = new PooledList<Obstacle>();
 
+  // Decoration objects for the game
+  /**
+   * All the decorational objects in the world.
+   */
+  protected PooledList<DecorationModel> decoobjects = new PooledList<DecorationModel>();
   /**
    * Reference to the character avatar
    */
@@ -269,7 +274,13 @@ public class LevelModel {
           }
           break;
         case "deco":
-          // TODO make decorations
+          System.out.println("case deco");
+          if (layer.get("data") != null) {
+            makeDecoTiles(numTilesHorizontal, numTilesVertical, layer.get("data").asIntArray(),
+                tileWidth,
+                tileHeight,
+                directory);
+          }
           break;
       }
       layer = layer.next();
@@ -301,6 +312,25 @@ public class LevelModel {
         obj.initializeAsTile(xPos, yPos, (float) tileHeight, directory, "" + data[i],
             tileProperties);
         activate(obj);
+      }
+    }
+  }
+
+  private void makeDecoTiles(int cols, int rows, int[] data, int tileWidth, int tileHeight,
+      AssetDirectory directory) {
+    System.out.println("making deco tiles");
+    for (int i = 0; i < data.length; i++) {
+      if (data[i] != 0) {
+        // i % numCols = how deep in x
+        // i / numCols = how deep in y
+        int xPos = (i % cols) * tileWidth;
+        // subtract from full height since data starts at the top
+        int yPos = tileHeight * rows - (i / cols) * tileHeight;
+
+        DecorationModel obj = new DecorationModel();
+        obj.setDrawScale(scale);
+        obj.initialize(xPos, yPos, (float) tileHeight, directory, "" + data[i]);
+        decoobjects.add(obj);
       }
     }
   }
@@ -416,6 +446,11 @@ public class LevelModel {
     for (Obstacle obj : objects) {
       obj.draw(canvas);
     }
+    // Added decoration draw
+    for (DecorationModel obj : decoobjects) {
+      obj.draw(canvas);
+      //System.out.println("drawing decoration");
+    }
     canvas.end();
 
     if (debug) {
@@ -427,10 +462,10 @@ public class LevelModel {
     }
   }
 
-  public void breakPlatforms(){
-    for (Obstacle obj : objects){
-      if (obj instanceof BreakablePlatformModel){
-        if (((BreakablePlatformModel) obj).isBroken()){
+  public void breakPlatforms() {
+    for (Obstacle obj : objects) {
+      if (obj instanceof BreakablePlatformModel) {
+        if (((BreakablePlatformModel) obj).isBroken()) {
           objects.remove(obj);
           obj.deactivatePhysics(world);
         }
