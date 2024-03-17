@@ -147,19 +147,23 @@
     <property name="texture" value="dude"/>
    </properties>
   </object>
-  <object id="10" name="fan" type="Fan" x="16" y="320" width="16" height="80">
+  <object id="10" name="fan" type="Fan" x="13.9303" y="292.777" width="16" height="120">
    <properties>
     <property name="Active" type="bool" value="true"/>
     <property name="BodyType" value="static"/>
     <property name="DebugColor" value="yellow"/>
     <property name="DebugOpacity" type="int" value="255"/>
     <property name="FanTexture" value="earth"/>
+    <property name="NumWindParticles" value="10"/>
     <property name="Period" type="float" value="0"/>
     <property name="PeriodOnRatio" type="float" value="1"/>
     <property name="Side" value="right"/>
     <property name="Type" value="constant"/>
-    <property name="WindBreadth" type="float" value="70"/>
-    <property name="WindLength" type="float" value="120"/>
+    <property name="WindBreadth" type="float" value="100"/>
+    <property name="WindBreadthParticleGrids" value="2"/>
+    <property name="WindLength" type="float" value="300"/>
+    <property name="WindLengthParticleGrids" value="5"/>
+    <property name="WindParticleTexture" value="earth"/>
     <property name="WindStrength" type="float" value="50"/>
     <property name="WindTexture" value="earth"/>
    </properties>
@@ -172,53 +176,6 @@
     <property name="density" type="float" value="0"/>
     <property name="friction" type="float" value="0"/>
     <property name="restitution" type="float" value="0"/>
-   </properties>
-  </object>
-  <object id="19" name="bounce" type="Bounce" gid="1" x="16" y="288" width="16" height="48">
-   <properties>
-    <property name="bodytype" value="static"/>
-    <property name="coefficient" value="3"/>
-    <property name="debugcolor" value="yellow"/>
-    <property name="debugopacity" type="int" value="255"/>
-    <property name="denisty" type="float" value="0"/>
-    <property name="friction" type="float" value="0.01"/>
-    <property name="height" type="float" value="0"/>
-    <property name="max_speed" value="50"/>
-    <property name="restitution" type="float" value="0"/>
-    <property name="texture" value="earth"/>
-    <property name="width" type="float" value="0"/>
-   </properties>
-  </object>
-  <object id="20" name="bounce" type="Bounce" gid="1" x="352" y="400" width="48" height="16">
-   <properties>
-    <property name="bodytype" value="static"/>
-    <property name="coefficient" value="3"/>
-    <property name="debugcolor" value="yellow"/>
-    <property name="debugopacity" type="int" value="255"/>
-    <property name="denisty" type="float" value="0"/>
-    <property name="friction" type="float" value="0.01"/>
-    <property name="height" type="float" value="0"/>
-    <property name="max_speed" value="50"/>
-    <property name="restitution" type="float" value="0"/>
-    <property name="texture" value="earth"/>
-    <property name="width" type="float" value="0"/>
-   </properties>
-  </object>
-  <object id="21" name="fan" type="Fan" x="304" y="320" width="16" height="80">
-   <properties>
-    <property name="Active" type="bool" value="true"/>
-    <property name="BodyType" value="static"/>
-    <property name="DebugColor" value="yellow"/>
-    <property name="DebugOpacity" type="int" value="255"/>
-    <property name="FanTexture" value="earth"/>
-    <property name="Period" type="float" value="0"/>
-    <property name="PeriodOnRatio" type="float" value="1"/>
-    <property name="Side" value="left"/>
-    <property name="Type" value="constant"/>
-    <property name="WindBreadth" type="float" value="70"/>
-    <property name="WindLength" type="float" value="120"/>
-    <property name="WindStrength" type="float" value="50"/>
-    <property name="WindTexture" value="earth"/>
    </properties>
   </object>
  </objectgroup>
