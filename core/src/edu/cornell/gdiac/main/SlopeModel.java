@@ -9,7 +9,6 @@ import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.physics.obstacle.PolygonObstacle;
 import java.lang.reflect.Field;
-import java.util.Arrays;
 
 public class SlopeModel extends PolygonObstacle {
 
@@ -57,7 +56,6 @@ public class SlopeModel extends PolygonObstacle {
       index++;
       polygon = polygon.next();
     }
-    System.out.println("points: " + Arrays.toString(points));
     initShapes(points);
     initBounds();
 
