@@ -328,11 +328,6 @@
                          "value":"yellow"
                         }, 
                         {
-                         "name":"fallMultiplier",
-                         "type":"float",
-                         "value":1.1
-                        }, 
-                        {
                          "name":"force",
                          "type":"float",
                          "value":10
@@ -348,19 +343,14 @@
                          "value":30
                         }, 
                         {
-                         "name":"jumpvelocity",
-                         "type":"float",
-                         "value":10
-                        }, 
-                        {
-                         "name":"lowJumpMultiplier",
+                         "name":"jumppulse",
                          "type":"float",
                          "value":2
                         }, 
                         {
                          "name":"maxspeed",
                          "type":"float",
-                         "value":6
+                         "value":5
                         }, 
                         {
                          "name":"restitution",
@@ -482,8 +472,8 @@
                 {
                  "gid":1,
                  "height":16,
-                 "id":18,
-                 "name":"breakable",
+                 "id":13,
+                 "name":"",
                  "properties":[
                         {
                          "name":"bodytype",
@@ -493,7 +483,7 @@
                         {
                          "name":"breakminvelocity",
                          "type":"float",
-                         "value":6
+                         "value":10
                         }, 
                         {
                          "name":"debugcolor",
@@ -518,8 +508,94 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":48,
+                 "width":16,
+                 "x":144,
+                 "y":208
+                }, 
+                {
+                 "gid":1,
+                 "height":16,
+                 "id":18,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"bodytype",
+                         "type":"string",
+                         "value":"static"
+                        }, 
+                        {
+                         "name":"breakminvelocity",
+                         "type":"float",
+                         "value":10
+                        }, 
+                        {
+                         "name":"debugcolor",
+                         "type":"string",
+                         "value":"yellow"
+                        }, 
+                        {
+                         "name":"density",
+                         "type":"float",
+                         "value":0
+                        }, 
+                        {
+                         "name":"friction",
+                         "type":"float",
+                         "value":0
+                        }, 
+                        {
+                         "name":"restitution",
+                         "type":"float",
+                         "value":0
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":16,
                  "x":128,
+                 "y":208
+                }, 
+                {
+                 "gid":1,
+                 "height":16,
+                 "id":16,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"bodytype",
+                         "type":"string",
+                         "value":"static"
+                        }, 
+                        {
+                         "name":"breakminvelocity",
+                         "type":"float",
+                         "value":10
+                        }, 
+                        {
+                         "name":"debugcolor",
+                         "type":"string",
+                         "value":"yellow"
+                        }, 
+                        {
+                         "name":"density",
+                         "type":"float",
+                         "value":0
+                        }, 
+                        {
+                         "name":"friction",
+                         "type":"float",
+                         "value":0
+                        }, 
+                        {
+                         "name":"restitution",
+                         "type":"float",
+                         "value":0
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":16,
+                 "x":160,
                  "y":208
                 }],
          "opacity":1,
@@ -538,14 +614,9 @@
          "value":1
         }, 
         {
-         "name":"fallMultiplier",
-         "type":"float",
-         "value":1.75
-        }, 
-        {
          "name":"gravity",
          "type":"float",
-         "value":-12
+         "value":-9.8
         }, 
         {
          "name":"pheight",
@@ -563,7 +634,7 @@
  "tilesets":[
         {
          "firstgid":1,
-         "source":"..\/..\/tiled\/tile.tsx"
+         "source":"tile.tsx"
         }],
  "tilewidth":16,
  "type":"map",
