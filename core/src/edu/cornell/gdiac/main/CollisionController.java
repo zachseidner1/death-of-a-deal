@@ -31,24 +31,24 @@ public class CollisionController implements ContactListener {
     this.sensorFixtures = new ObjectSet<Fixture>();
   }
 
-  private static Vector2 getForceVector(SlopeModel slope) {
+  private static Vector2 getImpulseVector(SlopeModel slope) {
     float slopeAngle = slope.getSlopeAngle();
-    float forceMagnitude = slope.getSlopeFrozenForce();
+    float forceMagnitude = slope.getSlopefrozenimpulse();
 
     Vector2 force;
     if (slopeAngle >= 0 && slopeAngle <= Math.PI) {
       System.out.println("downleft");
       // Slope is pointing down left
       force = new Vector2(
-        (float) -Math.cos(slopeAngle) * forceMagnitude,
-        (float) -Math.sin(slopeAngle) * forceMagnitude
+          (float) -Math.cos(slopeAngle) * forceMagnitude,
+          (float) -Math.sin(slopeAngle) * forceMagnitude
       );
       System.out.println(force);
     } else {
       // Slope is pointing down right
       System.out.println("downright");
       force = new Vector2((float) Math.cos(slopeAngle) * forceMagnitude,
-        (float) Math.sin(slopeAngle) * forceMagnitude);
+          (float) Math.sin(slopeAngle) * forceMagnitude);
       System.out.println(force);
     }
     return force;
@@ -105,15 +105,16 @@ public class CollisionController implements ContactListener {
       }
 
       // See if we have landed on the ground
-      if (!is1WindFixture && !is2WindFixture && ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
-        (avatar.getSensorName().equals(fd1) && avatar != bd2))) {
+      if (!is1WindFixture && !is2WindFixture && (
+          (avatar.getSensorName().equals(fd2) && avatar != bd1) ||
+              (avatar.getSensorName().equals(fd1) && avatar != bd2))) {
         avatar.setGrounded(true);
         sensorFixtures.add(avatar == bd1 ? fix2 : fix1);
       }
 
       // Check for win condition
       if ((bd1 == avatar && bd2 == door) ||
-        (bd1 == door && bd2 == avatar)) {
+          (bd1 == door && bd2 == avatar)) {
         level.setComplete(true);
       }
 
@@ -144,7 +145,7 @@ public class CollisionController implements ContactListener {
 
     PlayerModel avatar = level.getAvatar();
     if ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
-      (avatar.getSensorName().equals(fd1) && avatar != bd2)) {
+        (avatar.getSensorName().equals(fd1) && avatar != bd2)) {
       sensorFixtures.remove(avatar == bd1 ? fix2 : fix1);
       if (sensorFixtures.size == 0) {
         avatar.setGrounded(false);
@@ -252,14 +253,14 @@ public class CollisionController implements ContactListener {
       Obstacle bd2 = (Obstacle) body2.getUserData();
 
       if ((bd1.equals(plyr) && bd2 instanceof SlopeModel) || (bd2.equals(plyr)
-        && bd1 instanceof SlopeModel)) {
+          && bd1 instanceof SlopeModel)) {
         SlopeModel slope = (bd1 instanceof SlopeModel) ? (SlopeModel) bd1 : (SlopeModel) bd2;
 
         // Only add extra force when player is frozen
         if (plyr.getIsFrozen()) {
-          Vector2 force = getForceVector(slope);
-          System.out.println(force);
-          plyr.getBody().applyForce(force, plyr.getPosition(), true);
+          Vector2 impulse = getImpulseVector(slope);
+          System.out.println(impulse);
+          plyr.setFrozenImpulse(impulse);
         }
       }
     } catch (Exception e) {

@@ -40,7 +40,7 @@ public class PlayerModel extends CapsuleObstacle {
   /**
    * frozen density
    */
-  private final float FROZEN_DENSITY = 50.0f;
+  private final float FROZEN_DENSITY = 30.0f;
   /**
    * Whether the character has a higher density in the frozen state which causes them to slide
    */
@@ -141,6 +141,8 @@ public class PlayerModel extends CapsuleObstacle {
    */
   private float sensorSizeX;
 
+  private Vector2 frozenImpulse = new Vector2(0.0f, 0.0f);
+
   /**
    * Creates a new player with degenerate settings
    * <p>
@@ -192,6 +194,14 @@ public class PlayerModel extends CapsuleObstacle {
     } else if (movement > 0) {
       faceRight = true;
     }
+  }
+
+  public Vector2 getFrozenImpulse() {
+    return frozenImpulse;
+  }
+
+  public void setFrozenImpulse(Vector2 impulse) {
+    frozenImpulse = impulse;
   }
 
   /**
@@ -428,7 +438,7 @@ public class PlayerModel extends CapsuleObstacle {
 
     setPosition(x, y);
     setDimension(json.getFloat("width") * (1 / drawScale.x),
-      json.getFloat("height") * (1 / drawScale.y));
+        json.getFloat("height") * (1 / drawScale.y));
 
     JsonValue properties = json.get("properties").child();
     Color debugColor = null;
@@ -437,8 +447,8 @@ public class PlayerModel extends CapsuleObstacle {
       switch (properties.getString("name")) {
         case "bodytype":
           setBodyType(
-            properties.get("value").asString().equals("static") ? BodyDef.BodyType.StaticBody
-              : BodyDef.BodyType.DynamicBody);
+              properties.get("value").asString().equals("static") ? BodyDef.BodyType.StaticBody
+                  : BodyDef.BodyType.DynamicBody);
           break;
         case "density":
           setDensity(properties.getFloat("value"));
@@ -576,7 +586,6 @@ public class PlayerModel extends CapsuleObstacle {
       body.applyForce(forceCache, getPosition(), true);
     }
 
-
     forceCache.set(getMovement() / 2.5F, 0);
     /*
     Check for:
@@ -584,8 +593,8 @@ public class PlayerModel extends CapsuleObstacle {
     We are at a somewhat low speed but going the opposite of where the user wants to go
      */
     if ((Math.abs(getVX()) <= 1
-      || (Math.abs(getVX()) < 5 && Math.signum(getVX()) != Math.signum(forceCache.x))
-      && forceCache.x != 0)) {
+        || (Math.abs(getVX()) < 5 && Math.signum(getVX()) != Math.signum(forceCache.x))
+        && forceCache.x != 0)) {
       // Set player velocity in the direction of where the user wants to go
       setVX(Math.signum(forceCache.x));
     }
@@ -609,6 +618,10 @@ public class PlayerModel extends CapsuleObstacle {
       forceCache.set(0, chargedImpulse);
       body.applyLinearImpulse(forceCache, getPosition(), true);
     }
+
+    // Apply Frozen Impulse
+    body.applyLinearImpulse(getFrozenImpulse(), getPosition(), true);
+    setFrozenImpulse(new Vector2(0.0f, 0.0f));
   }
 
   /**
@@ -637,8 +650,8 @@ public class PlayerModel extends CapsuleObstacle {
     if (texture != null) {
       float effect = faceRight ? 1.0f : -1.0f;
       canvas.draw(isFrozen ? frozenTexture : texture, color, origin.x, origin.y,
-        getX() * drawScale.x,
-        getY() * drawScale.y, getAngle(), effect, 1.0f);
+          getX() * drawScale.x,
+          getY() * drawScale.y, getAngle(), effect, 1.0f);
     }
   }
 }
