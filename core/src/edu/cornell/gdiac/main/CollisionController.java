@@ -51,6 +51,29 @@ public class CollisionController implements ContactListener {
     return force;
   }
 
+  private static Vector2 getImpulseVector(SlopeModel slope) {
+    float slopeAngle = slope.getSlopeAngle();
+    float forceMagnitude = slope.getSlopefrozenimpulse();
+
+    Vector2 force;
+    if (slopeAngle >= 0 && slopeAngle <= Math.PI) {
+      System.out.println("downleft");
+      // Slope is pointing down left
+      force = new Vector2(
+          (float) -Math.cos(slopeAngle) * forceMagnitude,
+          (float) -Math.sin(slopeAngle) * forceMagnitude
+      );
+      System.out.println(force);
+    } else {
+      // Slope is pointing down right
+      System.out.println("downright");
+      force = new Vector2((float) Math.cos(slopeAngle) * forceMagnitude,
+          (float) Math.sin(slopeAngle) * forceMagnitude);
+      System.out.println(force);
+    }
+    return force;
+  }
+
   /**
    * Called when two fixtures begin to touch. This method is triggered during the simulation step at
    * the start of a contact between two fixtures
@@ -250,28 +273,7 @@ public class CollisionController implements ContactListener {
     }
   }
 
-
-  public void preSolveSlope(Contact contact, PlayerModel plyr, Body body1, Body body2) {
-    try {
-      Obstacle bd1 = (Obstacle) body1.getUserData();
-      Obstacle bd2 = (Obstacle) body2.getUserData();
-
-      if ((bd1.equals(plyr) && bd2 instanceof SlopeModel) || (bd2.equals(plyr)
-          && bd1 instanceof SlopeModel)) {
-        SlopeModel slope = (bd1 instanceof SlopeModel) ? (SlopeModel) bd1 : (SlopeModel) bd2;
-
-        // Only add extra force when player is frozen
-        if (plyr.getIsFrozen()) {
-          Vector2 force = getForceVector(slope);
-          plyr.getBody().applyForce(force, plyr.getPosition(), true);
-        }
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
-
-  public void postSolveBounce(Contact contact, PlayerModel plyr, Body body1, Body body2) {
+  private void postSolveBounce(Contact contact, PlayerModel plyr, Body body1, Body body2) {
     try {
       Obstacle bd1 = (Obstacle) body1.getUserData();
       Obstacle bd2 = (Obstacle) body2.getUserData();
@@ -302,6 +304,27 @@ public class CollisionController implements ContactListener {
           }
         }
       }
+    }
+  }
+
+  private void preSolveSlope(Contact contact, PlayerModel plyr, Body body1, Body body2) {
+    try {
+      Obstacle bd1 = (Obstacle) body1.getUserData();
+      Obstacle bd2 = (Obstacle) body2.getUserData();
+
+      if ((bd1.equals(plyr) && bd2 instanceof SlopeModel) || (bd2.equals(plyr)
+          && bd1 instanceof SlopeModel)) {
+        SlopeModel slope = (bd1 instanceof SlopeModel) ? (SlopeModel) bd1 : (SlopeModel) bd2;
+
+        // Only add extra force when player is frozen
+        if (plyr.getIsFrozen()) {
+          Vector2 impulse = getImpulseVector(slope);
+          System.out.println(impulse);
+          plyr.setFrozenImpulse(impulse);
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
     }
   }
 }
