@@ -208,7 +208,9 @@ public class FanModel extends PlatformModel {
       fanSide,
       windType,
       windTexture,
-      windParticleTexture
+      windParticleTexture,
+      0f,
+      0f
     );
   }
 
@@ -228,7 +230,9 @@ public class FanModel extends PlatformModel {
     WindSide windSide,
     WindType windType,
     TextureRegion windTexture,
-    TextureRegion windParticleTexture
+    TextureRegion windParticleTexture,
+    float offsetX,
+    float offsetY
   ) {
 
     wind.initialize(
@@ -244,7 +248,9 @@ public class FanModel extends PlatformModel {
       windSide,
       windType,
       windTexture,
-      windParticleTexture
+      windParticleTexture,
+      offsetX,
+      offsetY
     );
   }
 
@@ -252,9 +258,13 @@ public class FanModel extends PlatformModel {
   protected void createFixtures() {
     super.createFixtures();
 
+    if (wind == null) {
+      return;
+    }
+
     FixtureDef windFixtureDef = wind.getWindFixtureDef();
     // Create fixture
-    if (wind != null && windFixtureDef != null) {
+    if (windFixtureDef != null) {
       windFixture = body.createFixture(windFixtureDef);
       // Sets the user data to instance of Wind
       windFixture.setUserData(wind);

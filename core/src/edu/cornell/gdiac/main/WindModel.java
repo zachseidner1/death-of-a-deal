@@ -25,6 +25,8 @@ public class WindModel {
    * Center of the wind bounding box (in world coordinates)
    */
   final private Vector2 windCenter;
+  final private FixtureDef windFixtureDef;
+  final private Color windColor;
   /**
    * Whether breadth should be set as the texture width
    */
@@ -42,11 +44,9 @@ public class WindModel {
    * Represents the length over which the wind force is applied, starting from the wind origin
    */
   private float windLength;
-  private FixtureDef windFixtureDef;
   private WindModel[] windParticles;
   private PolygonShape windShape;
   private float windRotation;
-  private Color windColor;
   private boolean isWindOn;
   private int numWindParticles;
   private int windLengthParticleGrids;
@@ -63,7 +63,7 @@ public class WindModel {
     windForce = new Vector2();
 
     // Default wind color
-    windColor = new Color((float) Math.random() * 0.5f, (float) Math.random() * 0.5f, (float) Math.random(), 0.2f);
+    windColor = new Color((float) Math.random() * 0.5f, (float) Math.random() * 0.5f, (float) Math.random(), 0.1f);
   }
 
   /**
@@ -82,7 +82,9 @@ public class WindModel {
     WindSide windSide,
     WindType windType,
     TextureRegion windTexture,
-    TextureRegion windParticleTexture
+    TextureRegion windParticleTexture,
+    float offsetX, // TODO: Remove but add to wind particles model
+    float offsetY // TODO: Remove but add to wind particles model
   ) {
 
     this.windBreadth = windBreadth;
@@ -133,15 +135,13 @@ public class WindModel {
     windShape.setAsBox(
       width2,
       height2,
-      new Vector2(windCenter.x - windSource.x, windCenter.y - windSource.y),
+      new Vector2(windCenter.x - windSource.x + offsetX, windCenter.y - windSource.y + offsetY),
       (float) (windRotation / (Math.PI / 2))
     );
     windFixtureDef.shape = windShape;
 
     assert numWindParticles > 0;
-    if (numWindParticles > 0) {
-      windParticles = new WindModel[numWindParticles];
-    }
+    windParticles = new WindModel[numWindParticles];
 
     createWindParticles();
   }
@@ -187,8 +187,8 @@ public class WindModel {
 
         WindModel windParticle = new WindModel();
         windParticle.initialize(
-          (windSide == WindSide.LEFT ? -1 : 1) * lengthIndex * windLengthGridDist,
-          windBreadthGridDist / 2 + breadthIndex * windBreadthGridDist,
+          (windSide == WindSide.LEFT ? -1 : 1) * lengthIndex * windLengthGridDist + windSourceBottomX, // TODO: For particles, should be set to just true wind force
+          windBreadthGridDist / 2 + breadthIndex * windBreadthGridDist + windSourceBottomY, // TODO: Same as above, we would need to calibrate the draw logic for wind particles depending on wind source
           windBreadthGridDist,
           windLengthGridDist,
           windStrength,
@@ -199,7 +199,9 @@ public class WindModel {
           windSide,
           windType,
           windParticleTexture,
-          windParticleTexture
+          windParticleTexture,
+          (windSide == WindSide.LEFT ? -1 : 1) * lengthIndex * windLengthGridDist,
+          windBreadthGridDist / 2 + breadthIndex * windBreadthGridDist - windBreadth / 2
         );
         windParticles[windParticleIndex++] = windParticle;
       }
