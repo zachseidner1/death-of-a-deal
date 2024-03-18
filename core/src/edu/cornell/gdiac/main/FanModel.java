@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.assets.AssetDirectory;
+import edu.cornell.gdiac.main.WindModel.WindParticleModel;
 import edu.cornell.gdiac.main.WindModel.WindSide;
 import edu.cornell.gdiac.main.WindModel.WindType;
 import java.lang.reflect.Field;
@@ -45,6 +46,7 @@ public class FanModel extends PlatformModel {
    */
   private WindModel wind;
   private Fixture windFixture;
+  private Fixture[] windParticleFixtures;
 
   public FanModel() {
     // Degenerate settings
@@ -86,7 +88,9 @@ public class FanModel extends PlatformModel {
     Vector2 windSource = new Vector2();
     WindType windType = null;
     TextureRegion windTexture = null;
+    TextureRegion windParticleTexture = null;
     float windStrength = -1, windBreadth = -1, windLength = -1;
+    int numWindParticles = -1, windLengthParticleGrids = -1, windBreadthParticleGrids = -1;
 
     JsonValue properties = json.get("properties").child();
     while (properties != null) {
@@ -110,8 +114,11 @@ public class FanModel extends PlatformModel {
             case "EXPONENTIAL":
               windType = WindType.Exponential;
               break;
-            default:
+            case "CONSTANT":
               windType = WindType.Constant;
+              break;
+            default:
+              windType = WindType.Default;
               break;
           }
           break;
@@ -122,14 +129,6 @@ public class FanModel extends PlatformModel {
             case "LEFT":
               fanSide = WindSide.LEFT;
               windSource.set(x, y - height / 2);
-              break;
-            case "TOP":
-              fanSide = WindSide.TOP;
-              windSource.set(x + width / 2, y);
-              break;
-            case "BOTTOM":
-              fanSide = WindSide.BOTTOM;
-              windSource.set(x + width / 2, y - height);
               break;
             default:
               fanSide = WindSide.RIGHT;
@@ -145,6 +144,17 @@ public class FanModel extends PlatformModel {
           break;
         case "WindLength":
           windLength = properties.getFloat("value") * scaleFactorY;
+          break;
+        case "NumWindParticles":
+          numWindParticles = properties.getInt("value");
+          assert numWindParticles >= 0;
+          windParticleFixtures = new Fixture[numWindParticles];
+          break;
+        case "WindLengthParticleGrids":
+          windLengthParticleGrids = properties.getInt("value");
+          break;
+        case "WindBreadthParticleGrids":
+          windBreadthParticleGrids = properties.getInt("value");
           break;
         case "Period":
           period = properties.getFloat("value");
@@ -168,6 +178,10 @@ public class FanModel extends PlatformModel {
           key = properties.getString("value");
           windTexture = new TextureRegion(directory.getEntry(key, Texture.class));
           break;
+        case "WindParticleTexture":
+          key = properties.getString("value");
+          windParticleTexture = new TextureRegion(directory.getEntry(key, Texture.class));
+          break;
         default:
           break;
       }
@@ -184,15 +198,18 @@ public class FanModel extends PlatformModel {
       windLength,
       windStrength,
       fanRotation,
+      numWindParticles,
+      windLengthParticleGrids,
+      windBreadthParticleGrids,
       fanSide,
       windType,
-      windTexture
+      windTexture,
+      windParticleTexture
     );
   }
 
   /**
-   * // TODO: Creation and destruction of wind fixture (on/off status)
-   * Called whenever there should be a change in the behavior of the wind, as directed by this fan
+   * Initialize wind properties. Called whenever there should be a change in the behavior of the wind, as directed by this fan
    */
   public void initializeWind(
     float windSourceX,
@@ -201,9 +218,14 @@ public class FanModel extends PlatformModel {
     float windLength,
     float windStrength,
     float windRotation,
+    int numWindParticles,
+    int windLengthParticleGrids,
+    int windBreadthParticleGrids,
     WindSide windSide,
     WindType windType,
-    TextureRegion windTexture) {
+    TextureRegion windTexture,
+    TextureRegion windParticleTexture
+  ) {
 
     wind.initialize(
       windSourceX,
@@ -212,9 +234,13 @@ public class FanModel extends PlatformModel {
       windLength,
       windStrength,
       windRotation,
+      numWindParticles,
+      windLengthParticleGrids,
+      windBreadthParticleGrids,
       windSide,
       windType,
-      windTexture
+      windTexture,
+      windParticleTexture
     );
   }
 
@@ -222,13 +248,31 @@ public class FanModel extends PlatformModel {
   protected void createFixtures() {
     super.createFixtures();
 
-    // TODO: Need to figure out a way to make wind fixture creation/destruction more efficient here. Will likely factor out wind fixture creation/destruction logic so that it can be applied elsewhere (i.e. on set fan active)
-    FixtureDef windFixtureDef = wind.getWindFixtureDef();
+    if (wind == null) {
+      return;
+    }
+
+    FixtureDef windFixtureDef = wind.getFixtureDef();
     // Create fixture
-    if (wind != null && windFixtureDef != null) {
+    if (windFixtureDef != null) {
       windFixture = body.createFixture(windFixtureDef);
       // Sets the user data to instance of Wind
       windFixture.setUserData(wind);
+    }
+
+    WindParticleModel[] windParticles = wind.getWindParticles();
+    if (windParticles == null) {
+      return;
+    }
+    assert windParticleFixtures != null;
+    for (int i = 0; i < windParticles.length; i++) {
+      WindParticleModel particle = windParticles[i];
+
+      assert particle != null;
+
+      Fixture windParticleFixture = body.createFixture(particle.getFixtureDef());
+      windParticleFixture.setUserData(particle);
+      windParticleFixtures[i] = windParticleFixture;
     }
   }
 
@@ -239,6 +283,14 @@ public class FanModel extends PlatformModel {
     // Destroy fixture
     if (windFixture != null) {
       body.destroyFixture(windFixture);
+    }
+
+    if (windParticleFixtures != null) {
+      for (Fixture windParticleFixture : windParticleFixtures) {
+        if (windParticleFixture != null) {
+          body.destroyFixture(windParticleFixture);
+        }
+      }
     }
   }
 
@@ -283,7 +335,8 @@ public class FanModel extends PlatformModel {
 
   @Override
   public void draw(GameCanvas canvas) {
-    super.draw(canvas);
+    canvas.draw(region, Color.BLUE, 0, 0, (getX() - anchor.x) * drawScale.x,
+      (getY() - anchor.y) * drawScale.y, getAngle(), 1, 1);
 
     if (isFanActive) {
       // Draw wind texture
