@@ -261,6 +261,9 @@ public class FanModel extends PlatformModel {
     }
 
     WindParticleModel[] windParticles = wind.getWindParticles();
+    if (windParticles == null) {
+      return;
+    }
     assert windParticleFixtures != null;
     for (int i = 0; i < windParticles.length; i++) {
       WindParticleModel particle = windParticles[i];

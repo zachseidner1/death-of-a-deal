@@ -299,13 +299,11 @@ public class CollisionController implements ContactListener {
 
       if ((bd1.equals(plyr) && bd2 instanceof SlopeModel) || (bd2.equals(plyr)
         && bd1 instanceof SlopeModel)) {
-        System.out.println("solving slope");
         SlopeModel slope = (bd1 instanceof SlopeModel) ? (SlopeModel) bd1 : (SlopeModel) bd2;
 
         // Only add extra force when player is frozen
         if (plyr.getIsFrozen()) {
           prepareImpulse(slope);
-          System.out.println("impulse: " + v2Cache);
           plyr.getBody().applyLinearImpulse(v2Cache, plyr.getPosition(), true);
         }
       }

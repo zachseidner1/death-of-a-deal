@@ -123,7 +123,9 @@ public class WindModel {
     windFixtureDef.shape = windShape;
 
     assert numWindParticles > 0;
-    windParticles = new WindParticleModel[numWindParticles];
+    if (numWindParticles > 0) {
+      windParticles = new WindParticleModel[numWindParticles];
+    }
 
     createWindParticles();
   }
