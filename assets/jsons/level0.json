@@ -466,7 +466,7 @@
         {
          "name":"timelimit",
          "type":"string",
-         "value":"31"
+         "value":"21"
         }],
  "renderorder":"right-down",
  "tiledversion":"1.10.2",

@@ -616,103 +616,6 @@
                  "width":48,
                  "x":112,
                  "y":288
-                }, 
-                {
-                 "height":80,
-                 "id":31,
-                 "name":"fan",
-                 "properties":[
-                        {
-                         "name":"Active",
-                         "type":"bool",
-                         "value":true
-                        }, 
-                        {
-                         "name":"BodyType",
-                         "type":"string",
-                         "value":"static"
-                        }, 
-                        {
-                         "name":"DebugColor",
-                         "type":"string",
-                         "value":"yellow"
-                        }, 
-                        {
-                         "name":"DebugOpacity",
-                         "type":"int",
-                         "value":255
-                        }, 
-                        {
-                         "name":"FanTexture",
-                         "type":"string",
-                         "value":"1"
-                        }, 
-                        {
-                         "name":"NumWindParticles",
-                         "type":"int",
-                         "value":100
-                        }, 
-                        {
-                         "name":"Period",
-                         "type":"float",
-                         "value":0
-                        }, 
-                        {
-                         "name":"PeriodOnRatio",
-                         "type":"float",
-                         "value":1
-                        }, 
-                        {
-                         "name":"Side",
-                         "type":"string",
-                         "value":"right"
-                        }, 
-                        {
-                         "name":"Type",
-                         "type":"string",
-                         "value":"constant"
-                        }, 
-                        {
-                         "name":"WindBreadth",
-                         "type":"float",
-                         "value":70
-                        }, 
-                        {
-                         "name":"WindBreadthParticleGrids",
-                         "type":"int",
-                         "value":10
-                        }, 
-                        {
-                         "name":"WindLength",
-                         "type":"float",
-                         "value":120
-                        }, 
-                        {
-                         "name":"WindLengthParticleGrids",
-                         "type":"int",
-                         "value":10
-                        }, 
-                        {
-                         "name":"WindParticleTexture",
-                         "type":"string",
-                         "value":"1"
-                        }, 
-                        {
-                         "name":"WindStrength",
-                         "type":"float",
-                         "value":2
-                        }, 
-                        {
-                         "name":"WindTexture",
-                         "type":"string",
-                         "value":"1"
-                        }],
-                 "rotation":0,
-                 "type":"Fan",
-                 "visible":true,
-                 "width":16,
-                 "x":17.6009,
-                 "y":287.123
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -747,7 +650,7 @@
         {
          "name":"timelimit",
          "type":"string",
-         "value":"31"
+         "value":"16"
         }],
  "renderorder":"right-down",
  "tiledversion":"1.10.2",
