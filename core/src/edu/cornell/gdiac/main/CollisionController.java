@@ -202,26 +202,26 @@ public class CollisionController implements ContactListener {
     try {
       Obstacle bd1 = (Obstacle) body1.getUserData();
       Obstacle bd2 = (Obstacle) body2.getUserData();
-      if (bd1.equals(plyr)) {
-        if (bd2 instanceof BouncePlatformModel) {
-          BouncePlatformModel bplt = (BouncePlatformModel) bd2;
-          float c = bplt.getCoefficient();
-          if (plyr.getIsFrozen()) {
-            contact.setRestitution(c);
-          }
-        }
-      }
-      if (bd2.equals(plyr)) {
-        if (bd1 instanceof BouncePlatformModel) {
-          BouncePlatformModel bplt = (BouncePlatformModel) bd1;
-          float c = bplt.getCoefficient();
-          if (plyr.getIsFrozen()) {
-            contact.setRestitution(c);
-          }
-        }
-      }
+      setUpBounce(contact, plyr, bd2, bd1);
+      setUpBounce(contact, plyr, bd1, bd2);
     } catch (Exception e) {
       e.printStackTrace();
+    }
+  }
+
+  private void setUpBounce(Contact contact, PlayerModel plyr, Obstacle bd1, Obstacle bd2) {
+    if (bd2.equals(plyr)) {
+      if (bd1 instanceof BouncePlatformModel) {
+        BouncePlatformModel bplt = (BouncePlatformModel) bd1;
+        float c = bplt.getCoefficient();
+        if (plyr.getIsFrozen()) {
+          contact.setRestitution(c);
+          bplt.setMaxSpeed(
+              Math.max(bplt.getDefaultMaxSpeed(),
+                  Math.max(Math.abs(plyr.getVX()), Math.abs(plyr.getVY())))
+          );
+        }
+      }
     }
   }
 
@@ -275,6 +275,7 @@ public class CollisionController implements ContactListener {
         if (playerModel.getIsFrozen()) {
           BouncePlatformModel bplt = (BouncePlatformModel) bd2;
           float maxSpeed = bplt.getMaxSpeed();
+          System.out.println("max speed: " + maxSpeed);
           float xSpeed = playerModel.getLinearVelocity().x;
           float ySpeed = playerModel.getLinearVelocity().y;
           if (xSpeed > maxSpeed) {
@@ -287,6 +288,8 @@ public class CollisionController implements ContactListener {
           } else if (ySpeed < -maxSpeed) {
             playerModel.setVY(-maxSpeed);
           }
+          bplt.setMaxSpeed(bplt.getDefaultMaxSpeed());
+          System.out.println("max speed now: " + bplt.getMaxSpeed());
         }
       }
     }

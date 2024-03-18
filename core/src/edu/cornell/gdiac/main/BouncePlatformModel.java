@@ -17,6 +17,8 @@ public class BouncePlatformModel extends PlatformModel {
   private float bounceCoefficient;
   private float maxSpeed;
 
+  private float defaultMaxSpeed;
+
   public BouncePlatformModel() {
     super();
     region = null;
@@ -40,6 +42,10 @@ public class BouncePlatformModel extends PlatformModel {
     maxSpeed = c;
   }
 
+  public float getDefaultMaxSpeed() {
+    return defaultMaxSpeed;
+  }
+
   public void initialize(AssetDirectory directory, JsonValue json, int gSizeY) {
     float x = json.getFloat("x") * (1 / drawScale.x);
     float y = (gSizeY - json.getFloat("y")) * (1 / drawScale.y);
@@ -58,7 +64,7 @@ public class BouncePlatformModel extends PlatformModel {
       switch (properties.getString("name")) {
         case "bodytype":
           setBodyType(properties.getString("value").equals("static") ? BodyDef.BodyType.StaticBody
-            : BodyDef.BodyType.DynamicBody);
+              : BodyDef.BodyType.DynamicBody);
           break;
         case "density":
           setDensity(properties.getFloat("value"));
@@ -84,6 +90,7 @@ public class BouncePlatformModel extends PlatformModel {
           break;
         case "max_speed":
           setMaxSpeed(properties.getFloat("value"));
+          defaultMaxSpeed = properties.getFloat("value");
           break;
         case "coefficient":
           setCoefficient(properties.getFloat("value"));
@@ -98,7 +105,7 @@ public class BouncePlatformModel extends PlatformModel {
   public void draw(GameCanvas canvas) {
     if (region != null) {
       canvas.draw(region, Color.RED, 0, 0, (getX() - anchor.x) * drawScale.x,
-        (getY() - anchor.y) * drawScale.y, getAngle(), 1, 1);
+          (getY() - anchor.y) * drawScale.y, getAngle(), 1, 1);
     }
   }
 }
