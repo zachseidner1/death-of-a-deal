@@ -198,8 +198,7 @@ public class FanModel extends PlatformModel {
 
       properties = properties.next();
     }
-
-    // TODO: Figure out fan and wind rotation
+    
     // Configure shape and configure wind fixture
     initializeWind(
       windSource.x,
@@ -345,8 +344,18 @@ public class FanModel extends PlatformModel {
 
   @Override
   public void draw(GameCanvas canvas) {
-    canvas.draw(region, Color.BLUE, 0, 0, (getX() - anchor.x) * drawScale.x,
-      (getY() - anchor.y) * drawScale.y, getAngle(), 1, 1);
+    // Need to determine bottom left corner
+    canvas.draw(
+      region,
+      Color.BLUE,
+      getX() * drawScale.x,
+      getY() * drawScale.y,
+      0,
+      0,
+      fanRotation,
+      1,
+      1
+    );
 
     if (isFanActive) {
       // Draw wind texture

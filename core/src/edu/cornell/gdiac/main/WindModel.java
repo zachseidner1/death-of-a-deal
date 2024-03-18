@@ -160,6 +160,7 @@ public class WindModel {
     int windParticleIndex = 0;
     float windBreadthGridDist = windBreadth / windBreadthParticleGrids;
     float windLengthGridDist = windLength / windLengthParticleGrids;
+
     // Bottom vertex of wind (not fan) dimensions corresponding to wind source origin
     float windSourceBottomX = windSource.x;
     float windSourceBottomY = windSource.y - windBreadth / 2;
@@ -198,7 +199,7 @@ public class WindModel {
   }
 
   /**
-   * // TODO: Can be refactored with binding drawing with wind region coordinates
+   * // TODO: Draw based on wind region vertices
    * Draws the wind container and particles
    */
   protected void draw(GameCanvas canvas, Vector2 drawScale) {
@@ -209,19 +210,23 @@ public class WindModel {
     boolean shouldFlipX = windSide == WindSide.LEFT;
     windTexture.flip(shouldFlipX, false);
     windTexture.setRegion(0, 0, windLength / 2, windBreadth / 2);
+    windTexture.setRegionWidth((int) ((shouldFlipX ? -1 : 1) * windLength * drawScale.x));
+    windTexture.setRegionHeight((int)
+      (windBreadth * drawScale.y));
 
     // TODO: Figure out asset rotation
     // TODO: find how to set texture origin
-    canvas.draw(
-      windTexture,
-      windColor,
-      0,
-      0,
-      windSource.x * drawScale.x,
-      (windSource.y - windBreadth / 2) * drawScale.y,
-      (shouldFlipX ? -1 : 1) * windLength * drawScale.x,
-      windBreadth * drawScale.y
-    );
+//    canvas.draw(
+//      windTexture,
+//      windColor,
+//      0,
+//      0,
+//      windSource.x * drawScale.x,
+//      windSource.y * drawScale.y,
+//      windRotation,
+//      1,
+//      1
+//    );
 
     // Draw particles
     if (windParticles != null) {
@@ -300,20 +305,17 @@ public class WindModel {
      * @return wind force applied to the object at contact position
      */
     public Vector2 getForce(float x, float y) {
-      // TODO: Calculate difference between x, y and wind source + depending on wind type --> find force
       if (!isWindOn) {
         assert windForceCache.x == 0 && windForceCache.y == 0;
         return windForceCache;
       }
 
-      // TODO: Figure why forces are not accurate here
       float normX = x - windSource.x;
       float normY = y - windSource.y;
       float norm = (float) Math.sqrt(normX * normX + normY * normY);
       normX /= norm;
       normY /= norm;
 
-      // TODO: Temporarily set to pure directional force (will need to change if rotation exists)
       windForceCache.set(
         (float) Math.cos(windRotation),
         (float) Math.sin(windRotation));
@@ -339,26 +341,30 @@ public class WindModel {
       return particleFixtureDef;
     }
 
+    // TODO: Draw based on vertices of shape
     protected void draw(GameCanvas canvas, Vector2 drawScale) {
       if (!isWindOn) {
         return;
       }
 
-      boolean shouldFlipX = windSide == WindSide.LEFT;
-      particleTexture.flip(shouldFlipX, false);
-      particleTexture.setRegion(0, 0, width / 2, height / 2);
-
-      // TODO: Figure out asset rotation (how to set texture origin)
-      canvas.draw(
-        particleTexture,
-        particleColor,
-        0,
-        0,
-        (windSource.x + posX) * drawScale.x,
-        (windSource.y + posY - height / 2) * drawScale.y,
-        (shouldFlipX ? -1 : 1) * width * drawScale.x,
-        height * drawScale.y
-      );
+//      boolean shouldFlipX = windSide == WindSide.LEFT;
+//      particleTexture.flip(shouldFlipX, false);
+//      particleTexture.setRegion(0, 0, width / 2, height / 2);
+//      particleTexture.setRegionWidth((int) ((shouldFlipX ? -1 : 1) * width * drawScale.x));
+//      particleTexture.setRegionHeight((int)
+//        (height * drawScale.y));
+//
+//      canvas.draw(
+//        particleTexture,
+//        particleColor,
+//        0,
+//        0,
+//        (windSource.x + posX) * drawScale.x,
+//        (windSource.y + posY - height / 2) * drawScale.y,
+//        windRotation,
+//        1,
+//        1
+//      );
     }
   }
 }
