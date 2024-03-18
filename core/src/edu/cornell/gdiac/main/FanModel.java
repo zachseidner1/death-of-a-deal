@@ -12,6 +12,7 @@ import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.main.WindModel.WindParticleModel;
 import edu.cornell.gdiac.main.WindModel.WindSide;
 import edu.cornell.gdiac.main.WindModel.WindType;
+import edu.cornell.gdiac.util.MathUtil;
 import java.lang.reflect.Field;
 
 /**
@@ -82,16 +83,21 @@ public class FanModel extends PlatformModel {
     // Note: Tiled uses rotation about the top-left corner of the rectangle, while our impl uses the center.
     // We perform some trig position calculations to address the difference in how rotation is treated.
 
-    // (topLeftX, topLeftY) is top-left most point
+    // topLeft is top-left most point
     float topLeftX = json.getFloat("x") * scaleFactorX;
     float topLeftY = (gSizeY - json.getFloat("y")) * scaleFactorY;
-    // (centerX0, centerY0) is center of rectangle with rotation 0
+    Vector2 topLeft = new Vector2(topLeftX, topLeftY);
+
+    // center0 is center of rectangle with rotation 0
     float centerX0 = topLeftX + width / 2;
     float centerY0 = topLeftY - height / 2;
-    // Rotate (x, y) about top-left corner with fanRotation
-    float x = (float) ((centerX0 - topLeftX) * Math.cos(fanRotation) - (centerY0 - topLeftY) * Math.sin(fanRotation) + topLeftX);
-    float y = (float) ((centerX0 - topLeftX) * Math.sin(fanRotation) + (centerY0 - topLeftY) * Math.cos(fanRotation) + topLeftY);
-    // (x,y) is the determined center after rotation
+    Vector2 center0 = new Vector2(centerX0, centerY0);
+
+    // Rotate center0 about top-left corner with fanRotation
+    Vector2 center = new Vector2();
+    MathUtil.rotateAroundPivot(topLeft, center0, center, fanRotation);
+    float x = center.x;
+    float y = center.y;
     setPosition(x, y);
 
     // Wind wrapper fields
@@ -198,7 +204,7 @@ public class FanModel extends PlatformModel {
 
       properties = properties.next();
     }
-    
+
     // Configure shape and configure wind fixture
     initializeWind(
       windSource.x,
