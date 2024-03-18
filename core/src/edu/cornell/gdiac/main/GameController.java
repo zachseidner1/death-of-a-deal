@@ -386,8 +386,9 @@ public class GameController implements Screen {
     if (avatar.getVY() < 0 && !avatar.isGrounded()) {
       avatar.setVY(
           avatar.getVY() + gravity * (avatar.getFallMultiplier() - 1) * dt);
-    } else if (avatar.getVY() > 0 && !isJumpPressed && !avatar.isGrounded()) {
-      // On jump, increase the gravity only if the user is not pressing up
+    } else if (avatar.getVY() > 0 && (!isJumpPressed || avatar.getIsFrozen())
+        && !avatar.isGrounded()) {
+      // On jump, increase the gravity only if the user is not pressing up (or the user is frozen)
       // Allows the player to exert more control over vertical motion
       avatar.setVY(avatar.getVY() + gravity * (avatar.getLowJumpMultiplier() - 1) * dt);
     }
