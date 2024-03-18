@@ -42,6 +42,9 @@ public class WindModel {
   private float windLength;
   private WindParticleModel[] windParticles;
   private PolygonShape windShape;
+  /**
+   * Rotates wind windRotations about wind source
+   */
   private float windRotation;
   private boolean isWindOn;
   private int numWindParticles;
@@ -118,7 +121,7 @@ public class WindModel {
       length2,
       breadth2,
       new Vector2(windCenter.x - windSource.x, windCenter.y - windSource.y),
-      (float) (windRotation / (Math.PI / 2))
+      windRotation
     );
     windFixtureDef.shape = windShape;
 
@@ -282,7 +285,7 @@ public class WindModel {
         width / 2,
         height / 2,
         new Vector2(posX, posY),
-        (float) (windRotation / (Math.PI / 2))
+        windRotation
       );
 
       particleFixtureDef = new FixtureDef();
@@ -312,21 +315,20 @@ public class WindModel {
 
       // TODO: Temporarily set to pure directional force (will need to change if rotation exists)
       windForceCache.set(
-        windSide == WindSide.LEFT ? -1 : windSide == WindSide.RIGHT ? 1 : 0,
-        0);
+        (float) Math.cos(windRotation),
+        (float) Math.sin(windRotation));
 
       switch (windType) {
         case Constant:
           windForceCache.scl(windStrength);
           break;
         case Exponential:
-          // TODO: Implement
-          // float decayRate = 0.5f;
-//        float decayScale = (float) Math.exp(-decayRate * norm / windLength);
-//        windForceCache.scl(windStrength * decayScale);
+          float decayRate = 0.5f;
+          float decayScale = (float) Math.exp(-decayRate * norm / windLength);
+          windForceCache.scl(windStrength * decayScale);
         default:
-          // TODO: Implement
-//
+          // TODO: Implement natural wind physics
+          windForceCache.scl(windStrength);
           break;
       }
 

@@ -71,18 +71,28 @@ public class FanModel extends PlatformModel {
     float scaleFactorX = 1 / drawScale.x;
     float scaleFactorY = 1 / drawScale.y;
 
+    fanRotation = (float) -Math.toRadians(json.getFloat("rotation"));
+    setAngle(fanRotation);
+
     float width = json.getFloat("width") * scaleFactorX;
     float height = json.getFloat("height") * scaleFactorY;
     setDimension(width, height);
 
-    // Note: (x, y) is top-left most point
-    float x = json.getFloat("x") * scaleFactorX;
-    float y = (gSizeY - json.getFloat("y")) * scaleFactorY;
-    setPosition(x + width / 2, y - height / 2);
+    // TODO: Will likely abstract this away as a util function for compatible parsing of Tiled rotation
+    // Note: Tiled uses rotation about the top-left corner of the rectangle, while our impl uses the center.
+    // We perform some trig position calculations to address the difference in how rotation is treated.
 
-    // TODO: Implement rotation
-    float rotation = -1 * json.getFloat("rotation") / (float) (Math.PI / 2);
-    setAngle(rotation);
+    // (topLeftX, topLeftY) is top-left most point
+    float topLeftX = json.getFloat("x") * scaleFactorX;
+    float topLeftY = (gSizeY - json.getFloat("y")) * scaleFactorY;
+    // (centerX0, centerY0) is center of rectangle with rotation 0
+    float centerX0 = topLeftX + width / 2;
+    float centerY0 = topLeftY - height / 2;
+    // Rotate (x, y) about top-left corner with fanRotation
+    float x = (float) ((centerX0 - topLeftX) * Math.cos(fanRotation) - (centerY0 - topLeftY) * Math.sin(fanRotation) + topLeftX);
+    float y = (float) ((centerX0 - topLeftX) * Math.sin(fanRotation) + (centerY0 - topLeftY) * Math.cos(fanRotation) + topLeftY);
+    // (x,y) is the determined center after rotation
+    setPosition(x, y);
 
     // Wind wrapper fields
     Vector2 windSource = new Vector2();
