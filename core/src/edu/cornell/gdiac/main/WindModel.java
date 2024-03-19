@@ -259,8 +259,8 @@ public class WindModel {
       windColor,
       windSource.x * drawScale.x,
       windSource.y * drawScale.y,
-      windLength * drawScale.x,
-      windBreadth * drawScale.y
+      (windSide == WindSide.LEFT ? -1 : 1) * windLength * drawScale.x,
+      (windSide == WindSide.LEFT ? -1 : 1) * windBreadth * drawScale.y
     );
 
     // Draw particles
