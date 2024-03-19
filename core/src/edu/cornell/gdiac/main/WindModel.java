@@ -1,10 +1,12 @@
 package edu.cornell.gdiac.main;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.PolygonRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
+import edu.cornell.gdiac.util.MathUtil;
 
 /**
  * Wrapper around wind particle initialization and organization.
@@ -66,7 +68,10 @@ public class WindModel {
   }
 
   /**
-   * Set wind fields
+   * Set wind fields.
+   * Note: changing or creating a new wind can only use this method to set wind state
+   * Note: we are not concerned with rotation, which should indirectly set shape points. All we are
+   * doing is initialize the wind model in the right, 0-degree rotation orientation.
    */
   public void initialize(
     float windSourceX,
@@ -161,9 +166,7 @@ public class WindModel {
     float windBreadthGridDist = windBreadth / windBreadthParticleGrids;
     float windLengthGridDist = windLength / windLengthParticleGrids;
 
-    // Bottom vertex of wind (not fan) dimensions corresponding to wind source origin
-    float windSourceBottomX = windSource.x;
-    float windSourceBottomY = windSource.y - windBreadth / 2;
+    // Create wind particles
     for (int breadthIndex = 0; breadthIndex < windBreadthParticleGrids; breadthIndex++) {
       for (int lengthIndex = 0; lengthIndex < windLengthParticleGrids; lengthIndex++) {
         if (windParticleIndex >= numWindParticles) {
@@ -178,6 +181,7 @@ public class WindModel {
           (windSide == WindSide.LEFT ? -1 : 1) * lengthIndex * windLengthGridDist,
           windBreadthGridDist / 2 + breadthIndex * windBreadthGridDist - windBreadth / 2
         );
+
         windParticles[windParticleIndex++] = windParticle;
       }
     }
@@ -214,19 +218,41 @@ public class WindModel {
     windTexture.setRegionHeight((int)
       (windBreadth * drawScale.y));
 
-    // TODO: Figure out asset rotation
-    // TODO: find how to set texture origin
-//    canvas.draw(
-//      windTexture,
-//      windColor,
-//      0,
-//      0,
-//      windSource.x * drawScale.x,
-//      windSource.y * drawScale.y,
-//      windRotation,
-//      1,
-//      1
-//    );
+    // TODO: Testing
+    int numVertices = windShape.getVertexCount();
+    float[] scaled = new float[numVertices * 2];
+    short[] tris = {0, 1, 3, 3, 2, 1};
+    Vector2 tempPoint = new Vector2();
+
+    // Weird, but polygon shape gets rotated about its origin, so it is not relative to the windSource origin: does not treat it as (0,0)
+    // Solution is to shift the reference point that was once the origin (in the default right, 0 degree orientation)
+    // Reference point is the average of the first and last point
+    windShape.getVertex(0, tempPoint);
+    float shiftX = tempPoint.x;
+    float shiftY = tempPoint.y;
+    windShape.getVertex(numVertices - 1, tempPoint);
+    shiftX += tempPoint.x;
+    shiftY += tempPoint.y;
+    shiftX /= 2;
+    shiftY /= 2;
+
+    for (int ii = 0; ii < scaled.length; ii++) {
+      if (ii % 2 == 0) {
+        windShape.getVertex(ii / 2, tempPoint);
+        scaled[ii] = (tempPoint.x - shiftX) * drawScale.x;
+      } else {
+        scaled[ii] = (tempPoint.y - shiftY) * drawScale.y;
+      }
+    }
+
+    PolygonRegion testPoly = new PolygonRegion(windTexture, scaled, tris);
+    canvas.draw(
+      testPoly,
+      windColor,
+      windSource.x * drawScale.x,
+      windSource.y * drawScale.y,
+      windLength * drawScale.x,
+      windBreadth * drawScale.y);
 
     // Draw particles
     if (windParticles != null) {
@@ -310,27 +336,36 @@ public class WindModel {
         return windForceCache;
       }
 
+      // Use force cache to temporarily store
       float normX = x - windSource.x;
       float normY = y - windSource.y;
-      float norm = (float) Math.sqrt(normX * normX + normY * normY);
-      normX /= norm;
-      normY /= norm;
+      windForceCache.set(normX, normY);
+      // Distance from wind source
+      float norm = MathUtil.getMagnitude(windForceCache);
+      float proximityRatio = Math.min(norm / windLength, 1);
 
+      // Set the wind direction
       windForceCache.set(
         (float) Math.cos(windRotation),
         (float) Math.sin(windRotation));
+
+      // Opposite force if left side
+      windForceCache.scl((windSide == WindSide.LEFT ? -1 : 1));
 
       switch (windType) {
         case Constant:
           windForceCache.scl(windStrength);
           break;
         case Exponential:
+          // TODO: Currently defaults to 0.5, could possibly set this in Tiled?
           float decayRate = 0.5f;
-          float decayScale = (float) Math.exp(-decayRate * norm / windLength);
+          float decayScale = (float) Math.exp(-decayRate * proximityRatio);
           windForceCache.scl(windStrength * decayScale);
+          break;
         default:
-          // TODO: Implement natural wind physics
-          windForceCache.scl(windStrength);
+          // Natural wind physics
+          float dampingFactor = (float) Math.pow(1 - proximityRatio, 2);
+          windForceCache.scl(windStrength * windStrength * dampingFactor);
           break;
       }
 
@@ -341,30 +376,12 @@ public class WindModel {
       return particleFixtureDef;
     }
 
-    // TODO: Draw based on vertices of shape
     protected void draw(GameCanvas canvas, Vector2 drawScale) {
       if (!isWindOn) {
         return;
       }
 
-//      boolean shouldFlipX = windSide == WindSide.LEFT;
-//      particleTexture.flip(shouldFlipX, false);
-//      particleTexture.setRegion(0, 0, width / 2, height / 2);
-//      particleTexture.setRegionWidth((int) ((shouldFlipX ? -1 : 1) * width * drawScale.x));
-//      particleTexture.setRegionHeight((int)
-//        (height * drawScale.y));
-//
-//      canvas.draw(
-//        particleTexture,
-//        particleColor,
-//        0,
-//        0,
-//        (windSource.x + posX) * drawScale.x,
-//        (windSource.y + posY - height / 2) * drawScale.y,
-//        windRotation,
-//        1,
-//        1
-//      );
+      // TODO: Draw based on vertices of shape
     }
   }
 }

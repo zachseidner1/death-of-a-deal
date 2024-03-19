@@ -96,12 +96,10 @@ public class FanModel extends PlatformModel {
     // Rotate center0 about top-left corner with fanRotation
     Vector2 center = new Vector2();
     MathUtil.rotateAroundPivot(topLeft, center0, center, fanRotation);
-    float x = center.x;
-    float y = center.y;
-    setPosition(x, y);
+    setPosition(center);
 
     // Wind wrapper fields
-    Vector2 windSource = new Vector2();
+    Vector2 windSource = getPosition();
     WindType windType = null;
     TextureRegion windTexture = null;
     TextureRegion windParticleTexture = null;
@@ -144,11 +142,9 @@ public class FanModel extends PlatformModel {
           switch (side) {
             case "LEFT":
               fanSide = WindSide.LEFT;
-              windSource.set(x, y - height / 2);
               break;
             default:
               fanSide = WindSide.RIGHT;
-              windSource.set(x + width, y - height / 2);
               break;
           }
           break;
