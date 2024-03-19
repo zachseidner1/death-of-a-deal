@@ -134,11 +134,6 @@ public class WindModel {
     );
     windFixtureDef.shape = windShape;
 
-    assert numWindParticles > 0;
-    if (numWindParticles > 0) {
-      windParticles = new WindParticleModel[numWindParticles];
-    }
-
     initWindParticles();
     initDrawing();
   }
@@ -148,16 +143,21 @@ public class WindModel {
    */
   private void initWindParticles() {
     // Standard is to uniformly spread particles (static fixtures right now)
-    if (numWindParticles == 0) {
+    if (numWindParticles <= 0) {
       return;
     }
+
+    windParticles = new WindParticleModel[numWindParticles];
 
     if (windBreadthParticleGrids == 0 && windLengthParticleGrids == 0) {
       windBreadthParticleGrids = windLengthParticleGrids = (int) Math.ceil(Math.sqrt(numWindParticles));
     } else {
+      // Find the size of grids that occupy the wind length
       windLengthParticleGrids = windLengthParticleGrids == 0 ?
         (int) Math.ceil((float) numWindParticles / windBreadthParticleGrids) :
         windLengthParticleGrids;
+
+      // Size of breadth grids
       windBreadthParticleGrids = windBreadthParticleGrids == 0 ?
         (int) Math.ceil((float) numWindParticles / windLengthParticleGrids) :
         windBreadthParticleGrids;

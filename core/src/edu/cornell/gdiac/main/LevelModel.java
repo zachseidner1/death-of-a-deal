@@ -272,8 +272,11 @@ public class LevelModel {
       switch (layer.getString("name")) {
         case "level":
           makeTiles(numTilesHorizontal, numTilesVertical, layer.get("data").asIntArray(), tileWidth,
-            tileHeight,
-            directory, tileProperties);
+            tileHeight, directory, tileProperties, false);
+          break;
+        case "pass":
+          makeTiles(numTilesHorizontal, numTilesVertical, layer.get("data").asIntArray(), tileWidth,
+            tileHeight, directory, tileProperties, true);
           break;
         case "objects":
           if (layer.get("objects") != null) {
@@ -306,7 +309,7 @@ public class LevelModel {
    * @param tileProperties additional tile properties
    */
   private void makeTiles(int cols, int rows, int[] data, int tileWidth, int tileHeight,
-                         AssetDirectory directory, JsonValue tileProperties) {
+                         AssetDirectory directory, JsonValue tileProperties, boolean passThrough) {
     for (int i = 0; i < data.length; i++) {
       if (data[i] != 0) {
         // i % numCols = how deep in x
@@ -314,7 +317,7 @@ public class LevelModel {
         int xPos = (i % cols) * tileWidth;
         // subtract from full height since data starts at the top
         int yPos = tileHeight * rows - (i / cols) * tileHeight;
-        PlatformModel obj = new PlatformModel();
+        PlatformModel obj = passThrough ? new PassThroughPlatformModel() : new PlatformModel();
         obj.setDrawScale(scale);
         obj.initializeAsTile(xPos, yPos, (float) tileHeight, directory, "" + data[i],
           tileProperties);
@@ -418,7 +421,6 @@ public class LevelModel {
    */
   public void applyAirResistance() {
     for (Obstacle obj : objects) {
-      // TODO: Refactor (can have obstacles implement air resistance interface to determine whether this force should be applied
 
       float velX = obj.getVX();
       float velY = obj.getVY();

@@ -262,7 +262,7 @@ public class FanModel extends PlatformModel {
   protected void createFixtures() {
     super.createFixtures();
 
-    if (wind == null) {
+    if (body == null || wind == null) {
       return;
     }
 
@@ -293,6 +293,10 @@ public class FanModel extends PlatformModel {
   @Override
   protected void releaseFixtures() {
     super.releaseFixtures();
+
+    if (body == null) {
+      return;
+    }
 
     // Destroy fixture
     if (windFixture != null) {
