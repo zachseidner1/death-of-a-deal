@@ -32,6 +32,7 @@ public class WindModel {
   private float windStrength = DEFAULT_WIND_STRENGTH;
   private WindType windType = DEFAULT_WIND_TYPE;
   private WindSide windSide;
+  private PolygonRegion windPolyTexture;
   private TextureRegion windTexture;
   private TextureRegion windParticleTexture;
   /**
@@ -52,6 +53,7 @@ public class WindModel {
   private int numWindParticles;
   private int windLengthParticleGrids;
   private int windBreadthParticleGrids;
+  private Vector2 drawScale;
 
   WindModel() {
     windFixtureDef = new FixtureDef();
@@ -86,7 +88,8 @@ public class WindModel {
     WindSide windSide,
     WindType windType,
     TextureRegion windTexture,
-    TextureRegion windParticleTexture
+    TextureRegion windParticleTexture,
+    Vector2 drawScale
   ) {
 
     this.windBreadth = windBreadth;
@@ -100,6 +103,7 @@ public class WindModel {
     this.numWindParticles = numWindParticles;
     this.windLengthParticleGrids = windLengthParticleGrids;
     this.windBreadthParticleGrids = windBreadthParticleGrids;
+    this.drawScale = drawScale;
     this.windSource.set(windSourceX, windSourceY);
 
     float breadth2 = windBreadth / 2;
@@ -135,13 +139,14 @@ public class WindModel {
       windParticles = new WindParticleModel[numWindParticles];
     }
 
-    createWindParticles();
+    initWindParticles();
+    initDrawing();
   }
 
   /**
    * Creates wind particles depending on wind initialization information
    */
-  private void createWindParticles() {
+  private void initWindParticles() {
     // Standard is to uniformly spread particles (static fixtures right now)
     if (numWindParticles == 0) {
       return;
@@ -187,6 +192,45 @@ public class WindModel {
     }
   }
 
+  /**
+   * Drawing and texture initialization logic
+   */
+  public void initDrawing() {
+    boolean shouldFlipX = windSide == WindSide.LEFT;
+    windTexture.flip(shouldFlipX, false);
+    windTexture.setRegion(0, 0, windLength / 2, windBreadth / 2);
+    windTexture.setRegionWidth((int) (windLength * drawScale.x));
+    windTexture.setRegionHeight((int) (windBreadth * drawScale.y));
+
+    int numVertices = windShape.getVertexCount();
+    float[] scaled = new float[numVertices * 2];
+    short[] tris = {0, 1, 3, 3, 2, 1};
+    Vector2 tempPoint = new Vector2();
+
+    // Weird, but polygon shape gets rotated about its origin, so it is not relative to the windSource origin: does not treat it as (0,0)
+    // Solution is to shift the reference point that was once the origin (in the default right, 0 degree orientation)
+    // Reference point is the average of the first and last point
+    windShape.getVertex(0, tempPoint);
+    float shiftX = tempPoint.x;
+    float shiftY = tempPoint.y;
+    windShape.getVertex(numVertices - 1, tempPoint);
+    shiftX += tempPoint.x;
+    shiftY += tempPoint.y;
+    shiftX /= 2;
+    shiftY /= 2; // shift is now the average of the first and last points
+
+    for (int ii = 0; ii < scaled.length; ii++) {
+      if (ii % 2 == 0) {
+        windShape.getVertex(ii / 2, tempPoint);
+        scaled[ii] = (tempPoint.x - shiftX) * drawScale.x;
+      } else {
+        scaled[ii] = (tempPoint.y - shiftY) * drawScale.y;
+      }
+    }
+
+    windPolyTexture = new PolygonRegion(windTexture, scaled, tris);
+  }
+
   public FixtureDef getFixtureDef() {
     return windFixtureDef;
   }
@@ -203,7 +247,6 @@ public class WindModel {
   }
 
   /**
-   * // TODO: Draw based on wind region vertices
    * Draws the wind container and particles
    */
   protected void draw(GameCanvas canvas, Vector2 drawScale) {
@@ -211,53 +254,19 @@ public class WindModel {
       return;
     }
 
-    boolean shouldFlipX = windSide == WindSide.LEFT;
-    windTexture.flip(shouldFlipX, false);
-    windTexture.setRegion(0, 0, windLength / 2, windBreadth / 2);
-    windTexture.setRegionWidth((int) ((shouldFlipX ? -1 : 1) * windLength * drawScale.x));
-    windTexture.setRegionHeight((int)
-      (windBreadth * drawScale.y));
-
-    // TODO: Testing
-    int numVertices = windShape.getVertexCount();
-    float[] scaled = new float[numVertices * 2];
-    short[] tris = {0, 1, 3, 3, 2, 1};
-    Vector2 tempPoint = new Vector2();
-
-    // Weird, but polygon shape gets rotated about its origin, so it is not relative to the windSource origin: does not treat it as (0,0)
-    // Solution is to shift the reference point that was once the origin (in the default right, 0 degree orientation)
-    // Reference point is the average of the first and last point
-    windShape.getVertex(0, tempPoint);
-    float shiftX = tempPoint.x;
-    float shiftY = tempPoint.y;
-    windShape.getVertex(numVertices - 1, tempPoint);
-    shiftX += tempPoint.x;
-    shiftY += tempPoint.y;
-    shiftX /= 2;
-    shiftY /= 2;
-
-    for (int ii = 0; ii < scaled.length; ii++) {
-      if (ii % 2 == 0) {
-        windShape.getVertex(ii / 2, tempPoint);
-        scaled[ii] = (tempPoint.x - shiftX) * drawScale.x;
-      } else {
-        scaled[ii] = (tempPoint.y - shiftY) * drawScale.y;
-      }
-    }
-
-    PolygonRegion testPoly = new PolygonRegion(windTexture, scaled, tris);
     canvas.draw(
-      testPoly,
+      windPolyTexture,
       windColor,
       windSource.x * drawScale.x,
       windSource.y * drawScale.y,
       windLength * drawScale.x,
-      windBreadth * drawScale.y);
+      windBreadth * drawScale.y
+    );
 
     // Draw particles
     if (windParticles != null) {
-      for (int i = 0; i < windParticles.length; i++) {
-        windParticles[i].draw(
+      for (WindParticleModel windParticle : windParticles) {
+        windParticle.draw(
           canvas,
           drawScale
         );
@@ -381,7 +390,7 @@ public class WindModel {
         return;
       }
 
-      // TODO: Draw based on vertices of shape
+      // TODO: Draw based on vertices of shape in the future (animation)
     }
   }
 }

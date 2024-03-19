@@ -215,7 +215,8 @@ public class FanModel extends PlatformModel {
       fanSide,
       windType,
       windTexture,
-      windParticleTexture
+      windParticleTexture,
+      drawScale
     );
   }
 
@@ -235,7 +236,8 @@ public class FanModel extends PlatformModel {
     WindSide windSide,
     WindType windType,
     TextureRegion windTexture,
-    TextureRegion windParticleTexture
+    TextureRegion windParticleTexture,
+    Vector2 drawScale
   ) {
 
     wind.initialize(
@@ -251,7 +253,8 @@ public class FanModel extends PlatformModel {
       windSide,
       windType,
       windTexture,
-      windParticleTexture
+      windParticleTexture,
+      drawScale
     );
   }
 

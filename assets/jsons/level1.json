@@ -70,10 +70,10 @@
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 6, 7, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 6, 7, 0, 0, 0, 0, 0, 0,
-            8, 9, 9, 9, 9, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 6, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            12, 12, 12, 12, 12, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            12, 12, 12, 12, 12, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            12, 12, 12, 12, 12, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            10, 11, 11, 11, 11, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 6, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            14, 14, 14, 14, 14, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            14, 14, 14, 14, 14, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            14, 14, 14, 14, 14, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
          "height":30,
          "id":1,
          "name":"level",
@@ -619,103 +619,6 @@
                 }, 
                 {
                  "height":80,
-                 "id":31,
-                 "name":"fan",
-                 "properties":[
-                        {
-                         "name":"Active",
-                         "type":"bool",
-                         "value":true
-                        }, 
-                        {
-                         "name":"BodyType",
-                         "type":"string",
-                         "value":"static"
-                        }, 
-                        {
-                         "name":"DebugColor",
-                         "type":"string",
-                         "value":"yellow"
-                        }, 
-                        {
-                         "name":"DebugOpacity",
-                         "type":"int",
-                         "value":255
-                        }, 
-                        {
-                         "name":"FanTexture",
-                         "type":"string",
-                         "value":"1"
-                        }, 
-                        {
-                         "name":"NumWindParticles",
-                         "type":"int",
-                         "value":100
-                        }, 
-                        {
-                         "name":"Period",
-                         "type":"float",
-                         "value":0
-                        }, 
-                        {
-                         "name":"PeriodOnRatio",
-                         "type":"float",
-                         "value":1
-                        }, 
-                        {
-                         "name":"Side",
-                         "type":"string",
-                         "value":"right"
-                        }, 
-                        {
-                         "name":"Type",
-                         "type":"string",
-                         "value":"exponential"
-                        }, 
-                        {
-                         "name":"WindBreadth",
-                         "type":"float",
-                         "value":70
-                        }, 
-                        {
-                         "name":"WindBreadthParticleGrids",
-                         "type":"int",
-                         "value":10
-                        }, 
-                        {
-                         "name":"WindLength",
-                         "type":"float",
-                         "value":120
-                        }, 
-                        {
-                         "name":"WindLengthParticleGrids",
-                         "type":"int",
-                         "value":10
-                        }, 
-                        {
-                         "name":"WindParticleTexture",
-                         "type":"string",
-                         "value":"1"
-                        }, 
-                        {
-                         "name":"WindStrength",
-                         "type":"float",
-                         "value":10
-                        }, 
-                        {
-                         "name":"WindTexture",
-                         "type":"string",
-                         "value":"1"
-                        }],
-                 "rotation":-90,
-                 "type":"Fan",
-                 "visible":true,
-                 "width":16,
-                 "x":290.992580952811,
-                 "y":418.856285211585
-                }, 
-                {
-                 "height":80,
                  "id":32,
                  "name":"fan",
                  "properties":[
@@ -762,12 +665,12 @@
                         {
                          "name":"Side",
                          "type":"string",
-                         "value":"right"
+                         "value":"left"
                         }, 
                         {
                          "name":"Type",
                          "type":"string",
-                         "value":"exponential"
+                         "value":"default"
                         }, 
                         {
                          "name":"WindBreadth",
@@ -804,12 +707,12 @@
                          "type":"string",
                          "value":"1"
                         }],
-                 "rotation":90,
+                 "rotation":-40,
                  "type":"Fan",
                  "visible":true,
                  "width":16,
-                 "x":286.144184787512,
-                 "y":223.466570423171
+                 "x":371.540224391472,
+                 "y":301.436867452874
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -868,7 +771,7 @@
          "source":"..\/..\/tiled\/wood_tileset.tsx"
         }, 
         {
-         "firstgid":8,
+         "firstgid":10,
          "source":"..\/..\/tiled\/stonetileset.tsx"
         }],
  "tilewidth":16,
