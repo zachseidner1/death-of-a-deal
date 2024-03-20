@@ -68,11 +68,12 @@ public class PassThroughPlatformModel extends PlatformModel {
    */
   private void initFixtureDefs(float width, float height) {
     // Create the body fixture def
-    bodySensor = new BodySensor(0, 0, width / 2, height / 2);
+    float defaultSensorScale = 1.25f;
+    bodySensor = new BodySensor(0, 0, width / 2 * defaultSensorScale, height / 2 * defaultSensorScale);
 
     // Create the bottom fixture def
+    float defaultSensorHeight = 0.1f;
     float centerYRel = -height / 2;
-    float defaultSensorHeight = 0.05f;
     bottomSensor = new BottomSensor(0, centerYRel, width / 2, defaultSensorHeight);
   }
 
@@ -141,19 +142,19 @@ public class PassThroughPlatformModel extends PlatformModel {
     }
 
     @Override
-    public void beginContact(Obstacle obs, Object fixtureData) {
-      if (!(fixtureData instanceof PlayerModel.BodySensor)) {
+    public void beginContact(Obstacle obs, Fixture fixture) {
+      if (!(fixture.getUserData() instanceof PlayerModel.BodySensor)) {
         return;
       }
-      
-      getObstacle().setPassThrough(true);
+      PlayerModel test = (PlayerModel) obs;
+
+      if (!test.getIsDropping()) {
+        getObstacle().setPassThrough(true);
+      }
     }
 
     @Override
-    public void endContact(Obstacle obs, Object fixtureData) {
-      if (!(fixtureData instanceof PlayerModel.BodySensor)) {
-        return;
-      }
+    public void endContact(Obstacle obs, Fixture fixture) {
     }
   }
 
@@ -167,24 +168,28 @@ public class PassThroughPlatformModel extends PlatformModel {
     }
 
     @Override
-    public void beginContact(Obstacle obs, Object fixtureData) {
-      boolean isPlayerHeadSensor = fixtureData instanceof PlayerModel.BodySensor;
+    public void beginContact(Obstacle obs, Fixture fixture) {
+      boolean isPlayerBodySensor = fixture.getUserData() instanceof PlayerModel.BodySensor;
 
-      if (!isPlayerHeadSensor) {
+      if (!isPlayerBodySensor) {
         return;
       }
+
+      System.out.println("Add to: " + this);
 
       // Add to obstacles within
       obstaclesWithin.add(obs);
     }
 
     @Override
-    public void endContact(Obstacle obs, Object fixtureData) {
-      boolean isPlayerBodySensor = fixtureData instanceof PlayerModel.BodySensor;
+    public void endContact(Obstacle obs, Fixture fixture) {
+      boolean isPlayerBodySensor = fixture.getUserData() instanceof PlayerModel.BodySensor;
 
       if (!isPlayerBodySensor) {
         return;
       }
+
+      System.out.println("Remove from: " + this);
 
       // Remove from obstacles within
       obstaclesWithin.remove(obs);

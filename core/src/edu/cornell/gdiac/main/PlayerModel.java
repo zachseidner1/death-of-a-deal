@@ -463,15 +463,17 @@ public class PlayerModel extends CapsuleObstacle {
   }
 
   public void initFixtureDefs(float width, float height) {
-    // Can be set in Tiled, but good-enough default here
-    float defaultSensorHeight = 0.05f;
+    // Can be set in Tiled, but good-enough default here (we want a very thin sensor)
+    float defaultSensorHeight = 0.005f;
 
     // Create the head fixture def
     bodySensor = new BodySensor(0, 0, width / 2, height / 2);
 
     // Create the bottom fixture def
     float groundYRel = -height / 2;
-    groundSensor = new GroundSensor(0, groundYRel, width / 2, defaultSensorHeight);
+    // To represent the feet (smaller width)
+    float defaultGroundSensorScale = 0.2f;
+    groundSensor = new GroundSensor(0, groundYRel, width / 2 * defaultGroundSensorScale, defaultSensorHeight);
   }
 
   @Override
@@ -571,16 +573,28 @@ public class PlayerModel extends CapsuleObstacle {
       setVY(jumpVelocity);
 
       // Clear platform in ground sensor
-      groundSensor.platform = null;
+      System.out.println("Clear bottom platforms");
+      groundSensor.clearPlatforms();
     }
 
     // If on top of a pass-through platform and pressing drop, set the tile to pass-through
-    Obstacle platform = groundSensor.platform;
-    if (platform instanceof PassThroughPlatformModel && isDropping) {
-      ((PassThroughPlatformModel) platform).setPassThrough(true);
-    }
+    dropPassThroughPlatform(groundSensor.prevPlatform);
+    dropPassThroughPlatform(groundSensor.currPlatform);
+
+//    System.out.println(groundSensor.prevPlatform);
+//    System.out.println(groundSensor.currPlatform);
+//    System.out.println();
 
     body.applyForce(v2Cache, getPosition(), true);
+  }
+
+  /**
+   * Checks whether tile is pass-through and set to pass-through if player dropping
+   */
+  private void dropPassThroughPlatform(Obstacle platform) {
+    if (isDropping && platform instanceof PassThroughPlatformModel) {
+      ((PassThroughPlatformModel) platform).setPassThrough(true);
+    }
   }
 
   /**
@@ -614,12 +628,12 @@ public class PlayerModel extends CapsuleObstacle {
     }
 
     @Override
-    public void beginContact(Obstacle obs, Object fixtureData) {
+    public void beginContact(Obstacle obs, Fixture fixture) {
       // TODO: Can refactor breakable platform under this logic for consistency
     }
 
     @Override
-    public void endContact(Obstacle obs, Object fixtureData) {
+    public void endContact(Obstacle obs, Fixture fixture) {
     }
   }
 
@@ -627,17 +641,32 @@ public class PlayerModel extends CapsuleObstacle {
     /**
      * The current platform the player is standing on
      */
-    Obstacle platform;
+    Obstacle currPlatform;
+
+    /**
+     * Previous platform (since player can be standing between two pass through tiles. Can also serve as cache.
+     */
+    Obstacle prevPlatform;
 
     public GroundSensor(float x, float y, float width2, float height2) {
       super(PlayerModel.this, x, y, width2, height2);
 
-      platform = null;
+      clearPlatforms();
+    }
+
+    public void clearPlatforms() {
+      currPlatform = prevPlatform = null;
     }
 
     @Override
-    public void beginContact(Obstacle bodyData, Object fixtureData) {
-      platform = bodyData;
+    public void beginContact(Obstacle bodyData, Fixture fixture) {
+      if (bodyData != currPlatform && !fixture.isSensor()) {
+        prevPlatform = currPlatform;
+        currPlatform = bodyData;
+
+        // TODO: Issue lies in ground sensor colliding with a sensor fixture, which does not set grounded
+        System.out.println("Begin contact with: " + bodyData);
+      }
 
       // TODO: Can migrate some of the logic (setGrounded) from collision controller here. Notice
       // that we are slowly drifting away from model territory, which is fine. If it gets to complicated,
@@ -648,7 +677,7 @@ public class PlayerModel extends CapsuleObstacle {
     }
 
     @Override
-    public void endContact(Obstacle bodyData, Object fixtureData) {
+    public void endContact(Obstacle bodyData, Fixture fixture) {
     }
   }
 }

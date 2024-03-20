@@ -90,8 +90,8 @@ public class CollisionController implements ContactListener {
 
       // See if we have landed on the ground
       if (!isWindContact &&
-        (fd2 instanceof PlayerModel.GroundSensor && avatar != bd1) ||
-        (fd1 instanceof PlayerModel.GroundSensor && avatar != bd2)) {
+        (fd2 instanceof PlayerModel.GroundSensor && bd1 != avatar && !fix1.isSensor()) ||
+        (fd1 instanceof PlayerModel.GroundSensor && bd2 != avatar && !fix2.isSensor())) {
         avatar.setGrounded(true);
         sensorFixtures.add(avatar == bd1 ? fix2 : fix1);
       }
@@ -343,17 +343,17 @@ public class CollisionController implements ContactListener {
       if (isPass1) {
         sensorFixture = (BoxFixtureSensor<?>) data1;
         if (isBeginContact) {
-          sensorFixture.beginContact(bd2, data2);
+          sensorFixture.beginContact(bd2, fix2);
         } else {
-          sensorFixture.endContact(bd2, data2);
+          sensorFixture.endContact(bd2, fix2);
         }
       }
       if (isPass2) {
         sensorFixture = (BoxFixtureSensor<?>) data2;
         if (isBeginContact) {
-          sensorFixture.beginContact(bd1, data1);
+          sensorFixture.beginContact(bd1, fix1);
         } else {
-          sensorFixture.endContact(bd1, data1);
+          sensorFixture.endContact(bd1, fix1);
         }
       }
     } catch (Exception e) {

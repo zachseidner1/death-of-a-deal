@@ -1,6 +1,7 @@
 package edu.cornell.gdiac.main;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import edu.cornell.gdiac.physics.obstacle.Obstacle;
@@ -47,10 +48,10 @@ public abstract class BoxFixtureSensor<T extends Obstacle> {
   /**
    * Callback to be called right before contact resolution with sensor
    */
-  public abstract void beginContact(Obstacle obs, Object fixtureData);
+  public abstract void beginContact(Obstacle obs, Fixture fixture);
 
   /**
    * Callback to be called right after contact resolution with sensor
    */
-  public abstract void endContact(Obstacle obs, Object fixtureData);
+  public abstract void endContact(Obstacle obs, Fixture fixture);
 }
