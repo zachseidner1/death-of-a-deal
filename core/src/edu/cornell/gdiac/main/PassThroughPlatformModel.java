@@ -4,14 +4,13 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.physics.obstacle.Obstacle;
 
 public class PassThroughPlatformModel extends PlatformModel {
   private boolean isPassThrough;
-  private PassThroughSensor bodySensor;
+  private BodySensor bodySensor;
   private Fixture bodyFixture;
   private BottomSensor bottomSensor;
   private Fixture bottomFixture;
@@ -28,13 +27,25 @@ public class PassThroughPlatformModel extends PlatformModel {
     // Default
     passThroughColor = new Color(1f, 1f, 1f, 0.3f);
     solidColor = new Color(passThroughColor);
-    solidColor.a = 0.7f; // Differentiate alpha
+    solidColor.a = 0.6f; // Differentiate alpha
+  }
+
+  public boolean getPassThrough() {
+    return isPassThrough;
   }
 
   public void setPassThrough(boolean pass) {
     isPassThrough = pass;
 
     // TODO: Add side effects, including toggling between fixture body vs physical body
+    // Set all fixtures to sensors
+    for (Fixture fixture : body.getFixtureList()) {
+      fixture.setSensor(isPassThrough);
+    }
+
+    // Reset body and bottom sensor fixtures to sensors
+    bodyFixture.setSensor(true);
+    bottomFixture.setSensor(true);
   }
 
   @Override
@@ -53,12 +64,12 @@ public class PassThroughPlatformModel extends PlatformModel {
    */
   private void initFixtureDefs(float width, float height) {
     // Create the body fixture def
-    bodySensor = new BodySensor(0, 0, width / 2, height / 2);
+    bodySensor = new BodySensor(this, 0, 0, width / 2, height / 2);
 
     // Create the bottom fixture def
     float centerYRel = -height / 2;
     float defaultSensorHeight = 0.05f;
-    bottomSensor = new BottomSensor(0, centerYRel, width / 2, defaultSensorHeight);
+    bottomSensor = new BottomSensor(this, 0, centerYRel, width / 2, defaultSensorHeight);
   }
 
   @Override
@@ -112,80 +123,38 @@ public class PassThroughPlatformModel extends PlatformModel {
 
     // TODO: Draw sensors on debug?
   }
+}
 
-  /**
-   * Sensor class for handling sensor collision logic and fixture initialization
-   */
-  public abstract class PassThroughSensor {
-    protected FixtureDef sensorFixtureDef;
-    protected Vector2 center; // Relative to platfor body
-    protected Vector2 dimensions; // (width2, height2)
-
-    /**
-     * (x, y): center, relative to the platform
-     * (width2, height2): half dimensiosn from center
-     */
-    public PassThroughSensor(float x, float y, float width2, float height2) {
-      PolygonShape sensorShape = new PolygonShape();
-      center = new Vector2(x, y);
-      dimensions = new Vector2(width2, height2);
-      sensorShape.setAsBox(width2, height2, center, 0);
-
-      sensorFixtureDef = new FixtureDef();
-      sensorFixtureDef.isSensor = true;
-      sensorFixtureDef.shape = sensorShape;
-    }
-
-    public FixtureDef getFixtureDef() {
-      return sensorFixtureDef;
-    }
-
-    public PassThroughPlatformModel getPlatform() {
-      return PassThroughPlatformModel.this;
-    }
-
-    /**
-     * Callback to be called right before contact resolution with sensor
-     */
-    public abstract void beforeContact(Obstacle obs);
-
-    /**
-     * Callback to be called right after contact resolution with sensor
-     */
-    public abstract void afterContact(Obstacle obs);
+class BottomSensor extends BoxFixtureSensor<PassThroughPlatformModel> {
+  public BottomSensor(PassThroughPlatformModel passPlatform, float x, float y, float width2, float height2) {
+    super(passPlatform, x, y, width2, height2);
   }
 
-  public class BottomSensor extends PassThroughSensor {
-    public BottomSensor(float x, float y, float width2, float height2) {
-      super(x, y, width2, height2);
-    }
-
-    @Override
-    public void beforeContact(Obstacle obs) {
-      System.out.println("This is working");
-      boolean fromBottom = obs.getPosition().y < center.y;
-      getPlatform().setPassThrough(fromBottom);
-    }
-
-    @Override
-    public void afterContact(Obstacle obs) {
-
-    }
+  @Override
+  public void beginContact(Obstacle obs) {
+    System.out.println("Sensor start called: " + this);
+    // boolean fromBottom = obs.getPosition().y < center.y + getPosition().y; // TODO: Reenable
+    getPlatform().setPassThrough(true);
   }
 
-  public class BodySensor extends PassThroughSensor {
-    public BodySensor(float x, float y, float width2, float height2) {
-      super(x, y, width2, height2);
-    }
+  @Override
+  public void endContact(Obstacle obs) {
+    System.out.println("Sensor end called: " + this);
+  }
+}
 
-    @Override
-    public void beforeContact(Obstacle obs) {
-    }
+class BodySensor extends BoxFixtureSensor<PassThroughPlatformModel> {
+  public BodySensor(PassThroughPlatformModel passModel, float x, float y, float width2, float height2) {
+    super(passModel, x, y, width2, height2);
+  }
 
-    @Override
-    public void afterContact(Obstacle obs) {
-      // Set back to platform after fall through
-      getPlatform().setPassThrough(false);
-    }
+  @Override
+  public void beginContact(Obstacle obs) {
+  }
+
+  @Override
+  public void endContact(Obstacle obs) {
+    // Set back to platform after fall through
+    // getPlatform().setPassThrough(true); // TODO: Set back to false
   }
 }

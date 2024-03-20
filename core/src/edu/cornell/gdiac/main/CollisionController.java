@@ -9,7 +9,6 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.utils.ObjectSet;
-import edu.cornell.gdiac.main.PassThroughPlatformModel.PassThroughSensor;
 import edu.cornell.gdiac.main.WindModel.WindParticleModel;
 import edu.cornell.gdiac.physics.obstacle.BoxObstacle;
 import edu.cornell.gdiac.physics.obstacle.Obstacle;
@@ -46,7 +45,6 @@ public class CollisionController implements ContactListener {
   private void prepareImpulse(SlopeModel slope) {
     float slopeAngle = slope.getSlopeAngle();
     float forceMagnitude = slope.getSlopeFrozenImpulse();
-    System.out.println("force mag" + forceMagnitude);
 
     if (slopeAngle >= 0 && slopeAngle <= Math.PI) {
       // Slope is pointing down left
@@ -84,11 +82,8 @@ public class CollisionController implements ContactListener {
       PlayerModel avatar = level.getAvatar();
       BoxObstacle door = level.getExit();
 
-      // TODO: test
-      PassThroughSensor test = checkPassThrough(avatar, body1, body2, fix1, fix2);
-      if (test != null) {
-        System.out.println("This is a test: " + test);
-      }
+      // Handle beginning of fixture sensor contact
+      onBoxFixtureSensorContact(true, body1, body2, fix1, fix2);
 
       // Handle possible wind contact
       boolean isWindContact = handleWindContact(contact, fix1, fix2, bd2, bd1);
@@ -174,6 +169,9 @@ public class CollisionController implements ContactListener {
         avatar.setGrounded(false);
       }
     }
+
+    // Handle end of fixture sensor contact
+    onBoxFixtureSensorContact(false, body1, body2, fix1, fix2);
   }
 
   /**
@@ -193,7 +191,6 @@ public class CollisionController implements ContactListener {
     preSolveBounce(contact, plyr, body1, body2);
     preSolveSlope(contact, plyr, body1, body2);
     preSolveBreak(contact, plyr, body1, body2);
-    preSolvePassThrough(plyr, body1, body2, fix1, fix2);
   }
 
   /**
@@ -209,7 +206,6 @@ public class CollisionController implements ContactListener {
     Body body2 = fix2.getBody();
     PlayerModel plyr = level.getAvatar();
     postSolveBounce(contact, plyr, body1, body2);
-    postSolvePassThrough(plyr, body1, body2, fix1, fix2);
   }
 
   public void preSolveBounce(Contact contact, PlayerModel plyr, Body body1, Body body2) {
@@ -289,7 +285,6 @@ public class CollisionController implements ContactListener {
         if (playerModel.getIsFrozen()) {
           BouncePlatformModel bplt = (BouncePlatformModel) bd2;
           float maxSpeed = bplt.getMaxSpeed();
-          System.out.println("max speed: " + maxSpeed);
           float xSpeed = playerModel.getLinearVelocity().x;
           float ySpeed = playerModel.getLinearVelocity().y;
           if (xSpeed > maxSpeed) {
@@ -303,7 +298,6 @@ public class CollisionController implements ContactListener {
             playerModel.setVY(-maxSpeed);
           }
           bplt.setMaxSpeed(bplt.getDefaultMaxSpeed());
-          System.out.println("max speed now: " + bplt.getMaxSpeed());
         }
       }
     }
@@ -330,56 +324,40 @@ public class CollisionController implements ContactListener {
   }
 
   /**
-   * <p>
-   * Checks whether collision occurs with a pass-through platform, returning the platform if true, null otherwise
+   * Handles the execution of appropriate fixture sensor callbacks
    */
-  private PassThroughSensor checkPassThrough(PlayerModel player, Body body1, Body body2, Fixture fix1, Fixture fix2) {
+  private void onBoxFixtureSensorContact(boolean isBeginContact, Body body1, Body body2, Fixture fix1, Fixture fix2) {
     try {
       Object data1 = fix1.getUserData();
       Object data2 = fix2.getUserData();
 
+      boolean isPass1 = data1 instanceof BoxFixtureSensor;
+      boolean isPass2 = data2 instanceof BoxFixtureSensor;
+
       Obstacle bd1 = (Obstacle) body1.getUserData();
       Obstacle bd2 = (Obstacle) body2.getUserData();
 
-      boolean isPass1 = data1 instanceof PassThroughSensor;
-      boolean isPass2 = data2 instanceof PassThroughSensor;
+      BoxFixtureSensor<?> sensorFixture;
 
-      if (isPass1 && bd2.equals(player) || (isPass2 && bd1.equals(player))) {
-        return (PassThroughSensor) (isPass1 ? data1 : data2);
+      // Execute callback
+      if (isPass1) {
+        sensorFixture = (BoxFixtureSensor<?>) data1;
+        if (isBeginContact) {
+          sensorFixture.beginContact(bd2);
+        } else {
+          sensorFixture.endContact(bd2);
+        }
       }
-
-      return null;
+      if (isPass2) {
+        sensorFixture = (BoxFixtureSensor<?>) data2;
+        if (isBeginContact) {
+          sensorFixture.beginContact(bd1);
+        } else {
+          sensorFixture.endContact(bd1);
+        }
+      }
     } catch (Exception e) {
       e.printStackTrace();
     }
-
-    return null;
-  }
-
-  /**
-   * Checks whether player wants to pass through the platform by going from the bottom -> top
-   */
-  private void preSolvePassThrough(PlayerModel player, Body body1, Body body2, Fixture fix1, Fixture fix2) {
-    PassThroughSensor sensor = checkPassThrough(player, body1, body2, fix1, fix2);
-
-    if (sensor == null || player == null) {
-      return;
-    }
-
-    System.out.println("Is this ever called");
-    sensor.beforeContact(player);
-  }
-
-  /**
-   * Checks whether the player is outside of the fixture representing the pass through platform
-   */
-  private void postSolvePassThrough(PlayerModel player, Body body1, Body body2, Fixture fix1, Fixture fix2) {
-    PassThroughSensor sensor = checkPassThrough(player, body1, body2, fix1, fix2);
-
-    if (sensor == null || player == null) {
-      return;
-    }
-
-    sensor.afterContact(player);
   }
 }
