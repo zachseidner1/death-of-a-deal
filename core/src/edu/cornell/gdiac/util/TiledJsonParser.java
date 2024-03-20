@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.assets.AssetDirectory;
@@ -13,6 +14,10 @@ import edu.cornell.gdiac.main.BreakablePlatformModel;
 import edu.cornell.gdiac.main.FanModel;
 import edu.cornell.gdiac.main.PlayerModel;
 import edu.cornell.gdiac.main.SlopeModel;
+import edu.cornell.gdiac.main.WindModel;
+import edu.cornell.gdiac.main.WindModel.WindSide;
+import edu.cornell.gdiac.main.WindModel.WindType;
+import edu.cornell.gdiac.physics.obstacle.BoxObstacle;
 import edu.cornell.gdiac.physics.obstacle.SimpleObstacle;
 import java.lang.reflect.Field;
 import javax.sql.rowset.BaseRowSet;
@@ -28,6 +33,21 @@ public class TiledJsonParser {
   public static float sensorSizeX; // player sensor size x component for calculations
   public static float sensorSizeY; // player sensor size y component for calculations
   public static Color playerSensorColor; // player sensor color
+  public static float windSourceX;
+  public static float windSourceY;
+  public static float windBreadth;
+  public static float windLength;
+  public static float windStrength;
+  public static float fanRotation;
+  public static int numWindParticles;
+  public static int windLengthParticleGrids;
+  public static int windBreadthParticleGrids;
+  public static WindModel.WindSide windSide;
+  public static WindModel.WindType windType;
+  public static TextureRegion windTexture;
+  public static TextureRegion windParticleTexture;
+
+
   // TODO: Add specific json fields (with custom logic) + other general types, and this will use type parameter to parse the tiled json
 
   /**
@@ -68,13 +88,36 @@ public class TiledJsonParser {
     obstacle.setTexture(texture);
   }
 
-  public static void setStaticFields(Vector2 dScale, Vector2 mScale, float tHeight) {
-    drawScale = dScale;
-    meterScale = mScale;
-    tiledHeight = tHeight;
-    playerSensorColor = null;
+  /**
+   *
+   * @param obstacle obstacle to initialize as object
+   * @param directory asset directory for use of assets
+   * @param json json to use for initialization
+   * @param drawScale drawScale for object
+   * @param tiledHeight tiledHeight for position calculation
+   */
+  public void initialize(SimpleObstacle obstacle, AssetDirectory directory, JsonValue json,
+      Vector2 drawScale, float tiledHeight) {
+    setStaticFields(drawScale, tiledHeight);
+    initObjectFromJson(obstacle, directory, json);
   }
 
+  /**
+   *
+   * @param dScale drawScale for object
+   * @param tHeight tiledHeight for position calculation
+   */
+  public static void setStaticFields(Vector2 dScale, float tHeight) {
+    drawScale = dScale;
+    tiledHeight = tHeight;
+  }
+
+  /**
+   *
+   * @param obstacle obstacle to initialize
+   * @param directory asset directory for use of assets
+   * @param json json to use for initialization
+   */
   public static void initObjectFromJson(
       SimpleObstacle obstacle, AssetDirectory directory, JsonValue json) {
       // Set type field and obstacle name
@@ -151,6 +194,12 @@ public class TiledJsonParser {
       }
   }
 
+  /**
+   *
+   * @param player player model to initialize
+   * @param directory asset directory
+   * @param json json for player object
+   */
   public static void initPlayerFromJson(
       PlayerModel player, AssetDirectory directory, JsonValue json) {
     // Set dimension and frozen texture
@@ -220,6 +269,12 @@ public class TiledJsonParser {
     }
   }
 
+  /**
+   *
+   * @param slope slope model to initialize
+   * @param directory asset directory
+   * @param json json for slope object
+   */
   public static void initSlopeFromJson(
       SlopeModel slope, AssetDirectory directory, JsonValue json) {
     // init bounds
@@ -232,6 +287,12 @@ public class TiledJsonParser {
     }
   }
 
+  /**
+   *
+   * @param bounce bounce platform model to initialize
+   * @param directory asset directory
+   * @param json json for bounce platform object
+   */
   public static void initBounceFromJson(
       BouncePlatformModel bounce, AssetDirectory directory, JsonValue json) {
     // Set dimension
@@ -241,14 +302,45 @@ public class TiledJsonParser {
 
   }
 
+  /**
+   *
+   * @param breakable breakable platform model to initialize
+   * @param directory asset directory
+   * @param json json for breakable platform object
+   */
   public static void initBreakableFromJson(
       BreakablePlatformModel breakable, AssetDirectory directory, JsonValue json) {
 
   }
 
+  /**
+   *
+   * @param fan fan model to initialize
+   * @param directory asset directory
+   * @param json json for fan object
+   */
   public static void initFanFromJson(
       FanModel fan, AssetDirectory directory, JsonValue json) {
+    float width = json.getFloat("width") * (1/drawScale.x);
+    float height = json.getFloat("height") * (1/drawScale.y);
+      fan.setDimension(width,height);
+
+    JsonValue properties = json.get("properties").child();
+    while (properties != null){
+      switch (properties.getString("name")){
+        default:
+          break;
+      }
+
+      properties = properties.next();
+    }
+
 
   }
 
+  public static void setObjectDimension(BoxObstacle obstacle, JsonValue json){
+    float width = json.getFloat("width") * (1/drawScale.x);
+    float height = json.getFloat("height") * (1/drawScale.y);
+    obstacle.setDimension(width,height);
+  }
 }

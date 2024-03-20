@@ -56,6 +56,20 @@ public class FanModel extends PlatformModel {
     wind = new WindModel();
   }
 
+  public void setPeriod(float period){
+    this.period = period;
+  }
+
+  public void setPeriodOnRatio(float periodOnRatio){
+    this.periodOnRatio = periodOnRatio;
+  }
+
+  public void setWindParticleFixtures(Fixture[] windParticleFixtures){
+    this.windParticleFixtures = windParticleFixtures;
+  }
+
+
+
   /**
    * Initializes the fan platform via the given JSON value
    *
