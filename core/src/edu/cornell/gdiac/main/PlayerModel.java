@@ -573,17 +573,11 @@ public class PlayerModel extends CapsuleObstacle {
       setVY(jumpVelocity);
 
       // Clear platform in ground sensor
-      System.out.println("Clear bottom platforms");
       groundSensor.clearPlatforms();
     }
 
     // If on top of a pass-through platform and pressing drop, set the tile to pass-through
-    dropPassThroughPlatform(groundSensor.prevPlatform);
-    dropPassThroughPlatform(groundSensor.currPlatform);
-
-//    System.out.println(groundSensor.prevPlatform);
-//    System.out.println(groundSensor.currPlatform);
-//    System.out.println();
+    dropPassThroughPlatform();
 
     body.applyForce(v2Cache, getPosition(), true);
   }
@@ -591,9 +585,39 @@ public class PlayerModel extends CapsuleObstacle {
   /**
    * Checks whether tile is pass-through and set to pass-through if player dropping
    */
-  private void dropPassThroughPlatform(Obstacle platform) {
-    if (isDropping && platform instanceof PassThroughPlatformModel) {
-      ((PassThroughPlatformModel) platform).setPassThrough(true);
+  private void dropPassThroughPlatform() {
+    if (!isDropping) {
+      return;
+    }
+
+    if (groundSensor.currPlatform == null) {
+      assert groundSensor.prevPlatform == null;
+      return;
+    }
+
+    if (!(groundSensor.currPlatform instanceof PassThroughPlatformModel)) {
+      return;
+    }
+
+    ((PassThroughPlatformModel) groundSensor.currPlatform).setPassThrough(true);
+
+    if (groundSensor.prevPlatform == null || !(groundSensor.prevPlatform instanceof PassThroughPlatformModel)) {
+      return;
+    }
+
+    assert !groundSensor.prevPlatform.equals(groundSensor.currPlatform);
+
+    // Check whether the previous platform is a neighboring tile
+    Vector2 currPlatformBodyCenter = groundSensor.currPlatform.getBody().getWorldCenter();
+    Vector2 prevPlatformBodyCenter = groundSensor.prevPlatform.getBody().getWorldCenter();
+
+    float xDiffThres = 0.5f; // Set to be within a tile width
+    float yDiffThres = 0.005f; // Set to arbitrarily small amount to account for float arith
+    boolean isNeighborX = Math.abs(currPlatformBodyCenter.x - prevPlatformBodyCenter.x) <= xDiffThres;
+    boolean isNeighborY = Math.abs(currPlatformBodyCenter.y - prevPlatformBodyCenter.y) <= yDiffThres;
+
+    if (isNeighborX && isNeighborY) {
+      ((PassThroughPlatformModel) groundSensor.prevPlatform).setPassThrough(true);
     }
   }
 
@@ -663,9 +687,6 @@ public class PlayerModel extends CapsuleObstacle {
       if (bodyData != currPlatform && !fixture.isSensor()) {
         prevPlatform = currPlatform;
         currPlatform = bodyData;
-
-        // TODO: Issue lies in ground sensor colliding with a sensor fixture, which does not set grounded
-        System.out.println("Begin contact with: " + bodyData);
       }
 
       // TODO: Can migrate some of the logic (setGrounded) from collision controller here. Notice
