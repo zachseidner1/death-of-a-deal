@@ -74,7 +74,7 @@ public class PassThroughPlatformModel extends PlatformModel {
     // Create the bottom fixture def
     float defaultSensorHeight = 0.1f;
     float centerYRel = -height / 2;
-    bottomSensor = new BottomSensor(0, centerYRel, width / 2, defaultSensorHeight);
+    bottomSensor = new BottomSensor(0, centerYRel, width / 2 * defaultSensorScale, defaultSensorHeight);
   }
 
   @Override
@@ -175,8 +175,6 @@ public class PassThroughPlatformModel extends PlatformModel {
         return;
       }
 
-      System.out.println("Add to: " + this);
-
       // Add to obstacles within
       obstaclesWithin.add(obs);
     }
@@ -188,8 +186,6 @@ public class PassThroughPlatformModel extends PlatformModel {
       if (!isPlayerBodySensor) {
         return;
       }
-
-      System.out.println("Remove from: " + this);
 
       // Remove from obstacles within
       obstaclesWithin.remove(obs);
