@@ -372,6 +372,57 @@ public class PlayerModel extends CapsuleObstacle {
   }
 
   /**
+   * Returns the frozen texture
+   */
+  public TextureRegion getFrozenTexture() {
+    return frozenTexture;
+  }
+
+  /**
+   * Sets the texture for frozen player
+   *
+   * @param texture the texture to set frozenTexture to
+   */
+  public void setFrozenTexture(TextureRegion texture) {
+    frozenTexture = texture;
+  }
+
+  /**
+   * Sets sensor shape
+   *
+   * @param shape the shape to set the sensor shape to
+   */
+  public void setSensorShape(PolygonShape shape) {
+    sensorShape = shape;
+  }
+
+  /**
+   * Sets sensor color
+   *
+   * @param color the color to set the sensor color to
+   */
+  public void setSensorColor(Color color){
+    sensorColor = color;
+  }
+
+  /**
+   * Sets fall multiplier
+   *
+   * @param value the value to set the fall multiplier to
+   */
+  public void setFallMultiplier(float value){
+    fallMultiplier = value;
+  }
+
+  /**
+   * Sets low jump multiplier
+   *
+   * @param value the value to set the low jump multiplier
+   */
+  public void setLowJumpMultiplier(float value){
+    lowJumpMultiplier = value;
+  }
+  /**
    * Initializes the player via the given JSON value
    * <p>
    * The JSON value has been parsed and is part of a bigger level file.  However, this JSON value is

@@ -95,11 +95,11 @@ public class FanModel extends PlatformModel {
     JsonValue properties = json.get("properties").child();
     while (properties != null) {
       switch (properties.getString("name")) {
-        case "BodyType":
+        case "bodytype":
           setBodyType(properties.getString("value").equals("static") ? BodyDef.BodyType.StaticBody
             : BodyDef.BodyType.DynamicBody);
           break;
-        case "DebugColor":
+        case "debugcolor":
           try {
             String cname = properties.getString("value").toUpperCase();
             Field field = Class.forName("com.badlogic.gdx.graphics.Color").getField(cname);
