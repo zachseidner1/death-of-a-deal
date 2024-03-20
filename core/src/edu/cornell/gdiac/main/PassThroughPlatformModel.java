@@ -37,7 +37,6 @@ public class PassThroughPlatformModel extends PlatformModel {
   public void setPassThrough(boolean pass) {
     isPassThrough = pass;
 
-    // TODO: Add side effects, including toggling between fixture body vs physical body
     // Set all fixtures to sensors
     for (Fixture fixture : body.getFixtureList()) {
       fixture.setSensor(isPassThrough);
@@ -64,17 +63,21 @@ public class PassThroughPlatformModel extends PlatformModel {
    */
   private void initFixtureDefs(float width, float height) {
     // Create the body fixture def
-    bodySensor = new BodySensor(this, 0, 0, width / 2, height / 2);
+    bodySensor = new BodySensor(0, 0, width / 2, height / 2);
 
     // Create the bottom fixture def
     float centerYRel = -height / 2;
     float defaultSensorHeight = 0.05f;
-    bottomSensor = new BottomSensor(this, 0, centerYRel, width / 2, defaultSensorHeight);
+    bottomSensor = new BottomSensor(0, centerYRel, width / 2, defaultSensorHeight);
   }
 
   @Override
   protected void createFixtures() {
     super.createFixtures();
+
+    if (body == null) {
+      return;
+    }
 
     // Create the sensor fixtures
     FixtureDef bodyFixtureDef = bodySensor != null ? bodySensor.getFixtureDef() : null;
@@ -123,38 +126,50 @@ public class PassThroughPlatformModel extends PlatformModel {
 
     // TODO: Draw sensors on debug?
   }
-}
 
-class BottomSensor extends BoxFixtureSensor<PassThroughPlatformModel> {
-  public BottomSensor(PassThroughPlatformModel passPlatform, float x, float y, float width2, float height2) {
-    super(passPlatform, x, y, width2, height2);
+  public class BottomSensor extends BoxFixtureSensor<PassThroughPlatformModel> {
+    public BottomSensor(float x, float y, float width2, float height2) {
+      super(PassThroughPlatformModel.this, x, y, width2, height2);
+    }
+
+    @Override
+    public void beginContact(Obstacle obs) {
+      // TODO: For both bottom and body sensors, figure interaction with player head sensor
+      System.out.println("Sensor start called: " + this);
+      // boolean fromBottom = obs.getPosition().y < center.y + getPosition().y; // TODO: Reenable
+      getObstacle().setPassThrough(true);
+    }
+
+    @Override
+    public void endContact(Obstacle obs) {
+      if (!(obs instanceof PlayerModel)) {
+        return;
+      }
+
+      System.out.println("Sensor end called: " + this);
+    }
   }
 
-  @Override
-  public void beginContact(Obstacle obs) {
-    System.out.println("Sensor start called: " + this);
-    // boolean fromBottom = obs.getPosition().y < center.y + getPosition().y; // TODO: Reenable
-    getPlatform().setPassThrough(true);
-  }
+  public class BodySensor extends BoxFixtureSensor<PassThroughPlatformModel> {
+    public BodySensor(float x, float y, float width2, float height2) {
+      super(PassThroughPlatformModel.this, x, y, width2, height2);
+    }
 
-  @Override
-  public void endContact(Obstacle obs) {
-    System.out.println("Sensor end called: " + this);
-  }
-}
+    @Override
+    public void beginContact(Obstacle obs) {
+      if (!(obs instanceof PlayerModel)) {
+        return;
+      }
+    }
 
-class BodySensor extends BoxFixtureSensor<PassThroughPlatformModel> {
-  public BodySensor(PassThroughPlatformModel passModel, float x, float y, float width2, float height2) {
-    super(passModel, x, y, width2, height2);
-  }
+    @Override
+    public void endContact(Obstacle obs) {
+      if (!(obs instanceof PlayerModel)) {
+        return;
+      }
 
-  @Override
-  public void beginContact(Obstacle obs) {
-  }
-
-  @Override
-  public void endContact(Obstacle obs) {
-    // Set back to platform after fall through
-    // getPlatform().setPassThrough(true); // TODO: Set back to false
+      // Set back to platform after fall through
+      // getPlatform().setPassThrough(true); // TODO: Set back to false
+    }
   }
 }

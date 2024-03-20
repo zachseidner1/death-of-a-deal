@@ -18,11 +18,10 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.physics.obstacle.CapsuleObstacle;
+import edu.cornell.gdiac.physics.obstacle.Obstacle;
 import java.lang.reflect.Field;
 
 /**
@@ -97,14 +96,15 @@ public class PlayerModel extends CapsuleObstacle {
   /**
    * Ground sensor to represent our feet
    */
-  private Fixture sensorFixture;
-  private PolygonShape sensorShape;
+  private GroundSensor groundSensor;
+  private Fixture groundSensorFixture;
   /**
-   * The name of the sensor for detection purposes
+   * Head sensor
    */
-  private String sensorName;
+  private HeadSensor headSensor;
+  private Fixture headSensorFixture;
   /**
-   * The color to paint the sensor in debug mode
+   * For the color to draw sensors in debug
    */
   private Color sensorColor;
   /**
@@ -115,11 +115,6 @@ public class PlayerModel extends CapsuleObstacle {
    * The texture to use in the frozen state
    */
   private TextureRegion frozenTexture;
-
-  /**
-   * Field to temporarily hold player sensor size x
-   */
-  private float sensorSizeX;
 
   /**
    * The multiplier gravity receives down for a low jump (short hop)
@@ -145,7 +140,6 @@ public class PlayerModel extends CapsuleObstacle {
     isFrozen = false;
     faceRight = true;
     color = Color.WHITE;
-    sensorSizeX = 0;
     setDensity(1);
 
     jumpCooldown = 0;
@@ -340,27 +334,28 @@ public class PlayerModel extends CapsuleObstacle {
     jumpLimit = value;
   }
 
-  /**
-   * Returns the name of the ground sensor
-   * <p>
-   * This is used by ContactListener
-   *
-   * @return the name of the ground sensor
-   */
-  public String getSensorName() {
-    return sensorName;
-  }
-
-  /**
-   * Sets the name of the ground sensor
-   * <p>
-   * This is used by ContactListener
-   *
-   * @param name the name of the ground sensor
-   */
-  public void setSensorName(String name) {
-    sensorName = name;
-  }
+// TODO: Remove
+//  /**
+//   * Returns the name of the ground sensor
+//   * <p>
+//   * This is used by ContactListener
+//   *
+//   * @return the name of the ground sensor
+//   */
+//  public String getSensorName() {
+//    return sensorName;
+//  }
+//
+//  /**
+//   * Sets the name of the ground sensor
+//   * <p>
+//   * This is used by ContactListener
+//   *
+//   * @param name the name of the ground sensor
+//   */
+//  public void setSensorName(String name) {
+//    sensorName = name;
+//  }
 
   /**
    * Returns true if this character is facing right
@@ -399,8 +394,8 @@ public class PlayerModel extends CapsuleObstacle {
       switch (properties.getString("name")) {
         case "bodytype":
           setBodyType(
-              properties.get("value").asString().equals("static") ? BodyDef.BodyType.StaticBody
-                  : BodyDef.BodyType.DynamicBody);
+            properties.get("value").asString().equals("static") ? BodyDef.BodyType.StaticBody
+              : BodyDef.BodyType.DynamicBody);
           break;
         case "density":
           setDensity(properties.getFloat("value"));
@@ -446,17 +441,6 @@ public class PlayerModel extends CapsuleObstacle {
           frozenTexture = new TextureRegion(directory.getEntry("frozen", Texture.class));
           setTexture(texture);
           break;
-        case "sensorsizex":
-          sensorSizeX = properties.getFloat("value");
-        case "sensorsizey":
-          Vector2 sensorCenter = new Vector2(0, -getHeight() / 2);
-          float sSizeY = properties.getFloat("value");
-          if (sensorSizeX == 0) {
-            System.out.println("Sensor size X has not yet been set");
-          }
-          sensorShape = new PolygonShape();
-          sensorShape.setAsBox(sensorSizeX, sSizeY, sensorCenter, 0.0f);
-          break;
         case "sensorcolor":
           try {
             String cname = properties.getString("value").toUpperCase();
@@ -471,9 +455,6 @@ public class PlayerModel extends CapsuleObstacle {
           if (sensorColor != null) {
             sensorColor.mul(opacity / 255.0f);
           }
-          break;
-        case "sensorname":
-          setSensorName(properties.getString("value"));
           break;
         case "fallMultiplier":
           fallMultiplier = properties.getFloat("value");
@@ -490,20 +471,29 @@ public class PlayerModel extends CapsuleObstacle {
 
       properties = properties.next();
     }
+
+    initFixtureDefs(width, height);
   }
 
-  /**
-   * Creates the physics Body(s) for this object, adding them to the world.
-   * <p>
-   * This method overrides the base method to keep your ship from spinning.
-   *
-   * @param world Box2D world to store body
-   * @return true if object allocation succeeded
-   */
-  public boolean activatePhysics(World world) {
-    // create the box from our superclass
-    if (!super.activatePhysics(world)) {
-      return false;
+  public void initFixtureDefs(float width, float height) {
+    // Can be set in Tiled, but good-enough default here
+    float defaultSensorHeight = 0.05f;
+
+    // Create the head fixture def
+    float headYRel = height / 2;
+    headSensor = new HeadSensor(0, headYRel, width / 2, defaultSensorHeight);
+
+    // Create the bottom fixture def
+    float groundYRel = -height / 2;
+    groundSensor = new GroundSensor(0, groundYRel, width / 2, defaultSensorHeight);
+  }
+
+  @Override
+  public void createFixtures() {
+    super.createFixtures();
+
+    if (body == null) {
+      return;
     }
 
     // Ground Sensor
@@ -511,17 +501,54 @@ public class PlayerModel extends CapsuleObstacle {
     // We only allow the player to jump when he's on the ground.
     // Double jumping is not allowed.
     //
-    // To determine whether or not the player is on the ground,
+    // To determine whether the player is on the ground,
     // we create a thin sensor under his feet, which reports
     // collisions with the world but has no collision response.
-    FixtureDef sensorDef = new FixtureDef();
-    sensorDef.density = getDensity();
-    sensorDef.isSensor = true;
-    sensorDef.shape = sensorShape;
-    sensorFixture = body.createFixture(sensorDef);
-    sensorFixture.setUserData(getSensorName());
+    //
+    // We can track what platform/obstacle the player is currently
+    // standing on by keeping it in track in the state of the
+    // ground sensor.
 
-    return true;
+    // Head Sensor
+    // -------------
+    // We use this sensor to determine special contact logic when
+    // the player collides with a platform by jumping up
+
+    // Create the sensor fixtures
+    FixtureDef groundFixtureDef = groundSensor != null ? groundSensor.getFixtureDef() : null;
+    if (groundFixtureDef != null) {
+      groundSensorFixture = body.createFixture(groundFixtureDef);
+      groundSensorFixture.setUserData(groundSensor);
+    }
+
+    FixtureDef headFixtureDef = headSensor != null ? headSensor.getFixtureDef() : null;
+    if (headFixtureDef != null) {
+      headSensorFixture = body.createFixture(headFixtureDef);
+      headSensorFixture.setUserData(headSensor);
+    }
+
+    assert headSensor != null;
+    assert headFixtureDef != null;
+    assert groundSensor != null;
+    assert groundFixtureDef != null;
+  }
+
+  @Override
+  public void releaseFixtures() {
+    super.releaseFixtures();
+
+    if (body == null) {
+      return;
+    }
+
+    // Destroy sensor fixtures
+    if (headSensorFixture != null) {
+      body.destroyFixture(groundSensorFixture);
+    }
+
+    if (groundSensorFixture != null) {
+      body.destroyFixture(headSensorFixture);
+    }
   }
 
 
@@ -540,7 +567,7 @@ public class PlayerModel extends CapsuleObstacle {
     float accelRate = 1.2F;
     // If the player is traveling faster than their target speed, do not change movement
     if (Math.abs(getVX()) > Math.abs(targetSpeed) && Math.signum(getVX()) == Math.signum(
-        targetSpeed) && Math.abs(targetSpeed) > 0.01F) {
+      targetSpeed) && Math.abs(targetSpeed) > 0.01F) {
       accelRate = 0;
     }
     // If the player is trying to go to 0 speed, apply deceleration rate (faster)
@@ -580,8 +607,52 @@ public class PlayerModel extends CapsuleObstacle {
     if (texture != null) {
       float effect = faceRight ? 1.0f : -1.0f;
       canvas.draw(isFrozen ? frozenTexture : texture, color, origin.x, origin.y,
-          getX() * drawScale.x,
-          getY() * drawScale.y, getAngle(), effect, 1.0f);
+        getX() * drawScale.x,
+        getY() * drawScale.y, getAngle(), effect, 1.0f);
+    }
+  }
+
+  public class HeadSensor extends BoxFixtureSensor<PlayerModel> {
+    public HeadSensor(float x, float y, float width2, float height2) {
+      super(PlayerModel.this, x, y, width2, height2);
+    }
+
+    @Override
+    public void beginContact(Obstacle obs) {
+      // TODO: Can refactor breakable platform under this logic for consistency
+    }
+
+    @Override
+    public void endContact(Obstacle obs) {
+    }
+  }
+
+  public class GroundSensor extends BoxFixtureSensor<PlayerModel> {
+    /**
+     * The current platform the player is standing on
+     */
+    Obstacle platform;
+
+    public GroundSensor(float x, float y, float width2, float height2) {
+      super(PlayerModel.this, x, y, width2, height2);
+
+      platform = null;
+    }
+
+    @Override
+    public void beginContact(Obstacle obs) {
+
+      platform = obs;
+      // TODO: Can migrate some of the logic (setGrounded) from collision controller here. Notice
+      // that we are slowly drifting away from model territory, which is fine. If it gets to complicated,
+      // it should be simple to call this enclosing class a PlayerController, and just make an inner
+      // public inner PlayerModel class that is simpler and purely store core player states and getters/setters.
+      // We can do this for other models too. In and of itself, this would make the initialization logic
+      // to parse from Tiled json make more sense too, as separate from the actual model.
+    }
+
+    @Override
+    public void endContact(Obstacle obs) {
     }
   }
 }

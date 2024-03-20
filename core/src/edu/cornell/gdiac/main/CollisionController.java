@@ -90,8 +90,8 @@ public class CollisionController implements ContactListener {
 
       // See if we have landed on the ground
       if (!isWindContact &&
-        ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
-          (avatar.getSensorName().equals(fd1) && avatar != bd2))) {
+        (fd2 instanceof PlayerModel.GroundSensor && avatar != bd1) ||
+        (fd1 instanceof PlayerModel.GroundSensor && avatar != bd2)) {
         avatar.setGrounded(true);
         sensorFixtures.add(avatar == bd1 ? fix2 : fix1);
       }
@@ -162,8 +162,8 @@ public class CollisionController implements ContactListener {
     Object bd2 = body2.getUserData();
 
     PlayerModel avatar = level.getAvatar();
-    if ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
-      (avatar.getSensorName().equals(fd1) && avatar != bd2)) {
+    if ((fd2 instanceof PlayerModel.GroundSensor && avatar != bd1) ||
+      (fd1 instanceof PlayerModel.GroundSensor && avatar != bd2)) {
       sensorFixtures.remove(avatar == bd1 ? fix2 : fix1);
       if (sensorFixtures.size == 0) {
         avatar.setGrounded(false);

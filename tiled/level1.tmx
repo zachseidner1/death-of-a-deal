@@ -165,10 +165,6 @@
     <property name="maxspeed" type="float" value="6"/>
     <property name="restitution" type="float" value="0"/>
     <property name="sensorcolor" value="red"/>
-    <property name="sensorname" value="dudeGroundSensor"/>
-    <property name="sensoropacity" type="int" value="192"/>
-    <property name="sensorsizex" type="float" value="0.183"/>
-    <property name="sensorsizey" type="float" value="0.05"/>
     <property name="texture" value="dude"/>
    </properties>
   </object>

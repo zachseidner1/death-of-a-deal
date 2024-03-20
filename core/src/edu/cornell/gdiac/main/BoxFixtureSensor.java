@@ -6,7 +6,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import edu.cornell.gdiac.physics.obstacle.Obstacle;
 
 /**
- * A factory wrapper class for creating sensor fixtures that are boxes (rectangular)
+ * A wrapper class for creating sensor fixtures that are boxes (rectangular)
  */
 public abstract class BoxFixtureSensor<T extends Obstacle> {
   protected T obstacle; // Contains the fixture-owning body
@@ -36,7 +36,10 @@ public abstract class BoxFixtureSensor<T extends Obstacle> {
     return sensorFixtureDef;
   }
 
-  public T getPlatform() {
+  /**
+   * Returns the fixture-owning obstacle
+   */
+  public T getObstacle() {
     return obstacle;
   }
 
