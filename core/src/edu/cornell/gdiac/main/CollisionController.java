@@ -343,17 +343,17 @@ public class CollisionController implements ContactListener {
       if (isPass1) {
         sensorFixture = (BoxFixtureSensor<?>) data1;
         if (isBeginContact) {
-          sensorFixture.beginContact(bd2);
+          sensorFixture.beginContact(bd2, data2);
         } else {
-          sensorFixture.endContact(bd2);
+          sensorFixture.endContact(bd2, data2);
         }
       }
       if (isPass2) {
         sensorFixture = (BoxFixtureSensor<?>) data2;
         if (isBeginContact) {
-          sensorFixture.beginContact(bd1);
+          sensorFixture.beginContact(bd1, data1);
         } else {
-          sensorFixture.endContact(bd1);
+          sensorFixture.endContact(bd1, data1);
         }
       }
     } catch (Exception e) {

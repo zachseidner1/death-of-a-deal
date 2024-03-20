@@ -381,8 +381,8 @@ public class PlayerModel extends CapsuleObstacle {
     // Set position and dimension
     float x = json.getFloat("x") * (1 / drawScale.x);
     float y = (gSizeY - json.getFloat("y")) * (1 / drawScale.y);
-
     setPosition(x, y);
+
     float width = json.getFloat("width") * (1 / drawScale.x);
     float height = json.getFloat("height") * (1 / drawScale.y);
     setDimension(width, height);
@@ -479,13 +479,16 @@ public class PlayerModel extends CapsuleObstacle {
     // Can be set in Tiled, but good-enough default here
     float defaultSensorHeight = 0.05f;
 
+    // Center of this platform
+    Vector2 bodyCenter = new Vector2(getPosition().x + width / 2, getPosition().y - height / 2);
+
     // Create the head fixture def
     float headYRel = height / 2;
-    headSensor = new HeadSensor(0, headYRel, width / 2, defaultSensorHeight);
+    headSensor = new HeadSensor(bodyCenter, new Vector2(0, headYRel), new Vector2(width / 2, defaultSensorHeight));
 
     // Create the bottom fixture def
     float groundYRel = -height / 2;
-    groundSensor = new GroundSensor(0, groundYRel, width / 2, defaultSensorHeight);
+    groundSensor = new GroundSensor(bodyCenter, new Vector2(0, groundYRel), new Vector2(width / 2, defaultSensorHeight));
   }
 
   @Override
@@ -613,17 +616,17 @@ public class PlayerModel extends CapsuleObstacle {
   }
 
   public class HeadSensor extends BoxFixtureSensor<PlayerModel> {
-    public HeadSensor(float x, float y, float width2, float height2) {
-      super(PlayerModel.this, x, y, width2, height2);
+    public HeadSensor(Vector2 bodyCenter, Vector2 relCenter, Vector2 dimensions) {
+      super(PlayerModel.this, bodyCenter, relCenter, dimensions);
     }
 
     @Override
-    public void beginContact(Obstacle obs) {
+    public void beginContact(Obstacle obs, Object fixtureData) {
       // TODO: Can refactor breakable platform under this logic for consistency
     }
 
     @Override
-    public void endContact(Obstacle obs) {
+    public void endContact(Obstacle obs, Object fixtureData) {
     }
   }
 
@@ -633,16 +636,16 @@ public class PlayerModel extends CapsuleObstacle {
      */
     Obstacle platform;
 
-    public GroundSensor(float x, float y, float width2, float height2) {
-      super(PlayerModel.this, x, y, width2, height2);
+    public GroundSensor(Vector2 bodyCenter, Vector2 relCenter, Vector2 dimensions) {
+      super(PlayerModel.this, bodyCenter, relCenter, dimensions);
 
       platform = null;
     }
 
     @Override
-    public void beginContact(Obstacle obs) {
+    public void beginContact(Obstacle bodyData, Object fixtureData) {
 
-      platform = obs;
+      platform = bodyData;
       // TODO: Can migrate some of the logic (setGrounded) from collision controller here. Notice
       // that we are slowly drifting away from model territory, which is fine. If it gets to complicated,
       // it should be simple to call this enclosing class a PlayerController, and just make an inner
@@ -652,7 +655,7 @@ public class PlayerModel extends CapsuleObstacle {
     }
 
     @Override
-    public void endContact(Obstacle obs) {
+    public void endContact(Obstacle bodyData, Object fixtureData) {
     }
   }
 }

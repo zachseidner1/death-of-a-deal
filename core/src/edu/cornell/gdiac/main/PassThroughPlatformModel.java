@@ -6,6 +6,7 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.assets.AssetDirectory;
+import edu.cornell.gdiac.main.PlayerModel.HeadSensor;
 import edu.cornell.gdiac.physics.obstacle.Obstacle;
 
 public class PassThroughPlatformModel extends PlatformModel {
@@ -62,13 +63,16 @@ public class PassThroughPlatformModel extends PlatformModel {
    * (x, y) is the top-left corner of the platform
    */
   private void initFixtureDefs(float width, float height) {
+    // Center of this platform
+    Vector2 bodyCenter = new Vector2(getPosition().x + width / 2, getPosition().y - height / 2);
+
     // Create the body fixture def
-    bodySensor = new BodySensor(0, 0, width / 2, height / 2);
+    bodySensor = new BodySensor(bodyCenter, new Vector2(0, 0), new Vector2(width / 2, height / 2));
 
     // Create the bottom fixture def
     float centerYRel = -height / 2;
     float defaultSensorHeight = 0.05f;
-    bottomSensor = new BottomSensor(0, centerYRel, width / 2, defaultSensorHeight);
+    bottomSensor = new BottomSensor(bodyCenter, new Vector2(0, centerYRel), new Vector2(width / 2, defaultSensorHeight));
   }
 
   @Override
@@ -127,22 +131,37 @@ public class PassThroughPlatformModel extends PlatformModel {
     // TODO: Draw sensors on debug?
   }
 
+  // Note: Fundamental feature is to determine when to set the platform to be pass-through vs. not,
+  // and being careful of cases like not setting to solid when a player is still "in" the platform.
+
   public class BottomSensor extends BoxFixtureSensor<PassThroughPlatformModel> {
-    public BottomSensor(float x, float y, float width2, float height2) {
-      super(PassThroughPlatformModel.this, x, y, width2, height2);
+    public BottomSensor(Vector2 bodyCenter, Vector2 relCenter, Vector2 dimensions) {
+      super(PassThroughPlatformModel.this, bodyCenter, relCenter, dimensions);
     }
 
     @Override
-    public void beginContact(Obstacle obs) {
-      // TODO: For both bottom and body sensors, figure interaction with player head sensor
+    public void beginContact(Obstacle obs, Object fixtureData) {
+      if (!(fixtureData instanceof PlayerModel.HeadSensor)) {
+        return;
+      }
+
+      // TODO: Fix world coordinate logic
+
+      System.out.println(((HeadSensor) fixtureData).getWorldPosY());
+      System.out.println(this.getWorldPosY());
+
+
+      System.out.println(((HeadSensor) fixtureData).bodyCenter);
+      System.out.println(this.bodyCenter);
+
       System.out.println("Sensor start called: " + this);
       // boolean fromBottom = obs.getPosition().y < center.y + getPosition().y; // TODO: Reenable
       getObstacle().setPassThrough(true);
     }
 
     @Override
-    public void endContact(Obstacle obs) {
-      if (!(obs instanceof PlayerModel)) {
+    public void endContact(Obstacle obs, Object fixtureData) {
+      if (!(fixtureData instanceof PlayerModel.HeadSensor)) {
         return;
       }
 
@@ -151,25 +170,39 @@ public class PassThroughPlatformModel extends PlatformModel {
   }
 
   public class BodySensor extends BoxFixtureSensor<PassThroughPlatformModel> {
-    public BodySensor(float x, float y, float width2, float height2) {
-      super(PassThroughPlatformModel.this, x, y, width2, height2);
+    public BodySensor(Vector2 bodyCenter, Vector2 relCenter, Vector2 dimensions) {
+      super(PassThroughPlatformModel.this, bodyCenter, relCenter, dimensions);
     }
 
     @Override
-    public void beginContact(Obstacle obs) {
-      if (!(obs instanceof PlayerModel)) {
-        return;
-      }
+    public void beginContact(Obstacle obs, Object fixtureData) {
     }
 
     @Override
-    public void endContact(Obstacle obs) {
-      if (!(obs instanceof PlayerModel)) {
+    public void endContact(Obstacle obs, Object fixtureData) {
+      boolean isPlayerGroundSensor = fixtureData instanceof PlayerModel.GroundSensor;
+      boolean isPlayerHeadSensor = fixtureData instanceof PlayerModel.HeadSensor;
+
+      if (!isPlayerGroundSensor && !isPlayerHeadSensor) {
         return;
       }
 
-      // Set back to platform after fall through
-      // getPlatform().setPassThrough(true); // TODO: Set back to false
+      BoxFixtureSensor<?> otherSensor = (BoxFixtureSensor<?>) fixtureData;
+
+      float sensorCenterX = this.getWorldPosX();
+      float sensorCenterY = this.getWorldPosY();
+      float otherSensorCenterX = otherSensor.getWorldPosX();
+      float otherSensorCenterY = otherSensor.getWorldPosY();
+
+      boolean noOverlapX1 = sensorCenterX - this.dimensions.x > otherSensorCenterX + otherSensor.dimensions.x;
+      boolean noOverlapX2 = sensorCenterX + this.dimensions.x < otherSensorCenterX - otherSensor.dimensions.x;
+      boolean noOverlapY1 = sensorCenterY - this.dimensions.y > otherSensorCenterY + otherSensor.dimensions.y;
+      boolean noOverlapY2 = sensorCenterY + this.dimensions.y < otherSensorCenterY - otherSensor.dimensions.y;
+
+      boolean hasNoOverlap = noOverlapX1 || noOverlapX2 || noOverlapY1 || noOverlapY2;
+
+//      getObstacle().setPassThrough(!hasNoOverlap); // TODO: Reenable
+      getObstacle().setPassThrough(true);
     }
   }
 }
