@@ -369,25 +369,34 @@ public class GameController implements Screen {
   public void update(float dt) {
     // Check if the game has completed (if player touches the objective)
     setComplete(level.getComplete());
+
     // Process actions in object model
     InputController input = InputController.getInstance();
     PlayerModel avatar = level.getAvatar();
+
+    // Horizontal movement
     avatar.setMovement(InputController.getInstance().getHorizontal() * avatar.getForce());
+
+    // Vertical movement
+    float verticalInput = InputController.getInstance().getVertical();
 
     // Jump Mechanics
     // Check for the transition from pressed to not pressed to detect a jump release
-    boolean isJumpPressed = InputController.getInstance().didPrimary();
-
+    boolean isJumpPressed = verticalInput > 0;
     avatar.setJumping(isJumpPressed);
+
+    // Drop Mechanics
+    boolean isDropPressed = verticalInput < 0;
+    avatar.setDropping(isDropPressed);
 
     // Change the gravity of the player only
     float gravity = level.getWorld().getGravity().y;
     // On fall, increase the gravity to add a more weighty feel
     if (avatar.getVY() < 0 && !avatar.isGrounded()) {
       avatar.setVY(
-          avatar.getVY() + gravity * (avatar.getFallMultiplier() - 1) * dt);
+        avatar.getVY() + gravity * (avatar.getFallMultiplier() - 1) * dt);
     } else if (avatar.getVY() > 0 && (!isJumpPressed || avatar.getIsFrozen())
-        && !avatar.isGrounded()) {
+      && !avatar.isGrounded()) {
       // On jump, increase the gravity only if the user is not pressing up (or the user is frozen)
       // Allows the player to exert more control over vertical motion
       avatar.setVY(avatar.getVY() + gravity * (avatar.getLowJumpMultiplier() - 1) * dt);
@@ -449,7 +458,7 @@ public class GameController implements Screen {
       }
       canvas.drawText(message, displayFont, canvas.getWidth() / 2f - 380, canvas.getHeight() - 120);
       canvas.drawText("L" + levelNumber, displayFont, canvas.getWidth() / 1.75f,
-          canvas.getHeight() - 120);
+        canvas.getHeight() - 120);
       canvas.end();
     }
 

@@ -168,7 +168,7 @@
     <property name="texture" value="dude"/>
    </properties>
   </object>
-  <object id="24" name="slope" type="Slope" x="112" y="432">
+  <object id="24" name="slope" type="Slope" x="26.9818" y="347.315">
    <properties>
     <property name="bodytype" value="static"/>
     <property name="debugcolor" value="yellow"/>

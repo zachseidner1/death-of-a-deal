@@ -11,24 +11,21 @@ import edu.cornell.gdiac.physics.obstacle.Obstacle;
 public abstract class BoxFixtureSensor<T extends Obstacle> {
   protected T obstacle; // Contains the fixture-owning body
   protected FixtureDef sensorFixtureDef;
-  protected Vector2 bodyCenter; // The center position of the fixture-owning body
   protected Vector2 center; // Relative to body center
   protected Vector2 dimensions; // (width2, height2)
 
   /**
-   * @param obstacle   Includes the body that will own this fixture
-   * @param bodyCenter The center of the fixture-owning body
-   * @param relCenter  The relative position of this fixture to the body center
-   * @param dimensions The half-dimensions of this fixture
+   * @param obstacle         Includes the body that will own this fixture
+   * @param (x,y)            The relative position of this fixture to the body center
+   * @param (width2,height2) The half-dimensions of this fixture
    */
-  public BoxFixtureSensor(T obstacle, Vector2 bodyCenter, Vector2 relCenter, Vector2 dimensions) {
+  public BoxFixtureSensor(T obstacle, float x, float y, float width2, float height2) {
     this.obstacle = obstacle;
-    this.bodyCenter = bodyCenter;
 
     // Initialize shape and fixture definition
     PolygonShape sensorShape = new PolygonShape();
-    center = relCenter;
-    this.dimensions = dimensions;
+    center = new Vector2(x, y);
+    this.dimensions = new Vector2(width2, height2);
     sensorShape.setAsBox(dimensions.x, dimensions.y, center, 0);
 
     sensorFixtureDef = new FixtureDef();
@@ -45,20 +42,6 @@ public abstract class BoxFixtureSensor<T extends Obstacle> {
    */
   public T getObstacle() {
     return obstacle;
-  }
-
-  /**
-   * Returns the x-coord of this sensor center's world position
-   */
-  public float getWorldPosX() {
-    return bodyCenter.x + this.center.x;
-  }
-
-  /**
-   * Returns the y-coord of this sensor center's world position
-   */
-  public float getWorldPosY() {
-    return bodyCenter.y + this.center.y;
   }
 
   /**

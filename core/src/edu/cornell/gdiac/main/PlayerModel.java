@@ -90,6 +90,10 @@ public class PlayerModel extends CapsuleObstacle {
    */
   private float jumpVelocity;
   /**
+   * Whether we are actively trying to drop
+   */
+  private boolean isDropping;
+  /**
    * Whether we are currently frozen
    */
   private boolean isFrozen;
@@ -99,10 +103,10 @@ public class PlayerModel extends CapsuleObstacle {
   private GroundSensor groundSensor;
   private Fixture groundSensorFixture;
   /**
-   * Head sensor
+   * Body sensor
    */
-  private HeadSensor headSensor;
-  private Fixture headSensorFixture;
+  private BodySensor bodySensor;
+  private Fixture bodySensorFixture;
   /**
    * For the color to draw sensors in debug
    */
@@ -197,13 +201,7 @@ public class PlayerModel extends CapsuleObstacle {
   }
 
   /**
-   * Returns true if
-   */
-
-  /**
    * Returns true if the player is actively jumping.
-   *
-   * @return true if the player is actively jumping.
    */
   public boolean getIsJumping() {
     return isJumping && jumpCooldown <= 0 && isGrounded;
@@ -211,12 +209,24 @@ public class PlayerModel extends CapsuleObstacle {
 
   /**
    * Sets whether the player is actively jumping.
-   *
-   * @param value whether the player is actively jumping.
    */
 
   public void setJumping(boolean value) {
     isJumping = value;
+  }
+
+  /**
+   * Returns true if the player is actively dropping
+   */
+  public boolean getIsDropping() {
+    return isDropping;
+  }
+
+  /**
+   * Sets whether the playter is actively dropping.
+   */
+  public void setDropping(boolean value) {
+    isDropping = value;
   }
 
   /**
@@ -333,29 +343,6 @@ public class PlayerModel extends CapsuleObstacle {
   public void setJumpLimit(int value) {
     jumpLimit = value;
   }
-
-// TODO: Remove
-//  /**
-//   * Returns the name of the ground sensor
-//   * <p>
-//   * This is used by ContactListener
-//   *
-//   * @return the name of the ground sensor
-//   */
-//  public String getSensorName() {
-//    return sensorName;
-//  }
-//
-//  /**
-//   * Sets the name of the ground sensor
-//   * <p>
-//   * This is used by ContactListener
-//   *
-//   * @param name the name of the ground sensor
-//   */
-//  public void setSensorName(String name) {
-//    sensorName = name;
-//  }
 
   /**
    * Returns true if this character is facing right
@@ -479,16 +466,12 @@ public class PlayerModel extends CapsuleObstacle {
     // Can be set in Tiled, but good-enough default here
     float defaultSensorHeight = 0.05f;
 
-    // Center of this platform
-    Vector2 bodyCenter = new Vector2(getPosition().x + width / 2, getPosition().y - height / 2);
-
     // Create the head fixture def
-    float headYRel = height / 2;
-    headSensor = new HeadSensor(bodyCenter, new Vector2(0, headYRel), new Vector2(width / 2, defaultSensorHeight));
+    bodySensor = new BodySensor(0, 0, width / 2, height / 2);
 
     // Create the bottom fixture def
     float groundYRel = -height / 2;
-    groundSensor = new GroundSensor(bodyCenter, new Vector2(0, groundYRel), new Vector2(width / 2, defaultSensorHeight));
+    groundSensor = new GroundSensor(0, groundYRel, width / 2, defaultSensorHeight);
   }
 
   @Override
@@ -524,13 +507,13 @@ public class PlayerModel extends CapsuleObstacle {
       groundSensorFixture.setUserData(groundSensor);
     }
 
-    FixtureDef headFixtureDef = headSensor != null ? headSensor.getFixtureDef() : null;
+    FixtureDef headFixtureDef = bodySensor != null ? bodySensor.getFixtureDef() : null;
     if (headFixtureDef != null) {
-      headSensorFixture = body.createFixture(headFixtureDef);
-      headSensorFixture.setUserData(headSensor);
+      bodySensorFixture = body.createFixture(headFixtureDef);
+      bodySensorFixture.setUserData(bodySensor);
     }
 
-    assert headSensor != null;
+    assert bodySensor != null;
     assert headFixtureDef != null;
     assert groundSensor != null;
     assert groundFixtureDef != null;
@@ -545,12 +528,12 @@ public class PlayerModel extends CapsuleObstacle {
     }
 
     // Destroy sensor fixtures
-    if (headSensorFixture != null) {
-      body.destroyFixture(groundSensorFixture);
+    if (bodySensorFixture != null) {
+      body.destroyFixture(bodySensorFixture);
     }
 
     if (groundSensorFixture != null) {
-      body.destroyFixture(headSensorFixture);
+      body.destroyFixture(groundSensorFixture);
     }
   }
 
@@ -582,9 +565,19 @@ public class PlayerModel extends CapsuleObstacle {
     float speedDif = targetSpeed - (getVX());
     float movement = speedDif * accelRate;
     v2Cache.set(movement, 0);
+
     // Jump!
     if (getIsJumping() && !getIsFrozen()) {
       setVY(jumpVelocity);
+
+      // Clear platform in ground sensor
+      groundSensor.platform = null;
+    }
+
+    // If on top of a pass-through platform and pressing drop, set the tile to pass-through
+    Obstacle platform = groundSensor.platform;
+    if (platform instanceof PassThroughPlatformModel && isDropping) {
+      ((PassThroughPlatformModel) platform).setPassThrough(true);
     }
 
     body.applyForce(v2Cache, getPosition(), true);
@@ -615,9 +608,9 @@ public class PlayerModel extends CapsuleObstacle {
     }
   }
 
-  public class HeadSensor extends BoxFixtureSensor<PlayerModel> {
-    public HeadSensor(Vector2 bodyCenter, Vector2 relCenter, Vector2 dimensions) {
-      super(PlayerModel.this, bodyCenter, relCenter, dimensions);
+  public class BodySensor extends BoxFixtureSensor<PlayerModel> {
+    public BodySensor(float x, float y, float width2, float height2) {
+      super(PlayerModel.this, x, y, width2, height2);
     }
 
     @Override
@@ -636,16 +629,16 @@ public class PlayerModel extends CapsuleObstacle {
      */
     Obstacle platform;
 
-    public GroundSensor(Vector2 bodyCenter, Vector2 relCenter, Vector2 dimensions) {
-      super(PlayerModel.this, bodyCenter, relCenter, dimensions);
+    public GroundSensor(float x, float y, float width2, float height2) {
+      super(PlayerModel.this, x, y, width2, height2);
 
       platform = null;
     }
 
     @Override
     public void beginContact(Obstacle bodyData, Object fixtureData) {
-
       platform = bodyData;
+
       // TODO: Can migrate some of the logic (setGrounded) from collision controller here. Notice
       // that we are slowly drifting away from model territory, which is fine. If it gets to complicated,
       // it should be simple to call this enclosing class a PlayerController, and just make an inner
