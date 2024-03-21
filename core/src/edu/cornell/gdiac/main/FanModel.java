@@ -68,6 +68,13 @@ public class FanModel extends PlatformModel {
     this.windParticleFixtures = windParticleFixtures;
   }
 
+  public void setFanSide(WindModel.WindSide windSide){
+    fanSide = windSide;
+  }
+
+  public void setWind(WindModel wind){
+    this.wind = wind;
+  }
 
 
   /**
