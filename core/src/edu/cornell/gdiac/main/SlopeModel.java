@@ -30,6 +30,15 @@ public class SlopeModel extends PolygonObstacle {
     super(new float[]{0, 0, 1, 0, 1, 1, 0, 1}, 0, 0);
   }
 
+  public void setFrozenImpulse(float frozenImpulse){
+    this.frozenImpulse = frozenImpulse;
+  }
+
+  public void initShapeAndBounds(float[] points){
+    initShapes(points);
+    initBounds();
+  }
+
   /**
    * Initializes the sloped platform via the given JSON value
    *
@@ -108,7 +117,7 @@ public class SlopeModel extends PolygonObstacle {
   /**
    * Calculates the angle of the slope based on the longest edge and stores it.
    */
-  private void calculateSlopeAngle() {
+  public void calculateSlopeAngle() {
     if (vertices.length < 4) {
       return; // Not enough vertices to form an edge
     }

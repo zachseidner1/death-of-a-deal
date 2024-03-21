@@ -26,6 +26,8 @@ import javax.sql.rowset.BaseRowSet;
  * Class that provides utility functions for parsing Tiled json and populating obstacles
  */
 public class TiledJsonParser {
+  public static Color debugColor;
+  public static int debugOpacity;
   public static Vector2 drawScale; // scale factor to convert to pixels : pixels / meter
   public static Vector2 meterScale; // scale factor to convert to meters (physics units) :
   public static float tiledHeight; // height of Tiled editor, used for mapping Tiled pixels to world (physics units)
@@ -45,6 +47,7 @@ public class TiledJsonParser {
   public static WindType windType;
   public static TextureRegion windTexture;
   public static TextureRegion windParticleTexture;
+  public static float[] points;
 
 
   // TODO: Add specific json fields (with custom logic) + other general types, and this will use type parameter to parse the tiled json
@@ -119,18 +122,14 @@ public class TiledJsonParser {
    */
   public static void initObjectFromJson(
       SimpleObstacle obstacle, AssetDirectory directory, JsonValue json) {
-      // Set type field and obstacle name
+      // Set type field, obstacle name, and obstacle position
       type = json.getString("name");
       obstacle.setName(type);
-
-      // Set position and other common properties
       obstacle.setPosition(json.getFloat("x") * (1/drawScale.x),
           (tiledHeight - json.getFloat("y")) * (1/drawScale.y));
-      Color debugColor;
-      int debugOpacity;
-      JsonValue properties = json.get("properties").child();
 
-      // Loop through common properties of all objects
+      // Loop through common properties of all objects and set obstacle fields
+      JsonValue properties = json.get("properties").child();
       while (properties != null){
         switch (properties.getString("name")){
           case "bodytype":
@@ -170,7 +169,7 @@ public class TiledJsonParser {
         properties = properties.next();
       }
 
-      // Call object specific method for remaining properties
+      // Call object specific method for object-specific properties
       switch (type){
         case "player":
           initPlayerFromJson((PlayerModel) obstacle, directory, json);
@@ -178,13 +177,13 @@ public class TiledJsonParser {
         case "slope":
           initSlopeFromJson((SlopeModel) obstacle, directory, json);
           break;
-        case "breakable":
-          assert (obstacle instanceof BreakablePlatformModel);
-          initBreakableFromJson((BreakablePlatformModel) obstacle, directory, json);
-          break;
         case "bounce":
           assert (obstacle instanceof BouncePlatformModel);
           initBounceFromJson((BouncePlatformModel) obstacle, directory, json);
+          break;
+        case "breakable":
+          assert (obstacle instanceof BreakablePlatformModel);
+          initBreakableFromJson((BreakablePlatformModel) obstacle, directory, json);
           break;
         case "fan":
           assert (obstacle instanceof FanModel);
@@ -278,13 +277,32 @@ public class TiledJsonParser {
    */
   public static void initSlopeFromJson(
       SlopeModel slope, AssetDirectory directory, JsonValue json) {
-    // init bounds
+    // Get slope points and init slope shape and bounds
+    // Polygon properties should have six floats
+    points = new float[10];
+    JsonValue polygon = json.get("polygon").child();
+    int index = 0;
+    while (polygon != null) {
+      points[index] = polygon.getFloat("x") * (1 / drawScale.x);
+      index++;
+      points[index] = -1 * polygon.getFloat("y") * (1 / drawScale.y);
+      index++;
+      polygon = polygon.next();
+    }
+    slope.initShapeAndBounds(points);
 
-    // Slope properties
+    // Get remaining property
     JsonValue properties = json.get("properties").child();
-    switch (properties.getString("name")) {
-      default:
-        break;
+    while (properties!= null){
+      switch (properties.getString("name")){
+        case "frozenimpulse":
+            slope.setFrozenImpulse(properties.getFloat("value"));
+          break;
+        default:
+          break;
+      }
+      properties = properties.next();
+      slope.calculateSlopeAngle();
     }
   }
 
@@ -297,6 +315,9 @@ public class TiledJsonParser {
   public static void initBounceFromJson(
       BouncePlatformModel bounce, AssetDirectory directory, JsonValue json) {
     // Set dimension
+    float width = json.getFloat("width") * (1/drawScale.x);
+    float height = json.getFloat("height") * (1/drawScale.y);
+    bounce.setDimension(width, height);
 
     // Bounce properties
     JsonValue properties = json.get("properties").child();
