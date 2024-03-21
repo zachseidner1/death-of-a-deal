@@ -41,8 +41,8 @@ public class TiledJsonParser {
   public static int numWindParticles;
   public static int windLengthParticleGrids;
   public static int windBreadthParticleGrids;
-  public static WindModel.WindSide windSide;
-  public static WindModel.WindType windType;
+  public static WindSide windSide;
+  public static WindType windType;
   public static TextureRegion windTexture;
   public static TextureRegion windParticleTexture;
 
@@ -331,30 +331,69 @@ public class TiledJsonParser {
     while (properties != null){
       switch (properties.getString("name")){
         case "Type":
+          String type = properties.getString("value").toUpperCase();
+          switch (type){
+            case "EXPONENTIAL":
+              windType = WindType.Exponential;
+              break;
+            case "CONSTANT":
+              windType = WindType.Constant;
+              break;
+            default:
+              windType = WindType.Default;
+          }
           break;
         case "Side":
+          String side = properties.getString("value").toUpperCase();
+          switch (side){
+            case "LEFT":
+              windSide = WindSide.LEFT;
+              fan.setFanSide(windSide);
+              windSource.set(fan.getX(), fan.getY() - height / 2);
+              break;
+            default:
+              windSide = WindSide.LEFT;
+              fan.setFanSide(windSide);
+              windSource.set(fan.getX() + width, fan.getY()- height);
+              break;
+          }
           break;
         case "WindStrength":
+          windStrength = properties.getFloat("value");
           break;
         case "WindBreadth":
+          windBreadth = properties.getFloat("value") * (1/drawScale.x);
           break;
         case "WindLength":
+          windLength = properties.getFloat("value") * (1/drawScale.y);
           break;
         case "NumWindParticles":
+          numWindParticles = properties.getInt("value");
+          assert numWindParticles >= 0;
+          fan.setWindParticleFixtures(new Fixture[numWindParticles]);
           break;
         case "WindBreadthParticleGrids":
+          windBreadthParticleGrids = properties.getInt("value");
           break;
         case "WindLengthParticleGrids":
+          windLengthParticleGrids = properties.getInt("value");
           break;
         case "Period":
+          fan.setPeriod(properties.getFloat("value"));
           break;
         case "PeriodOnRatio":
+          fan.setPeriodOnRatio(properties.getFloat("value"));
           break;
         case "Active":
+          fan.setActive(properties.getBoolean("value"));
           break;
         case "WindTexture":
+          String key = properties.getString("value");
+          windTexture = new TextureRegion(directory.getEntry(key, Texture.class));
           break;
         case "WindParticleTexture":
+          String key2 = properties.getString("value");
+          windParticleTexture = new TextureRegion(directory.getEntry(key2, Texture.class));
           break;
         default:
           break;
@@ -363,6 +402,20 @@ public class TiledJsonParser {
       properties = properties.next();
     }
 
+    fan.initializeWind(
+        windSource.x,
+        windSource.y,
+        windBreadth,
+        windLength,
+        windStrength,
+        fanRotation,
+        numWindParticles,
+        windLengthParticleGrids,
+        windBreadthParticleGrids,
+        windSide,
+        windType,
+        windTexture,
+        windParticleTexture);
 
   }
 

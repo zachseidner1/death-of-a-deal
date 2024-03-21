@@ -77,6 +77,7 @@ public class FanModel extends PlatformModel {
   }
 
 
+
   /**
    * Initializes the fan platform via the given JSON value
    *
