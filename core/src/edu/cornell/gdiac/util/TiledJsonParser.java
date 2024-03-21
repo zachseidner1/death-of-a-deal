@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.main.BouncePlatformModel;
@@ -26,6 +27,7 @@ import javax.sql.rowset.BaseRowSet;
  * Class that provides utility functions for parsing Tiled json and populating obstacles
  */
 public class TiledJsonParser {
+
   public static Color debugColor;
   public static int debugOpacity;
   public static Vector2 drawScale; // scale factor to convert to pixels : pixels / meter
@@ -49,7 +51,6 @@ public class TiledJsonParser {
   public static TextureRegion windParticleTexture;
   public static float[] points;
 
-
   // TODO: Add specific json fields (with custom logic) + other general types, and this will use type parameter to parse the tiled json
 
   /**
@@ -60,13 +61,13 @@ public class TiledJsonParser {
    * @param json      Json to be parsed
    */
   public static void initPlatformFromJson(
-    SimpleObstacle obstacle, AssetDirectory directory, JsonValue json) {
+      SimpleObstacle obstacle, AssetDirectory directory, JsonValue json) {
     // Technically, we should do error checking here.
     // A JSON field might accidentally be missing
     obstacle.setBodyType(
-      json.get("bodytype").asString().equals("static")
-        ? BodyDef.BodyType.StaticBody
-        : BodyDef.BodyType.DynamicBody);
+        json.get("bodytype").asString().equals("static")
+            ? BodyDef.BodyType.StaticBody
+            : BodyDef.BodyType.DynamicBody);
     obstacle.setDensity(json.get("density").asFloat());
     obstacle.setFriction(json.get("friction").asFloat());
     obstacle.setRestitution(json.get("restitution").asFloat());
@@ -91,119 +92,96 @@ public class TiledJsonParser {
   }
 
   /**
-   *
-   * @param obstacle obstacle to initialize as object
+   * @param obstacle  obstacle to initialize
    * @param directory asset directory for use of assets
-   * @param json json to use for initialization
-   * @param drawScale drawScale for object
-   * @param tiledHeight tiledHeight for position calculation
-   */
-  public void initialize(SimpleObstacle obstacle, AssetDirectory directory, JsonValue json,
-      Vector2 drawScale, float tiledHeight) {
-    setStaticFields(drawScale, tiledHeight);
-    initObjectFromJson(obstacle, directory, json);
-  }
-
-  /**
-   *
-   * @param dScale drawScale for object
-   * @param tHeight tiledHeight for position calculation
-   */
-  public static void setStaticFields(Vector2 dScale, float tHeight) {
-    drawScale = dScale;
-    tiledHeight = tHeight;
-  }
-
-  /**
-   *
-   * @param obstacle obstacle to initialize
-   * @param directory asset directory for use of assets
-   * @param json json to use for initialization
+   * @param json      json to use for initialization
    */
   public static void initObjectFromJson(
-      SimpleObstacle obstacle, AssetDirectory directory, JsonValue json) {
-      // Set type field, obstacle name, and obstacle position
-      type = json.getString("name");
-      obstacle.setName(type);
-      obstacle.setPosition(json.getFloat("x") * (1/drawScale.x),
-          (tiledHeight - json.getFloat("y")) * (1/drawScale.y));
+      SimpleObstacle obstacle, AssetDirectory directory, JsonValue json, Vector2 dScale,
+      int tHeight) {
+    // Set parser fields, obstacle name, and obstacle position
+    drawScale = dScale;
+    tiledHeight = tHeight;
+    type = json.getString("name");
+    obstacle.setName(type);
+    obstacle.setPosition(json.getFloat("x") * (1 / drawScale.x),
+        (tiledHeight - json.getFloat("y")) * (1 / drawScale.y));
 
-      // Loop through common properties of all objects and set obstacle fields
-      JsonValue properties = json.get("properties").child();
-      while (properties != null){
-        switch (properties.getString("name")){
-          case "bodytype":
-            obstacle.setBodyType(
-                properties.get("value").asString().equals("static") ? BodyDef.BodyType.StaticBody
-                : BodyDef.BodyType.DynamicBody);
-            break;
-          case "density":
-            obstacle.setDensity(properties.getFloat("value"));
-            break;
-          case "friction":
-            obstacle.setFriction(properties.getFloat("value"));
-            break;
-          case "restitution":
-            obstacle.setRestitution(properties.getFloat("value"));
-            break;
-          case "debugcolor":
-            try {
-              String cname = properties.getString("value").toUpperCase();
-              Field field = Class.forName(
-                  "com.badlogic.gdx.graphics.Color").getField(cname);
-              debugColor = new Color((Color) field.get(null));
-            } catch (Exception e) {
-              debugColor = null;
-            }
-            obstacle.setDebugColor(debugColor);
-            break;
-          case "debugopacity":
-            debugOpacity = properties.getInt("value");
-            obstacle.setDebugColor(obstacle.getDebugColor().mul(debugOpacity / 255.0f));
-            break;
-          case "texture":
-            String key = properties.getString("value");
-            TextureRegion texture = new TextureRegion(directory.getEntry(key, Texture.class));
-            obstacle.setTexture(texture);
-        }
-        properties = properties.next();
+    // Loop through common properties of all objects and set obstacle fields
+    JsonValue properties = json.get("properties").child();
+    while (properties != null) {
+      switch (properties.getString("name")) {
+        case "bodytype":
+          obstacle.setBodyType(
+              properties.get("value").asString().equals("static") ? BodyDef.BodyType.StaticBody
+                  : BodyDef.BodyType.DynamicBody);
+          break;
+        case "density":
+          obstacle.setDensity(properties.getFloat("value"));
+          break;
+        case "friction":
+          obstacle.setFriction(properties.getFloat("value"));
+          break;
+        case "restitution":
+          obstacle.setRestitution(properties.getFloat("value"));
+          break;
+        case "debugcolor":
+          try {
+            String cname = properties.getString("value").toUpperCase();
+            Field field = Class.forName(
+                "com.badlogic.gdx.graphics.Color").getField(cname);
+            debugColor = new Color((Color) field.get(null));
+          } catch (Exception e) {
+            debugColor = null;
+          }
+          obstacle.setDebugColor(debugColor);
+          break;
+        case "debugopacity":
+          debugOpacity = properties.getInt("value");
+          obstacle.setDebugColor(obstacle.getDebugColor().mul(debugOpacity / 255.0f));
+          break;
+        case "texture":
+          String key = properties.getString("value");
+          TextureRegion texture = new TextureRegion(directory.getEntry(key, Texture.class));
+          obstacle.setTexture(texture);
       }
+      properties = properties.next();
+    }
 
-      // Call object specific method for object-specific properties
-      switch (type){
-        case "player":
-          initPlayerFromJson((PlayerModel) obstacle, directory, json);
-          break;
-        case "slope":
-          initSlopeFromJson((SlopeModel) obstacle, directory, json);
-          break;
-        case "bounce":
-          assert (obstacle instanceof BouncePlatformModel);
-          initBounceFromJson((BouncePlatformModel) obstacle, directory, json);
-          break;
-        case "breakable":
-          assert (obstacle instanceof BreakablePlatformModel);
-          initBreakableFromJson((BreakablePlatformModel) obstacle, directory, json);
-          break;
-        case "fan":
-          assert (obstacle instanceof FanModel);
-          initFanFromJson((FanModel) obstacle, directory, json);
-          break;
-      }
+    // Call object specific method for object-specific properties
+    switch (type) {
+      case "player":
+        initPlayerFromJson((PlayerModel) obstacle, directory, json);
+        break;
+      case "slope":
+        initSlopeFromJson((SlopeModel) obstacle, directory, json);
+        break;
+      case "bounce":
+        assert (obstacle instanceof BouncePlatformModel);
+        initBounceFromJson((BouncePlatformModel) obstacle, directory, json);
+        break;
+      case "breakable":
+        assert (obstacle instanceof BreakablePlatformModel);
+        initBreakableFromJson((BreakablePlatformModel) obstacle, directory, json);
+        break;
+      case "fan":
+        assert (obstacle instanceof FanModel);
+        initFanFromJson((FanModel) obstacle, directory, json);
+        break;
+    }
   }
 
   /**
-   *
-   * @param player player model to initialize
+   * @param player    player model to initialize
    * @param directory asset directory
-   * @param json json for player object
+   * @param json      json for player object
    */
   public static void initPlayerFromJson(
       PlayerModel player, AssetDirectory directory, JsonValue json) {
     // Set dimension and frozen texture
-    float width = json.getFloat("width") * (1/drawScale.x);
-    float height = json.getFloat("height") * (1/drawScale.y);
-    player.setDimension(width,height);
+    float width = json.getFloat("width") * (1 / drawScale.x);
+    float height = json.getFloat("height") * (1 / drawScale.y);
+    player.setDimension(width, height);
     // Should we add this to tiled as well? We could have key property with the string "frozen"
     player.setFrozenTexture(new TextureRegion(directory.getEntry("frozen", Texture.class)));
 
@@ -270,10 +248,9 @@ public class TiledJsonParser {
   }
 
   /**
-   *
-   * @param slope slope model to initialize
+   * @param slope     slope model to initialize
    * @param directory asset directory
-   * @param json json for slope object
+   * @param json      json for slope object
    */
   public static void initSlopeFromJson(
       SlopeModel slope, AssetDirectory directory, JsonValue json) {
@@ -293,10 +270,10 @@ public class TiledJsonParser {
 
     // Get remaining property
     JsonValue properties = json.get("properties").child();
-    while (properties!= null){
-      switch (properties.getString("name")){
+    while (properties != null) {
+      switch (properties.getString("name")) {
         case "frozenimpulse":
-            slope.setFrozenImpulse(properties.getFloat("value"));
+          slope.setFrozenImpulse(properties.getFloat("value"));
           break;
         default:
           break;
@@ -307,53 +284,79 @@ public class TiledJsonParser {
   }
 
   /**
-   *
-   * @param bounce bounce platform model to initialize
+   * @param bounce    bounce platform model to initialize
    * @param directory asset directory
-   * @param json json for bounce platform object
+   * @param json      json for bounce platform object
    */
   public static void initBounceFromJson(
       BouncePlatformModel bounce, AssetDirectory directory, JsonValue json) {
     // Set dimension
-    float width = json.getFloat("width") * (1/drawScale.x);
-    float height = json.getFloat("height") * (1/drawScale.y);
+    float width = json.getFloat("width") * (1 / drawScale.x);
+    float height = json.getFloat("height") * (1 / drawScale.y);
     bounce.setDimension(width, height);
 
-    // Bounce properties
+    // Bounce remaining properties
     JsonValue properties = json.get("properties").child();
+    while (properties != null) {
+      switch (properties.getString("name")) {
+        case "max_speed":
+          break;
+        case "coefficient":
+          break;
+        default:
+          break;
+      }
+
+      properties = properties.next();
+    }
 
   }
 
   /**
-   *
    * @param breakable breakable platform model to initialize
    * @param directory asset directory
-   * @param json json for breakable platform object
+   * @param json      json for breakable platform object
    */
   public static void initBreakableFromJson(
       BreakablePlatformModel breakable, AssetDirectory directory, JsonValue json) {
+    // Set dimension
+    float width = json.getFloat("width") * (1 / drawScale.x);
+    float height = json.getFloat("height") * (1 / drawScale.y);
+    breakable.setDimension(width, height);
 
+    // Breakable remaining properties
+    JsonValue properties = json.get("properties").child();
+    while (properties != null) {
+      switch (properties.getString("name")) {
+        case "breakminvelocity":
+          breakable.setBreakMinVelocity(properties.getFloat("value"));
+          break;
+        default:
+          break;
+      }
+
+      properties = properties.next();
+    }
   }
 
   /**
-   *
-   * @param fan fan model to initialize
+   * @param fan       fan model to initialize
    * @param directory asset directory
-   * @param json json for fan object
+   * @param json      json for fan object
    */
   public static void initFanFromJson(
       FanModel fan, AssetDirectory directory, JsonValue json) {
-    float width = json.getFloat("width") * (1/drawScale.x);
-    float height = json.getFloat("height") * (1/drawScale.y);
-      fan.setDimension(width,height);
+    float width = json.getFloat("width") * (1 / drawScale.x);
+    float height = json.getFloat("height") * (1 / drawScale.y);
+    fan.setDimension(width, height);
 
     fanRotation = 0f;
     JsonValue properties = json.get("properties").child();
-    while (properties != null){
-      switch (properties.getString("name")){
+    while (properties != null) {
+      switch (properties.getString("name")) {
         case "Type":
           String type = properties.getString("value").toUpperCase();
-          switch (type){
+          switch (type) {
             case "EXPONENTIAL":
               windType = WindType.Exponential;
               break;
@@ -366,7 +369,7 @@ public class TiledJsonParser {
           break;
         case "Side":
           String side = properties.getString("value").toUpperCase();
-          switch (side){
+          switch (side) {
             case "LEFT":
               windSide = WindSide.LEFT;
               fan.setFanSide(windSide);
@@ -375,7 +378,7 @@ public class TiledJsonParser {
             default:
               windSide = WindSide.LEFT;
               fan.setFanSide(windSide);
-              windSource.set(fan.getX() + width, fan.getY()- height);
+              windSource.set(fan.getX() + width, fan.getY() - height);
               break;
           }
           break;
@@ -383,10 +386,10 @@ public class TiledJsonParser {
           windStrength = properties.getFloat("value");
           break;
         case "WindBreadth":
-          windBreadth = properties.getFloat("value") * (1/drawScale.x);
+          windBreadth = properties.getFloat("value") * (1 / drawScale.x);
           break;
         case "WindLength":
-          windLength = properties.getFloat("value") * (1/drawScale.y);
+          windLength = properties.getFloat("value") * (1 / drawScale.y);
           break;
         case "NumWindParticles":
           numWindParticles = properties.getInt("value");
@@ -440,9 +443,4 @@ public class TiledJsonParser {
 
   }
 
-  public static void setObjectDimension(BoxObstacle obstacle, JsonValue json){
-    float width = json.getFloat("width") * (1/drawScale.x);
-    float height = json.getFloat("height") * (1/drawScale.y);
-    obstacle.setDimension(width,height);
-  }
 }
