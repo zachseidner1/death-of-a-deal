@@ -10,6 +10,7 @@ import edu.cornell.gdiac.physics.obstacle.Obstacle;
  * A wrapper class for creating sensor fixtures that are boxes (rectangular)
  */
 public abstract class BoxFixtureSensor<T extends Obstacle> {
+
   protected T obstacle; // Contains the fixture-owning body
   protected FixtureDef sensorFixtureDef;
   protected Vector2 center; // Relative to body center

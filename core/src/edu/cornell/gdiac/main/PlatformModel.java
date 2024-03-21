@@ -199,8 +199,8 @@ public class PlatformModel extends BoxObstacle {
    * @param tileProperties the properties of the tile as a JSON value
    */
   public void initializeAsTile(float x, float y, float tileSize, AssetDirectory directory,
-                               String tileKey,
-                               JsonValue tileProperties) {
+      String tileKey,
+      JsonValue tileProperties) {
     // Use the scale to convert pixel positions to box 2D positions
     float pixelScaleX = 1 / drawScale.x;
     float pixelScaleY = 1 / drawScale.y;
@@ -254,7 +254,7 @@ public class PlatformModel extends BoxObstacle {
     // TODO: Maybe something to do with tilesize being 16 => 16 /2
     if (region != null) {
       canvas.draw(
-        texture, (getX()) * drawScale.x - 8, (getY() * drawScale.y) - 8);
+          texture, (getX()) * drawScale.x - 8, (getY() * drawScale.y) - 8);
     }
   }
 }

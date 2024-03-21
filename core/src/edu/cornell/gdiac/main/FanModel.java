@@ -20,6 +20,7 @@ import java.lang.reflect.Field;
  * models to be created when the fan is on.
  */
 public class FanModel extends PlatformModel {
+
   final private float DEFAULT_PERIOD = 10.0f;
   final private float DEFAULT_PERIOD_ON_RATIO = 1.0f;
   final private float DEFAULT_CURR_TIME = 0.0f;
@@ -282,8 +283,8 @@ public class FanModel extends PlatformModel {
   }
 
   /**
-   * // TODO: Will likely need to figure out a way to abstract away wind as a temporary fixture that can be attached and destroyed in the existence of this model
-   * Set whether the fan is active
+   * // TODO: Will likely need to figure out a way to abstract away wind as a temporary fixture that
+   * can be attached and destroyed in the existence of this model Set whether the fan is active
    */
   public void setFanActive(boolean active) {
     isFanActive = active;

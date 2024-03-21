@@ -10,6 +10,7 @@ import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.physics.obstacle.Obstacle;
 
 public class PassThroughPlatformModel extends PlatformModel {
+
   private boolean isPassThrough;
   private BodySensor bodySensor;
   private Fixture bodyFixture;
@@ -50,8 +51,8 @@ public class PassThroughPlatformModel extends PlatformModel {
 
   @Override
   public void initializeAsTile(float x, float y, float tileSize, AssetDirectory directory,
-                               String tileKey,
-                               JsonValue tileProperties) {
+      String tileKey,
+      JsonValue tileProperties) {
     super.initializeAsTile(x, y, tileSize, directory, tileKey, tileProperties);
 
     Vector2 dimension = getDimension();
@@ -59,18 +60,20 @@ public class PassThroughPlatformModel extends PlatformModel {
   }
 
   /**
-   * Initializes the fixture defs contained in this model.
-   * (x, y) is the top-left corner of the platform
+   * Initializes the fixture defs contained in this model. (x, y) is the top-left corner of the
+   * platform
    */
   private void initFixtureDefs(float width, float height) {
     // Create the body fixture def
     float defaultSensorScale = 1.25f;
-    bodySensor = new BodySensor(0, 0, width / 2 * defaultSensorScale, height / 2 * defaultSensorScale);
+    bodySensor = new BodySensor(0, 0, width / 2 * defaultSensorScale,
+        height / 2 * defaultSensorScale);
 
     // Create the bottom fixture def
     float defaultSensorHeight = 0.1f;
     float centerYRel = -height / 2;
-    bottomSensor = new BottomSensor(0, centerYRel, width / 2 * defaultSensorScale, defaultSensorHeight);
+    bottomSensor = new BottomSensor(0, centerYRel, width / 2 * defaultSensorScale,
+        defaultSensorHeight);
   }
 
   @Override
@@ -122,8 +125,9 @@ public class PassThroughPlatformModel extends PlatformModel {
   @Override
   public void draw(GameCanvas canvas) {
     if (region != null) {
-      canvas.draw(region, isPassThrough ? passThroughColor : solidColor, 0, 0, (getX() - anchor.x) * drawScale.x,
-        (getY() - anchor.y) * drawScale.y, getAngle(), 1, 1);
+      canvas.draw(region, isPassThrough ? passThroughColor : solidColor, 0, 0,
+          (getX() - anchor.x) * drawScale.x,
+          (getY() - anchor.y) * drawScale.y, getAngle(), 1, 1);
     }
 
     // TODO: Draw sensors on debug?
@@ -133,6 +137,7 @@ public class PassThroughPlatformModel extends PlatformModel {
   // and being careful of cases like not setting to solid when a player is still "in" the platform.
 
   public class BottomSensor extends BoxFixtureSensor<PassThroughPlatformModel> {
+
     public BottomSensor(float x, float y, float width2, float height2) {
       super(PassThroughPlatformModel.this, x, y, width2, height2);
     }
@@ -155,6 +160,7 @@ public class PassThroughPlatformModel extends PlatformModel {
   }
 
   public class BodySensor extends BoxFixtureSensor<PassThroughPlatformModel> {
+
     ObjectSet<Obstacle> obstaclesWithin;
 
     public BodySensor(float x, float y, float width2, float height2) {
