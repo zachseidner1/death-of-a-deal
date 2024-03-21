@@ -272,11 +272,11 @@ public class LevelModel {
       switch (layer.getString("name")) {
         case "level":
           makeTiles(numTilesHorizontal, numTilesVertical, layer.get("data").asIntArray(), tileWidth,
-            tileHeight, directory, tileProperties, false);
+              tileHeight, directory, tileProperties, false);
           break;
         case "pass":
           makeTiles(numTilesHorizontal, numTilesVertical, layer.get("data").asIntArray(), tileWidth,
-            tileHeight, directory, tileProperties, true);
+              tileHeight, directory, tileProperties, true);
           break;
         case "objects":
           if (layer.get("objects") != null) {
@@ -287,9 +287,9 @@ public class LevelModel {
           System.out.println("case deco");
           if (layer.get("data") != null) {
             makeDecoTiles(numTilesHorizontal, numTilesVertical, layer.get("data").asIntArray(),
-              tileWidth,
-              tileHeight,
-              directory);
+                tileWidth,
+                tileHeight,
+                directory);
           }
           break;
       }
@@ -309,7 +309,7 @@ public class LevelModel {
    * @param tileProperties additional tile properties
    */
   private void makeTiles(int cols, int rows, int[] data, int tileWidth, int tileHeight,
-                         AssetDirectory directory, JsonValue tileProperties, boolean passThrough) {
+      AssetDirectory directory, JsonValue tileProperties, boolean passThrough) {
     for (int i = 0; i < data.length; i++) {
       if (data[i] != 0) {
         // i % numCols = how deep in x
@@ -320,14 +320,14 @@ public class LevelModel {
         PlatformModel obj = passThrough ? new PassThroughPlatformModel() : new PlatformModel();
         obj.setDrawScale(scale);
         obj.initializeAsTile(xPos, yPos, (float) tileHeight, directory, "" + data[i],
-          tileProperties);
+            tileProperties);
         activate(obj);
       }
     }
   }
 
   private void makeDecoTiles(int cols, int rows, int[] data, int tileWidth, int tileHeight,
-                             AssetDirectory directory) {
+      AssetDirectory directory) {
     System.out.println("making deco tiles");
     for (int i = 0; i < data.length; i++) {
       if (data[i] != 0) {

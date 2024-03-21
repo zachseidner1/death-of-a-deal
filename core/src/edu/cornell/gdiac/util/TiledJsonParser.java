@@ -14,6 +14,7 @@ import java.lang.reflect.Field;
  * Class that provides utility functions for parsing Tiled json and populating obstacles
  */
 public class TiledJsonParser {
+
   public static Vector2 drawScale; // scale factor to convert to pixels : pixels / meter
   public static Vector2 meterScale; // scale factor to convert to meters (physics units) :
   public static float tiledHeight; // height of Tiled editor, used for mapping Tiled pixels to world (physics units)
@@ -28,13 +29,13 @@ public class TiledJsonParser {
    * @param json      Json to be parsed
    */
   public static void initPlatformFromJson(
-    SimpleObstacle obstacle, AssetDirectory directory, JsonValue json) {
+      SimpleObstacle obstacle, AssetDirectory directory, JsonValue json) {
     // Technically, we should do error checking here.
     // A JSON field might accidentally be missing
     obstacle.setBodyType(
-      json.get("bodytype").asString().equals("static")
-        ? BodyDef.BodyType.StaticBody
-        : BodyDef.BodyType.DynamicBody);
+        json.get("bodytype").asString().equals("static")
+            ? BodyDef.BodyType.StaticBody
+            : BodyDef.BodyType.DynamicBody);
     obstacle.setDensity(json.get("density").asFloat());
     obstacle.setFriction(json.get("friction").asFloat());
     obstacle.setRestitution(json.get("restitution").asFloat());

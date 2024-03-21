@@ -381,8 +381,8 @@ public class PlayerModel extends CapsuleObstacle {
       switch (properties.getString("name")) {
         case "bodytype":
           setBodyType(
-            properties.get("value").asString().equals("static") ? BodyDef.BodyType.StaticBody
-              : BodyDef.BodyType.DynamicBody);
+              properties.get("value").asString().equals("static") ? BodyDef.BodyType.StaticBody
+                  : BodyDef.BodyType.DynamicBody);
           break;
         case "density":
           setDensity(properties.getFloat("value"));
@@ -473,7 +473,8 @@ public class PlayerModel extends CapsuleObstacle {
     float groundYRel = -height / 2;
     // To represent the feet (smaller width)
     float defaultGroundSensorScale = 0.2f;
-    groundSensor = new GroundSensor(0, groundYRel, width / 2 * defaultGroundSensorScale, defaultSensorHeight);
+    groundSensor = new GroundSensor(0, groundYRel, width / 2 * defaultGroundSensorScale,
+        defaultSensorHeight);
   }
 
   @Override
@@ -555,7 +556,7 @@ public class PlayerModel extends CapsuleObstacle {
     float accelRate = 1.2F;
     // If the player is traveling faster than their target speed, do not change movement
     if (Math.abs(getVX()) > Math.abs(targetSpeed) && Math.signum(getVX()) == Math.signum(
-      targetSpeed) && Math.abs(targetSpeed) > 0.01F) {
+        targetSpeed) && Math.abs(targetSpeed) > 0.01F) {
       accelRate = 0;
     }
     // If the player is trying to go to 0 speed, apply deceleration rate (faster)
@@ -601,7 +602,8 @@ public class PlayerModel extends CapsuleObstacle {
 
     ((PassThroughPlatformModel) groundSensor.currPlatform).setPassThrough(true);
 
-    if (groundSensor.prevPlatform == null || !(groundSensor.prevPlatform instanceof PassThroughPlatformModel)) {
+    if (groundSensor.prevPlatform == null
+        || !(groundSensor.prevPlatform instanceof PassThroughPlatformModel)) {
       return;
     }
 
@@ -613,8 +615,10 @@ public class PlayerModel extends CapsuleObstacle {
 
     float xDiffThres = 0.5f; // Set to be within a tile width
     float yDiffThres = 0.005f; // Set to arbitrarily small amount to account for float arith
-    boolean isNeighborX = Math.abs(currPlatformBodyCenter.x - prevPlatformBodyCenter.x) <= xDiffThres;
-    boolean isNeighborY = Math.abs(currPlatformBodyCenter.y - prevPlatformBodyCenter.y) <= yDiffThres;
+    boolean isNeighborX =
+        Math.abs(currPlatformBodyCenter.x - prevPlatformBodyCenter.x) <= xDiffThres;
+    boolean isNeighborY =
+        Math.abs(currPlatformBodyCenter.y - prevPlatformBodyCenter.y) <= yDiffThres;
 
     if (isNeighborX && isNeighborY) {
       ((PassThroughPlatformModel) groundSensor.prevPlatform).setPassThrough(true);
@@ -641,12 +645,13 @@ public class PlayerModel extends CapsuleObstacle {
     if (texture != null) {
       float effect = faceRight ? 1.0f : -1.0f;
       canvas.draw(isFrozen ? frozenTexture : texture, color, origin.x, origin.y,
-        getX() * drawScale.x,
-        getY() * drawScale.y, getAngle(), effect, 1.0f);
+          getX() * drawScale.x,
+          getY() * drawScale.y, getAngle(), effect, 1.0f);
     }
   }
 
   public class BodySensor extends BoxFixtureSensor<PlayerModel> {
+
     public BodySensor(float x, float y, float width2, float height2) {
       super(PlayerModel.this, x, y, width2, height2);
     }
@@ -662,13 +667,15 @@ public class PlayerModel extends CapsuleObstacle {
   }
 
   public class GroundSensor extends BoxFixtureSensor<PlayerModel> {
+
     /**
      * The current platform the player is standing on
      */
     Obstacle currPlatform;
 
     /**
-     * Previous platform (since player can be standing between two pass through tiles. Can also serve as cache.
+     * Previous platform (since player can be standing between two pass through tiles. Can also
+     * serve as cache.
      */
     Obstacle prevPlatform;
 

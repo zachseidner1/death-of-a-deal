@@ -20,6 +20,7 @@ import java.lang.reflect.Field;
  * models to be created when the fan is on.
  */
 public class FanModel extends PlatformModel {
+
   final private float DEFAULT_PERIOD = 10.0f;
   final private float DEFAULT_PERIOD_ON_RATIO = 1.0f;
   final private float DEFAULT_CURR_TIME = 0.0f;
@@ -111,7 +112,7 @@ public class FanModel extends PlatformModel {
       switch (properties.getString("name")) {
         case "BodyType":
           setBodyType(properties.getString("value").equals("static") ? BodyDef.BodyType.StaticBody
-            : BodyDef.BodyType.DynamicBody);
+              : BodyDef.BodyType.DynamicBody);
           break;
         case "DebugColor":
           try {
@@ -203,58 +204,59 @@ public class FanModel extends PlatformModel {
 
     // Configure shape and configure wind fixture
     initializeWind(
-      windSource.x,
-      windSource.y,
-      windBreadth,
-      windLength,
-      windStrength,
-      fanRotation,
-      numWindParticles,
-      windLengthParticleGrids,
-      windBreadthParticleGrids,
-      fanSide,
-      windType,
-      windTexture,
-      windParticleTexture,
-      drawScale
+        windSource.x,
+        windSource.y,
+        windBreadth,
+        windLength,
+        windStrength,
+        fanRotation,
+        numWindParticles,
+        windLengthParticleGrids,
+        windBreadthParticleGrids,
+        fanSide,
+        windType,
+        windTexture,
+        windParticleTexture,
+        drawScale
     );
   }
 
   /**
-   * Initialize wind properties. Called whenever there should be a change in the behavior of the wind, as directed by this fan
+   * Initialize wind properties. Called whenever there should be a change in the behavior of the
+   * wind, as directed by this fan
    */
   public void initializeWind(
-    float windSourceX,
-    float windSourceY,
-    float windBreadth,
-    float windLength,
-    float windStrength,
-    float windRotation,
-    int numWindParticles,
-    int windLengthParticleGrids,
-    int windBreadthParticleGrids,
-    WindSide windSide,
-    WindType windType,
-    TextureRegion windTexture,
-    TextureRegion windParticleTexture,
-    Vector2 drawScale
+      float windSourceX,
+      float windSourceY,
+      float windBreadth,
+      float windLength,
+      float windStrength,
+      float windRotation,
+      int numWindParticles,
+      int windLengthParticleGrids,
+      int windBreadthParticleGrids,
+      WindSide windSide,
+      WindType windType,
+      TextureRegion windTexture,
+      TextureRegion windParticleTexture,
+      Vector2 drawScale
   ) {
 
     wind.initialize(
-      windSourceX,
-      windSourceY,
-      windBreadth,
-      windLength,
-      windStrength,
-      windRotation,
-      numWindParticles,
-      windLengthParticleGrids,
-      windBreadthParticleGrids,
-      windSide,
-      windType,
-      windTexture,
-      windParticleTexture,
-      drawScale
+        windSourceX,
+        windSourceY,
+        windBreadth,
+        windLength,
+        windStrength,
+        windRotation,
+        numWindParticles,
+        windLengthParticleGrids,
+        windBreadthParticleGrids,
+        windSide,
+        windType,
+        windTexture,
+        windParticleTexture,
+        drawScale
     );
   }
 
@@ -320,8 +322,8 @@ public class FanModel extends PlatformModel {
   }
 
   /**
-   * // TODO: Will likely need to figure out a way to abstract away wind as a temporary fixture that can be attached and destroyed in the existence of this model
-   * Set whether the fan is active
+   * // TODO: Will likely need to figure out a way to abstract away wind as a temporary fixture that
+   * can be attached and destroyed in the existence of this model Set whether the fan is active
    */
   public void setFanActive(boolean active) {
     isFanActive = active;
@@ -355,15 +357,15 @@ public class FanModel extends PlatformModel {
   public void draw(GameCanvas canvas) {
     // Need to determine bottom left corner
     canvas.draw(
-      region,
-      Color.BLUE,
-      getX() * drawScale.x,
-      getY() * drawScale.y,
-      0,
-      0,
-      fanRotation,
-      1,
-      1
+        region,
+        Color.BLUE,
+        getX() * drawScale.x,
+        getY() * drawScale.y,
+        0,
+        0,
+        fanRotation,
+        1,
+        1
     );
 
     if (isFanActive) {

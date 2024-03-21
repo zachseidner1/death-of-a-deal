@@ -394,9 +394,9 @@ public class GameController implements Screen {
     // On fall, increase the gravity to add a more weighty feel
     if (avatar.getVY() < 0 && !avatar.isGrounded()) {
       avatar.setVY(
-        avatar.getVY() + gravity * (avatar.getFallMultiplier() - 1) * dt);
+          avatar.getVY() + gravity * (avatar.getFallMultiplier() - 1) * dt);
     } else if (avatar.getVY() > 0 && (!isJumpPressed || avatar.getIsFrozen())
-      && !avatar.isGrounded()) {
+        && !avatar.isGrounded()) {
       // On jump, increase the gravity only if the user is not pressing up (or the user is frozen)
       // Allows the player to exert more control over vertical motion
       avatar.setVY(avatar.getVY() + gravity * (avatar.getLowJumpMultiplier() - 1) * dt);
@@ -458,7 +458,7 @@ public class GameController implements Screen {
       }
       canvas.drawText(message, displayFont, canvas.getWidth() / 2f - 380, canvas.getHeight() - 120);
       canvas.drawText("L" + levelNumber, displayFont, canvas.getWidth() / 1.75f,
-        canvas.getHeight() - 120);
+          canvas.getHeight() - 120);
       canvas.end();
     }
 
