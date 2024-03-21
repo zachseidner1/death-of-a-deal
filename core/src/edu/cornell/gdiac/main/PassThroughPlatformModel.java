@@ -31,10 +31,6 @@ public class PassThroughPlatformModel extends PlatformModel {
     solidColor.a = 0.6f; // Differentiate alpha
   }
 
-  public boolean getPassThrough() {
-    return isPassThrough;
-  }
-
   public void setPassThrough(boolean pass) {
     isPassThrough = pass;
 

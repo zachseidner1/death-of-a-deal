@@ -83,7 +83,7 @@ public class CollisionController implements ContactListener {
       BoxObstacle door = level.getExit();
 
       // Handle beginning of fixture sensor contact
-      onBoxFixtureSensorContact(true, body1, body2, fix1, fix2);
+      onBoxFixtureSensorContact(true, fix1, fix2);
 
       // Handle possible wind contact
       boolean isWindContact = handleWindContact(contact, fix1, fix2, bd2, bd1);
@@ -171,7 +171,7 @@ public class CollisionController implements ContactListener {
     }
 
     // Handle end of fixture sensor contact
-    onBoxFixtureSensorContact(false, body1, body2, fix1, fix2);
+    onBoxFixtureSensorContact(false, fix1, fix2);
   }
 
   /**
@@ -326,7 +326,7 @@ public class CollisionController implements ContactListener {
   /**
    * Handles the execution of appropriate fixture sensor callbacks
    */
-  private void onBoxFixtureSensorContact(boolean isBeginContact, Body body1, Body body2, Fixture fix1, Fixture fix2) {
+  private void onBoxFixtureSensorContact(boolean isBeginContact, Fixture fix1, Fixture fix2) {
     try {
       Object data1 = fix1.getUserData();
       Object data2 = fix2.getUserData();
@@ -334,8 +334,10 @@ public class CollisionController implements ContactListener {
       boolean isPass1 = data1 instanceof BoxFixtureSensor;
       boolean isPass2 = data2 instanceof BoxFixtureSensor;
 
-      Obstacle bd1 = (Obstacle) body1.getUserData();
-      Obstacle bd2 = (Obstacle) body2.getUserData();
+      Body body1 = fix1.getBody();
+      Body body2 = fix2.getBody();
+      Obstacle obs1 = (Obstacle) body1.getUserData();
+      Obstacle obs2 = (Obstacle) body2.getUserData();
 
       BoxFixtureSensor<?> sensorFixture;
 
@@ -343,17 +345,17 @@ public class CollisionController implements ContactListener {
       if (isPass1) {
         sensorFixture = (BoxFixtureSensor<?>) data1;
         if (isBeginContact) {
-          sensorFixture.beginContact(bd2, fix2);
+          sensorFixture.beginContact(obs2, fix2);
         } else {
-          sensorFixture.endContact(bd2, fix2);
+          sensorFixture.endContact(obs2, fix2);
         }
       }
       if (isPass2) {
         sensorFixture = (BoxFixtureSensor<?>) data2;
         if (isBeginContact) {
-          sensorFixture.beginContact(bd1, fix1);
+          sensorFixture.beginContact(obs1, fix1);
         } else {
-          sensorFixture.endContact(bd1, fix1);
+          sensorFixture.endContact(obs1, fix1);
         }
       }
     } catch (Exception e) {

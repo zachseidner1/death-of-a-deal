@@ -202,7 +202,7 @@ public class FanModel extends PlatformModel {
     }
 
     // Configure shape and configure wind fixture
-    initializeWind(
+    wind.initialize(
       windSource.x,
       windSource.y,
       windBreadth,
@@ -213,44 +213,6 @@ public class FanModel extends PlatformModel {
       windLengthParticleGrids,
       windBreadthParticleGrids,
       fanSide,
-      windType,
-      windTexture,
-      windParticleTexture,
-      drawScale
-    );
-  }
-
-  /**
-   * Initialize wind properties. Called whenever there should be a change in the behavior of the wind, as directed by this fan
-   */
-  public void initializeWind(
-    float windSourceX,
-    float windSourceY,
-    float windBreadth,
-    float windLength,
-    float windStrength,
-    float windRotation,
-    int numWindParticles,
-    int windLengthParticleGrids,
-    int windBreadthParticleGrids,
-    WindSide windSide,
-    WindType windType,
-    TextureRegion windTexture,
-    TextureRegion windParticleTexture,
-    Vector2 drawScale
-  ) {
-
-    wind.initialize(
-      windSourceX,
-      windSourceY,
-      windBreadth,
-      windLength,
-      windStrength,
-      windRotation,
-      numWindParticles,
-      windLengthParticleGrids,
-      windBreadthParticleGrids,
-      windSide,
       windType,
       windTexture,
       windParticleTexture,
