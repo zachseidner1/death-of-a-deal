@@ -33,8 +33,7 @@ public class TiledJsonParser {
   public static float sensorSizeX; // player sensor size x component for calculations
   public static float sensorSizeY; // player sensor size y component for calculations
   public static Color playerSensorColor; // player sensor color
-  public static float windSourceX;
-  public static float windSourceY;
+  public static Vector2 windSource;
   public static float windBreadth;
   public static float windLength;
   public static float windStrength;
@@ -266,6 +265,8 @@ public class TiledJsonParser {
       case "lowJumpMultiplier":
         player.setLowJumpMultiplier(properties.getFloat("value"));
         break;
+      default:
+        break;
     }
   }
 
@@ -325,9 +326,36 @@ public class TiledJsonParser {
     float height = json.getFloat("height") * (1/drawScale.y);
       fan.setDimension(width,height);
 
+    fanRotation = 0f;
     JsonValue properties = json.get("properties").child();
     while (properties != null){
       switch (properties.getString("name")){
+        case "Type":
+          break;
+        case "Side":
+          break;
+        case "WindStrength":
+          break;
+        case "WindBreadth":
+          break;
+        case "WindLength":
+          break;
+        case "NumWindParticles":
+          break;
+        case "WindBreadthParticleGrids":
+          break;
+        case "WindLengthParticleGrids":
+          break;
+        case "Period":
+          break;
+        case "PeriodOnRatio":
+          break;
+        case "Active":
+          break;
+        case "WindTexture":
+          break;
+        case "WindParticleTexture":
+          break;
         default:
           break;
       }
