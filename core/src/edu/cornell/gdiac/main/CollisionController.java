@@ -45,18 +45,17 @@ public class CollisionController implements ContactListener {
   private void prepareImpulse(SlopeModel slope) {
     float slopeAngle = slope.getSlopeAngle();
     float forceMagnitude = slope.getSlopeFrozenImpulse();
-    System.out.println("force mag" + forceMagnitude);
 
     if (slopeAngle >= 0 && slopeAngle <= Math.PI) {
       // Slope is pointing down left
       v2Cache.set(
-          (float) -Math.cos(slopeAngle) * forceMagnitude,
-          (float) -Math.sin(slopeAngle) * forceMagnitude
+        (float) -Math.cos(slopeAngle) * forceMagnitude,
+        (float) -Math.sin(slopeAngle) * forceMagnitude
       );
     } else {
       // Slope is pointing down right
       v2Cache.set((float) Math.cos(slopeAngle) * forceMagnitude,
-          (float) Math.sin(slopeAngle) * forceMagnitude);
+        (float) Math.sin(slopeAngle) * forceMagnitude);
     }
   }
 
@@ -83,11 +82,23 @@ public class CollisionController implements ContactListener {
       PlayerModel avatar = level.getAvatar();
       BoxObstacle door = level.getExit();
 
-      handleWindContact(contact, fix1, fix2, bd2, bd1, avatar, fd2, fd1);
+      // Handle beginning of fixture sensor contact
+      onBoxFixtureSensorContact(true, fix1, fix2);
+
+      // Handle possible wind contact
+      boolean isWindContact = handleWindContact(contact, fix1, fix2, bd2, bd1);
+
+      // See if we have landed on the ground
+      if (!isWindContact &&
+        (fd2 instanceof PlayerModel.GroundSensor && bd1 != avatar && !fix1.isSensor()) ||
+        (fd1 instanceof PlayerModel.GroundSensor && bd2 != avatar && !fix2.isSensor())) {
+        avatar.setGrounded(true);
+        sensorFixtures.add(avatar == bd1 ? fix2 : fix1);
+      }
 
       // Check for win condition
       if ((bd1 == avatar && bd2 == door) ||
-          (bd1 == door && bd2 == avatar)) {
+        (bd1 == door && bd2 == avatar)) {
         level.setComplete(true);
       }
 
@@ -96,9 +107,11 @@ public class CollisionController implements ContactListener {
     }
   }
 
-  private void handleWindContact(Contact contact, Fixture fix1, Fixture fix2, Obstacle bd2,
-      Obstacle bd1,
-      PlayerModel avatar, Object fd2, Object fd1) {
+  /**
+   * Handles potential wind contact, returning whether we indeed had contact
+   */
+  private boolean handleWindContact(Contact contact, Fixture fix1, Fixture fix2, Obstacle bd2,
+                                    Obstacle bd1) {
     boolean is1WindFixture = fix1.getUserData() instanceof WindParticleModel;
     boolean is2WindFixture = fix2.getUserData() instanceof WindParticleModel;
     WindParticleModel windParticle = null;
@@ -124,15 +137,8 @@ public class CollisionController implements ContactListener {
       }
     }
 
-    boolean isWind = is1WindFixture || is2WindFixture || fix1.getUserData() instanceof WindModel
-        || fix2.getUserData() instanceof WindModel;
-
-    // See if we have landed on the ground
-    if (!isWind && ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
-        (avatar.getSensorName().equals(fd1) && avatar != bd2))) {
-      avatar.setGrounded(true);
-      sensorFixtures.add(avatar == bd1 ? fix2 : fix1);
-    }
+    return is1WindFixture || is2WindFixture || fix1.getUserData() instanceof WindModel
+      || fix2.getUserData() instanceof WindModel;
   }
 
   /**
@@ -156,13 +162,16 @@ public class CollisionController implements ContactListener {
     Object bd2 = body2.getUserData();
 
     PlayerModel avatar = level.getAvatar();
-    if ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
-        (avatar.getSensorName().equals(fd1) && avatar != bd2)) {
+    if ((fd2 instanceof PlayerModel.GroundSensor && avatar != bd1) ||
+      (fd1 instanceof PlayerModel.GroundSensor && avatar != bd2)) {
       sensorFixtures.remove(avatar == bd1 ? fix2 : fix1);
       if (sensorFixtures.size == 0) {
         avatar.setGrounded(false);
       }
     }
+
+    // Handle end of fixture sensor contact
+    onBoxFixtureSensorContact(false, fix1, fix2);
   }
 
   /**
@@ -218,8 +227,8 @@ public class CollisionController implements ContactListener {
         if (plyr.getIsFrozen()) {
           contact.setRestitution(c);
           bplt.setMaxSpeed(
-              Math.max(bplt.getDefaultMaxSpeed(),
-                  Math.max(Math.abs(plyr.getVX()), Math.abs(plyr.getVY())))
+            Math.max(bplt.getDefaultMaxSpeed(),
+              Math.max(Math.abs(plyr.getVX()), Math.abs(plyr.getVY())))
           );
         }
       }
@@ -234,8 +243,8 @@ public class CollisionController implements ContactListener {
         if (bd1 instanceof BreakablePlatformModel) {
           BreakablePlatformModel breakablePlatform = (BreakablePlatformModel) bd1;
           if ((MathUtil.getMagnitude(plyr.getLinearVelocity())
-              > breakablePlatform.getBreakMinVelocity() && plyr.getIsFrozen())
-              || breakablePlatform.isBroken()
+            > breakablePlatform.getBreakMinVelocity() && plyr.getIsFrozen())
+            || breakablePlatform.isBroken()
           ) {
             breakablePlatform.setBroken(true);
             contact.setEnabled(false);
@@ -246,8 +255,8 @@ public class CollisionController implements ContactListener {
         if (bd1 instanceof BreakablePlatformModel) {
           BreakablePlatformModel breakablePlatform = (BreakablePlatformModel) bd1;
           if ((MathUtil.getMagnitude(plyr.getLinearVelocity())
-              > breakablePlatform.getBreakMinVelocity() && plyr.getIsFrozen())
-              || breakablePlatform.isBroken()
+            > breakablePlatform.getBreakMinVelocity() && plyr.getIsFrozen())
+            || breakablePlatform.isBroken()
           ) {
             breakablePlatform.setBroken(true);
             contact.setEnabled(false);
@@ -276,7 +285,6 @@ public class CollisionController implements ContactListener {
         if (playerModel.getIsFrozen()) {
           BouncePlatformModel bplt = (BouncePlatformModel) bd2;
           float maxSpeed = bplt.getMaxSpeed();
-          System.out.println("max speed: " + maxSpeed);
           float xSpeed = playerModel.getLinearVelocity().x;
           float ySpeed = playerModel.getLinearVelocity().y;
           if (xSpeed > maxSpeed) {
@@ -290,7 +298,6 @@ public class CollisionController implements ContactListener {
             playerModel.setVY(-maxSpeed);
           }
           bplt.setMaxSpeed(bplt.getDefaultMaxSpeed());
-          System.out.println("max speed now: " + bplt.getMaxSpeed());
         }
       }
     }
@@ -302,13 +309,53 @@ public class CollisionController implements ContactListener {
       Obstacle bd2 = (Obstacle) body2.getUserData();
 
       if ((bd1.equals(plyr) && bd2 instanceof SlopeModel) || (bd2.equals(plyr)
-          && bd1 instanceof SlopeModel)) {
+        && bd1 instanceof SlopeModel)) {
         SlopeModel slope = (bd1 instanceof SlopeModel) ? (SlopeModel) bd1 : (SlopeModel) bd2;
 
         // Only add extra force when player is frozen
         if (plyr.getIsFrozen()) {
           prepareImpulse(slope);
           plyr.getBody().applyLinearImpulse(v2Cache, plyr.getPosition(), true);
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Handles the execution of appropriate fixture sensor callbacks
+   */
+  private void onBoxFixtureSensorContact(boolean isBeginContact, Fixture fix1, Fixture fix2) {
+    try {
+      Object data1 = fix1.getUserData();
+      Object data2 = fix2.getUserData();
+
+      boolean isPass1 = data1 instanceof BoxFixtureSensor;
+      boolean isPass2 = data2 instanceof BoxFixtureSensor;
+
+      Body body1 = fix1.getBody();
+      Body body2 = fix2.getBody();
+      Obstacle obs1 = (Obstacle) body1.getUserData();
+      Obstacle obs2 = (Obstacle) body2.getUserData();
+
+      BoxFixtureSensor<?> sensorFixture;
+
+      // Execute callback
+      if (isPass1) {
+        sensorFixture = (BoxFixtureSensor<?>) data1;
+        if (isBeginContact) {
+          sensorFixture.beginContact(obs2, fix2);
+        } else {
+          sensorFixture.endContact(obs2, fix2);
+        }
+      }
+      if (isPass2) {
+        sensorFixture = (BoxFixtureSensor<?>) data2;
+        if (isBeginContact) {
+          sensorFixture.beginContact(obs1, fix1);
+        } else {
+          sensorFixture.endContact(obs1, fix1);
         }
       }
     } catch (Exception e) {

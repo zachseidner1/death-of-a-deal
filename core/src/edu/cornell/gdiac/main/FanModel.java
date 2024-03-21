@@ -12,6 +12,7 @@ import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.main.WindModel.WindParticleModel;
 import edu.cornell.gdiac.main.WindModel.WindSide;
 import edu.cornell.gdiac.main.WindModel.WindType;
+import edu.cornell.gdiac.util.MathUtil;
 import java.lang.reflect.Field;
 
 /**
@@ -19,6 +20,7 @@ import java.lang.reflect.Field;
  * models to be created when the fan is on.
  */
 public class FanModel extends PlatformModel {
+
   final private float DEFAULT_PERIOD = 10.0f;
   final private float DEFAULT_PERIOD_ON_RATIO = 1.0f;
   final private float DEFAULT_CURR_TIME = 0.0f;
@@ -71,21 +73,34 @@ public class FanModel extends PlatformModel {
     float scaleFactorX = 1 / drawScale.x;
     float scaleFactorY = 1 / drawScale.y;
 
+    fanRotation = (float) -Math.toRadians(json.getFloat("rotation"));
+    setAngle(fanRotation);
+
     float width = json.getFloat("width") * scaleFactorX;
     float height = json.getFloat("height") * scaleFactorY;
     setDimension(width, height);
 
-    // Note: (x, y) is top-left most point
-    float x = json.getFloat("x") * scaleFactorX;
-    float y = (gSizeY - json.getFloat("y")) * scaleFactorY;
-    setPosition(x + width / 2, y - height / 2);
+    // TODO: Will likely abstract this away as a util function for compatible parsing of Tiled rotation
+    // Note: Tiled uses rotation about the top-left corner of the rectangle, while our impl uses the center.
+    // We perform some trig position calculations to address the difference in how rotation is treated.
 
-    // TODO: Implement rotation
-    float rotation = -1 * json.getFloat("rotation") / (float) (Math.PI / 2);
-    setAngle(rotation);
+    // topLeft is top-left most point
+    float topLeftX = json.getFloat("x") * scaleFactorX;
+    float topLeftY = (gSizeY - json.getFloat("y")) * scaleFactorY;
+    Vector2 topLeft = new Vector2(topLeftX, topLeftY);
+
+    // center0 is center of rectangle with rotation 0
+    float centerX0 = topLeftX + width / 2;
+    float centerY0 = topLeftY - height / 2;
+    Vector2 center0 = new Vector2(centerX0, centerY0);
+
+    // Rotate center0 about top-left corner with fanRotation
+    Vector2 center = new Vector2();
+    MathUtil.rotateAroundPivot(topLeft, center0, center, fanRotation);
+    setPosition(center);
 
     // Wind wrapper fields
-    Vector2 windSource = new Vector2();
+    Vector2 windSource = getPosition();
     WindType windType = null;
     TextureRegion windTexture = null;
     TextureRegion windParticleTexture = null;
@@ -128,11 +143,9 @@ public class FanModel extends PlatformModel {
           switch (side) {
             case "LEFT":
               fanSide = WindSide.LEFT;
-              windSource.set(x, y - height / 2);
               break;
             default:
               fanSide = WindSide.RIGHT;
-              windSource.set(x + width, y - height / 2);
               break;
           }
           break;
@@ -189,9 +202,8 @@ public class FanModel extends PlatformModel {
       properties = properties.next();
     }
 
-    // TODO: Figure out fan and wind rotation
     // Configure shape and configure wind fixture
-    initializeWind(
+    wind.initialize(
       windSource.x,
       windSource.y,
       windBreadth,
@@ -204,43 +216,8 @@ public class FanModel extends PlatformModel {
       fanSide,
       windType,
       windTexture,
-      windParticleTexture
-    );
-  }
-
-  /**
-   * Initialize wind properties. Called whenever there should be a change in the behavior of the wind, as directed by this fan
-   */
-  public void initializeWind(
-    float windSourceX,
-    float windSourceY,
-    float windBreadth,
-    float windLength,
-    float windStrength,
-    float windRotation,
-    int numWindParticles,
-    int windLengthParticleGrids,
-    int windBreadthParticleGrids,
-    WindSide windSide,
-    WindType windType,
-    TextureRegion windTexture,
-    TextureRegion windParticleTexture
-  ) {
-
-    wind.initialize(
-      windSourceX,
-      windSourceY,
-      windBreadth,
-      windLength,
-      windStrength,
-      windRotation,
-      numWindParticles,
-      windLengthParticleGrids,
-      windBreadthParticleGrids,
-      windSide,
-      windType,
-      windTexture,
-      windParticleTexture
+      windParticleTexture,
+      drawScale
     );
   }
 
@@ -248,7 +225,7 @@ public class FanModel extends PlatformModel {
   protected void createFixtures() {
     super.createFixtures();
 
-    if (wind == null) {
+    if (body == null || wind == null) {
       return;
     }
 
@@ -280,6 +257,10 @@ public class FanModel extends PlatformModel {
   protected void releaseFixtures() {
     super.releaseFixtures();
 
+    if (body == null) {
+      return;
+    }
+
     // Destroy fixture
     if (windFixture != null) {
       body.destroyFixture(windFixture);
@@ -302,8 +283,8 @@ public class FanModel extends PlatformModel {
   }
 
   /**
-   * // TODO: Will likely need to figure out a way to abstract away wind as a temporary fixture that can be attached and destroyed in the existence of this model
-   * Set whether the fan is active
+   * // TODO: Will likely need to figure out a way to abstract away wind as a temporary fixture that
+   * can be attached and destroyed in the existence of this model Set whether the fan is active
    */
   public void setFanActive(boolean active) {
     isFanActive = active;
@@ -335,8 +316,18 @@ public class FanModel extends PlatformModel {
 
   @Override
   public void draw(GameCanvas canvas) {
-    canvas.draw(region, Color.BLUE, 0, 0, (getX() - anchor.x) * drawScale.x,
-      (getY() - anchor.y) * drawScale.y, getAngle(), 1, 1);
+    // Need to determine bottom left corner
+    canvas.draw(
+      region,
+      Color.BLUE,
+      getX() * drawScale.x,
+      getY() * drawScale.y,
+      0,
+      0,
+      fanRotation,
+      1,
+      1
+    );
 
     if (isFanActive) {
       // Draw wind texture

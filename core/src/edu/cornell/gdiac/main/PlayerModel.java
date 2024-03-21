@@ -18,11 +18,10 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.physics.obstacle.CapsuleObstacle;
+import edu.cornell.gdiac.physics.obstacle.Obstacle;
 import java.lang.reflect.Field;
 
 /**
@@ -91,20 +90,25 @@ public class PlayerModel extends CapsuleObstacle {
    */
   private float jumpVelocity;
   /**
+   * Whether we are actively trying to drop
+   */
+  private boolean isDropping;
+  /**
    * Whether we are currently frozen
    */
   private boolean isFrozen;
   /**
    * Ground sensor to represent our feet
    */
-  private Fixture sensorFixture;
-  private PolygonShape sensorShape;
+  private GroundSensor groundSensor;
+  private Fixture groundSensorFixture;
   /**
-   * The name of the sensor for detection purposes
+   * Body sensor
    */
-  private String sensorName;
+  private BodySensor bodySensor;
+  private Fixture bodySensorFixture;
   /**
-   * The color to paint the sensor in debug mode
+   * For the color to draw sensors in debug
    */
   private Color sensorColor;
   /**
@@ -115,11 +119,6 @@ public class PlayerModel extends CapsuleObstacle {
    * The texture to use in the frozen state
    */
   private TextureRegion frozenTexture;
-
-  /**
-   * Field to temporarily hold player sensor size x
-   */
-  private float sensorSizeX;
 
   /**
    * The multiplier gravity receives down for a low jump (short hop)
@@ -145,7 +144,6 @@ public class PlayerModel extends CapsuleObstacle {
     isFrozen = false;
     faceRight = true;
     color = Color.WHITE;
-    sensorSizeX = 0;
     setDensity(1);
 
     jumpCooldown = 0;
@@ -203,13 +201,7 @@ public class PlayerModel extends CapsuleObstacle {
   }
 
   /**
-   * Returns true if
-   */
-
-  /**
    * Returns true if the player is actively jumping.
-   *
-   * @return true if the player is actively jumping.
    */
   public boolean getIsJumping() {
     return isJumping && jumpCooldown <= 0 && isGrounded;
@@ -217,12 +209,24 @@ public class PlayerModel extends CapsuleObstacle {
 
   /**
    * Sets whether the player is actively jumping.
-   *
-   * @param value whether the player is actively jumping.
    */
 
   public void setJumping(boolean value) {
     isJumping = value;
+  }
+
+  /**
+   * Returns true if the player is actively dropping
+   */
+  public boolean getIsDropping() {
+    return isDropping;
+  }
+
+  /**
+   * Sets whether the playter is actively dropping.
+   */
+  public void setDropping(boolean value) {
+    isDropping = value;
   }
 
   /**
@@ -341,28 +345,6 @@ public class PlayerModel extends CapsuleObstacle {
   }
 
   /**
-   * Returns the name of the ground sensor
-   * <p>
-   * This is used by ContactListener
-   *
-   * @return the name of the ground sensor
-   */
-  public String getSensorName() {
-    return sensorName;
-  }
-
-  /**
-   * Sets the name of the ground sensor
-   * <p>
-   * This is used by ContactListener
-   *
-   * @param name the name of the ground sensor
-   */
-  public void setSensorName(String name) {
-    sensorName = name;
-  }
-
-  /**
    * Returns true if this character is facing right
    *
    * @return true if this character is facing right
@@ -386,8 +368,8 @@ public class PlayerModel extends CapsuleObstacle {
     // Set position and dimension
     float x = json.getFloat("x") * (1 / drawScale.x);
     float y = (gSizeY - json.getFloat("y")) * (1 / drawScale.y);
-
     setPosition(x, y);
+
     float width = json.getFloat("width") * (1 / drawScale.x);
     float height = json.getFloat("height") * (1 / drawScale.y);
     setDimension(width, height);
@@ -446,17 +428,6 @@ public class PlayerModel extends CapsuleObstacle {
           frozenTexture = new TextureRegion(directory.getEntry("frozen", Texture.class));
           setTexture(texture);
           break;
-        case "sensorsizex":
-          sensorSizeX = properties.getFloat("value");
-        case "sensorsizey":
-          Vector2 sensorCenter = new Vector2(0, -getHeight() / 2);
-          float sSizeY = properties.getFloat("value");
-          if (sensorSizeX == 0) {
-            System.out.println("Sensor size X has not yet been set");
-          }
-          sensorShape = new PolygonShape();
-          sensorShape.setAsBox(sensorSizeX, sSizeY, sensorCenter, 0.0f);
-          break;
         case "sensorcolor":
           try {
             String cname = properties.getString("value").toUpperCase();
@@ -471,9 +442,6 @@ public class PlayerModel extends CapsuleObstacle {
           if (sensorColor != null) {
             sensorColor.mul(opacity / 255.0f);
           }
-          break;
-        case "sensorname":
-          setSensorName(properties.getString("value"));
           break;
         case "fallMultiplier":
           fallMultiplier = properties.getFloat("value");
@@ -490,20 +458,31 @@ public class PlayerModel extends CapsuleObstacle {
 
       properties = properties.next();
     }
+
+    initFixtureDefs(width, height);
   }
 
-  /**
-   * Creates the physics Body(s) for this object, adding them to the world.
-   * <p>
-   * This method overrides the base method to keep your ship from spinning.
-   *
-   * @param world Box2D world to store body
-   * @return true if object allocation succeeded
-   */
-  public boolean activatePhysics(World world) {
-    // create the box from our superclass
-    if (!super.activatePhysics(world)) {
-      return false;
+  public void initFixtureDefs(float width, float height) {
+    // Can be set in Tiled, but good-enough default here (we want a very thin sensor)
+    float defaultSensorHeight = 0.005f;
+
+    // Create the head fixture def
+    bodySensor = new BodySensor(0, 0, width / 2, height / 2);
+
+    // Create the bottom fixture def
+    float groundYRel = -height / 2;
+    // To represent the feet (smaller width)
+    float defaultGroundSensorScale = 0.2f;
+    groundSensor = new GroundSensor(0, groundYRel, width / 2 * defaultGroundSensorScale,
+        defaultSensorHeight);
+  }
+
+  @Override
+  public void createFixtures() {
+    super.createFixtures();
+
+    if (body == null) {
+      return;
     }
 
     // Ground Sensor
@@ -511,17 +490,54 @@ public class PlayerModel extends CapsuleObstacle {
     // We only allow the player to jump when he's on the ground.
     // Double jumping is not allowed.
     //
-    // To determine whether or not the player is on the ground,
+    // To determine whether the player is on the ground,
     // we create a thin sensor under his feet, which reports
     // collisions with the world but has no collision response.
-    FixtureDef sensorDef = new FixtureDef();
-    sensorDef.density = getDensity();
-    sensorDef.isSensor = true;
-    sensorDef.shape = sensorShape;
-    sensorFixture = body.createFixture(sensorDef);
-    sensorFixture.setUserData(getSensorName());
+    //
+    // We can track what platform/obstacle the player is currently
+    // standing on by keeping it in track in the state of the
+    // ground sensor.
 
-    return true;
+    // Head Sensor
+    // -------------
+    // We use this sensor to determine special contact logic when
+    // the player collides with a platform by jumping up
+
+    // Create the sensor fixtures
+    FixtureDef groundFixtureDef = groundSensor != null ? groundSensor.getFixtureDef() : null;
+    if (groundFixtureDef != null) {
+      groundSensorFixture = body.createFixture(groundFixtureDef);
+      groundSensorFixture.setUserData(groundSensor);
+    }
+
+    FixtureDef headFixtureDef = bodySensor != null ? bodySensor.getFixtureDef() : null;
+    if (headFixtureDef != null) {
+      bodySensorFixture = body.createFixture(headFixtureDef);
+      bodySensorFixture.setUserData(bodySensor);
+    }
+
+    assert bodySensor != null;
+    assert headFixtureDef != null;
+    assert groundSensor != null;
+    assert groundFixtureDef != null;
+  }
+
+  @Override
+  public void releaseFixtures() {
+    super.releaseFixtures();
+
+    if (body == null) {
+      return;
+    }
+
+    // Destroy sensor fixtures
+    if (bodySensorFixture != null) {
+      body.destroyFixture(bodySensorFixture);
+    }
+
+    if (groundSensorFixture != null) {
+      body.destroyFixture(groundSensorFixture);
+    }
   }
 
 
@@ -552,12 +568,61 @@ public class PlayerModel extends CapsuleObstacle {
     float speedDif = targetSpeed - (getVX());
     float movement = speedDif * accelRate;
     v2Cache.set(movement, 0);
+
     // Jump!
     if (getIsJumping() && !getIsFrozen()) {
       setVY(jumpVelocity);
+
+      // Clear platform in ground sensor
+      groundSensor.clearPlatforms();
     }
 
+    // If on top of a pass-through platform and pressing drop, set the tile to pass-through
+    dropPassThroughPlatform();
+
     body.applyForce(v2Cache, getPosition(), true);
+  }
+
+  /**
+   * Checks whether tile is pass-through and set to pass-through if player dropping
+   */
+  private void dropPassThroughPlatform() {
+    if (!isDropping) {
+      return;
+    }
+
+    if (groundSensor.currPlatform == null) {
+      assert groundSensor.prevPlatform == null;
+      return;
+    }
+
+    if (!(groundSensor.currPlatform instanceof PassThroughPlatformModel)) {
+      return;
+    }
+
+    ((PassThroughPlatformModel) groundSensor.currPlatform).setPassThrough(true);
+
+    if (groundSensor.prevPlatform == null
+        || !(groundSensor.prevPlatform instanceof PassThroughPlatformModel)) {
+      return;
+    }
+
+    assert !groundSensor.prevPlatform.equals(groundSensor.currPlatform);
+
+    // Check whether the previous platform is a neighboring tile
+    Vector2 currPlatformBodyCenter = groundSensor.currPlatform.getBody().getWorldCenter();
+    Vector2 prevPlatformBodyCenter = groundSensor.prevPlatform.getBody().getWorldCenter();
+
+    float xDiffThres = 0.5f; // Set to be within a tile width
+    float yDiffThres = 0.005f; // Set to arbitrarily small amount to account for float arith
+    boolean isNeighborX =
+        Math.abs(currPlatformBodyCenter.x - prevPlatformBodyCenter.x) <= xDiffThres;
+    boolean isNeighborY =
+        Math.abs(currPlatformBodyCenter.y - prevPlatformBodyCenter.y) <= yDiffThres;
+
+    if (isNeighborX && isNeighborY) {
+      ((PassThroughPlatformModel) groundSensor.prevPlatform).setPassThrough(true);
+    }
   }
 
   /**
@@ -582,6 +647,65 @@ public class PlayerModel extends CapsuleObstacle {
       canvas.draw(isFrozen ? frozenTexture : texture, color, origin.x, origin.y,
           getX() * drawScale.x,
           getY() * drawScale.y, getAngle(), effect, 1.0f);
+    }
+  }
+
+  public class BodySensor extends BoxFixtureSensor<PlayerModel> {
+
+    public BodySensor(float x, float y, float width2, float height2) {
+      super(PlayerModel.this, x, y, width2, height2);
+    }
+
+    @Override
+    public void beginContact(Obstacle obs, Fixture fixture) {
+      // TODO: Can refactor breakable platform under this logic for consistency
+    }
+
+    @Override
+    public void endContact(Obstacle obs, Fixture fixture) {
+    }
+  }
+
+  public class GroundSensor extends BoxFixtureSensor<PlayerModel> {
+
+    /**
+     * The current platform the player is standing on
+     */
+    Obstacle currPlatform;
+
+    /**
+     * Previous platform (since player can be standing between two pass through tiles. Can also
+     * serve as cache.
+     */
+    Obstacle prevPlatform;
+
+    public GroundSensor(float x, float y, float width2, float height2) {
+      super(PlayerModel.this, x, y, width2, height2);
+
+      clearPlatforms();
+    }
+
+    public void clearPlatforms() {
+      currPlatform = prevPlatform = null;
+    }
+
+    @Override
+    public void beginContact(Obstacle bodyData, Fixture fixture) {
+      if (bodyData != currPlatform && !fixture.isSensor()) {
+        prevPlatform = currPlatform;
+        currPlatform = bodyData;
+      }
+
+      // TODO: Can migrate some of the logic (setGrounded) from collision controller here. Notice
+      // that we are slowly drifting away from model territory, which is fine. If it gets to complicated,
+      // it should be simple to call this enclosing class a PlayerController, and just make an inner
+      // public inner PlayerModel class that is simpler and purely store core player states and getters/setters.
+      // We can do this for other models too. In and of itself, this would make the initialization logic
+      // to parse from Tiled json make more sense too, as separate from the actual model.
+    }
+
+    @Override
+    public void endContact(Obstacle bodyData, Fixture fixture) {
     }
   }
 }

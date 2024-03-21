@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="40" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="32">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="40" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="38">
  <editorsettings>
   <export target="../assets/jsons/level1.json" format="json"/>
  </editorsettings>
@@ -14,7 +14,7 @@
   <image source="../assets/textures/tile.png" width="16" height="16"/>
  </tileset>
  <tileset firstgid="2" source="wood_tileset.tsx"/>
- <tileset firstgid="11" source="stonetileset.tsx"/>
+ <tileset firstgid="10" source="stonetileset.tsx"/>
  <layer id="2" name="deco" width="40" height="30">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -84,10 +84,44 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,6,7,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,6,7,0,0,0,0,0,0,
-11,12,12,12,12,13,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,6,7,0,0,0,0,0,0,0,0,0,0,0,
-15,15,15,15,15,16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-15,15,15,15,15,16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-15,15,15,15,15,16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+10,11,11,11,11,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,6,7,0,0,0,0,0,0,0,0,0,0,0,
+14,14,14,14,14,15,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+14,14,14,14,14,15,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+14,14,14,14,14,15,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <layer id="5" name="pass" width="40" height="30">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
  <objectgroup id="3" name="objects">
@@ -117,7 +151,7 @@
     <property name="texture" value="goal"/>
    </properties>
   </object>
-  <object id="8" name="player" type="Player" x="16" y="384" width="16" height="30">
+  <object id="8" name="player" type="Player" x="16" y="384" width="15" height="30">
    <properties>
     <property name="bodytype" value="dynamic"/>
     <property name="damping" type="float" value="10"/>
@@ -131,14 +165,10 @@
     <property name="maxspeed" type="float" value="6"/>
     <property name="restitution" type="float" value="0"/>
     <property name="sensorcolor" value="red"/>
-    <property name="sensorname" value="dudeGroundSensor"/>
-    <property name="sensoropacity" type="int" value="192"/>
-    <property name="sensorsizex" type="float" value="0.183"/>
-    <property name="sensorsizey" type="float" value="0.05"/>
     <property name="texture" value="dude"/>
    </properties>
   </object>
-  <object id="24" name="slope" type="Slope" x="112" y="432">
+  <object id="24" name="slope" type="Slope" x="111.728" y="432.061">
    <properties>
     <property name="bodytype" value="static"/>
     <property name="debugcolor" value="yellow"/>
@@ -194,6 +224,48 @@
     <property name="max_speed" value="17"/>
     <property name="restitution" type="float" value="0"/>
     <property name="texture" value="earth"/>
+   </properties>
+  </object>
+  <object id="33" name="fan" type="Fan" x="368.956" y="298.549" width="16" height="80" rotation="-40">
+   <properties>
+    <property name="Active" type="bool" value="true"/>
+    <property name="BodyType" value="static"/>
+    <property name="DebugColor" value="yellow"/>
+    <property name="DebugOpacity" type="int" value="255"/>
+    <property name="FanTexture" value="1"/>
+    <property name="NumWindParticles" type="int" value="100"/>
+    <property name="Period" type="float" value="0"/>
+    <property name="PeriodOnRatio" type="float" value="1"/>
+    <property name="Side" value="left"/>
+    <property name="Type" value="default"/>
+    <property name="WindBreadth" type="float" value="70"/>
+    <property name="WindBreadthParticleGrids" type="int" value="10"/>
+    <property name="WindLength" type="float" value="120"/>
+    <property name="WindLengthParticleGrids" type="int" value="10"/>
+    <property name="WindParticleTexture" value="1"/>
+    <property name="WindStrength" type="float" value="10"/>
+    <property name="WindTexture" value="1"/>
+   </properties>
+  </object>
+  <object id="37" name="fan" type="Fan" x="100.142" y="65.9603" width="16" height="100" rotation="90">
+   <properties>
+    <property name="Active" type="bool" value="true"/>
+    <property name="BodyType" value="static"/>
+    <property name="DebugColor" value="yellow"/>
+    <property name="DebugOpacity" type="int" value="255"/>
+    <property name="FanTexture" value="1"/>
+    <property name="NumWindParticles" type="int" value="100"/>
+    <property name="Period" type="float" value="0"/>
+    <property name="PeriodOnRatio" type="float" value="1"/>
+    <property name="Side" value="right"/>
+    <property name="Type" value="default"/>
+    <property name="WindBreadth" type="float" value="70"/>
+    <property name="WindBreadthParticleGrids" type="int" value="10"/>
+    <property name="WindLength" type="float" value="100"/>
+    <property name="WindLengthParticleGrids" type="int" value="10"/>
+    <property name="WindParticleTexture" value="1"/>
+    <property name="WindStrength" type="float" value="5"/>
+    <property name="WindTexture" value="1"/>
    </properties>
   </object>
  </objectgroup>

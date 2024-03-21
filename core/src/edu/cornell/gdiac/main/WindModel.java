@@ -1,16 +1,19 @@
 package edu.cornell.gdiac.main;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.PolygonRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
+import edu.cornell.gdiac.util.MathUtil;
 
 /**
- * Wrapper around wind particle initialization and organization.
- * Contains state of the wind as a collection of particles, including the wind container texture.
+ * Wrapper around wind particle initialization and organization. Contains state of the wind as a
+ * collection of particles, including the wind container texture.
  */
 public class WindModel {
+
   final private float DEFAULT_WIND_STRENGTH = 10.0f;
   final private WindType DEFAULT_WIND_TYPE = WindType.Constant;
   /**
@@ -30,6 +33,7 @@ public class WindModel {
   private float windStrength = DEFAULT_WIND_STRENGTH;
   private WindType windType = DEFAULT_WIND_TYPE;
   private WindSide windSide;
+  private PolygonRegion windPolyTexture;
   private TextureRegion windTexture;
   private TextureRegion windParticleTexture;
   /**
@@ -42,11 +46,15 @@ public class WindModel {
   private float windLength;
   private WindParticleModel[] windParticles;
   private PolygonShape windShape;
+  /**
+   * Rotates wind windRotations about wind source
+   */
   private float windRotation;
   private boolean isWindOn;
   private int numWindParticles;
   private int windLengthParticleGrids;
   private int windBreadthParticleGrids;
+  private Vector2 drawScale;
 
   WindModel() {
     windFixtureDef = new FixtureDef();
@@ -59,26 +67,30 @@ public class WindModel {
     windForceCache = new Vector2();
 
     // Default wind color
-    windColor = new Color((float) Math.random() * 0.5f, (float) Math.random() * 0.5f, (float) Math.random(), 0.05f);
+    windColor = new Color((float) Math.random() * 0.5f, (float) Math.random() * 0.5f,
+        (float) Math.random(), 0.05f);
   }
 
   /**
-   * Set wind fields
+   * Set wind fields. Note: changing or creating a new wind can only use this method to set wind
+   * state Note: we are not concerned with rotation, which should indirectly set shape points. All
+   * we are doing is initialize the wind model in the right, 0-degree rotation orientation.
    */
   public void initialize(
-    float windSourceX,
-    float windSourceY,
-    float windBreadth,
-    float windLength,
-    float windStrength,
-    float windRotation,
-    int numWindParticles,
-    int windLengthParticleGrids,
-    int windBreadthParticleGrids,
-    WindSide windSide,
-    WindType windType,
-    TextureRegion windTexture,
-    TextureRegion windParticleTexture
+      float windSourceX,
+      float windSourceY,
+      float windBreadth,
+      float windLength,
+      float windStrength,
+      float windRotation,
+      int numWindParticles,
+      int windLengthParticleGrids,
+      int windBreadthParticleGrids,
+      WindSide windSide,
+      WindType windType,
+      TextureRegion windTexture,
+      TextureRegion windParticleTexture,
+      Vector2 drawScale
   ) {
 
     this.windBreadth = windBreadth;
@@ -92,6 +104,7 @@ public class WindModel {
     this.numWindParticles = numWindParticles;
     this.windLengthParticleGrids = windLengthParticleGrids;
     this.windBreadthParticleGrids = windBreadthParticleGrids;
+    this.drawScale = drawScale;
     this.windSource.set(windSourceX, windSourceY);
 
     float breadth2 = windBreadth / 2;
@@ -115,39 +128,41 @@ public class WindModel {
 
     windShape = new PolygonShape();
     windShape.setAsBox(
-      length2,
-      breadth2,
-      new Vector2(windCenter.x - windSource.x, windCenter.y - windSource.y),
-      (float) (windRotation / (Math.PI / 2))
+        length2,
+        breadth2,
+        new Vector2(windCenter.x - windSource.x, windCenter.y - windSource.y),
+        windRotation
     );
     windFixtureDef.shape = windShape;
 
-    assert numWindParticles > 0;
-    if (numWindParticles > 0) {
-      windParticles = new WindParticleModel[numWindParticles];
-    }
-
-    createWindParticles();
+    initWindParticles();
+    initDrawing();
   }
 
   /**
    * Creates wind particles depending on wind initialization information
    */
-  private void createWindParticles() {
+  private void initWindParticles() {
     // Standard is to uniformly spread particles (static fixtures right now)
-    if (numWindParticles == 0) {
+    if (numWindParticles <= 0) {
       return;
     }
 
+    windParticles = new WindParticleModel[numWindParticles];
+
     if (windBreadthParticleGrids == 0 && windLengthParticleGrids == 0) {
-      windBreadthParticleGrids = windLengthParticleGrids = (int) Math.ceil(Math.sqrt(numWindParticles));
+      windBreadthParticleGrids = windLengthParticleGrids = (int) Math.ceil(
+          Math.sqrt(numWindParticles));
     } else {
+      // Find the size of grids that occupy the wind length
       windLengthParticleGrids = windLengthParticleGrids == 0 ?
-        (int) Math.ceil((float) numWindParticles / windBreadthParticleGrids) :
-        windLengthParticleGrids;
+          (int) Math.ceil((float) numWindParticles / windBreadthParticleGrids) :
+          windLengthParticleGrids;
+
+      // Size of breadth grids
       windBreadthParticleGrids = windBreadthParticleGrids == 0 ?
-        (int) Math.ceil((float) numWindParticles / windLengthParticleGrids) :
-        windBreadthParticleGrids;
+          (int) Math.ceil((float) numWindParticles / windLengthParticleGrids) :
+          windBreadthParticleGrids;
     }
 
     // Grids should apply ample space for desired number of wind particles
@@ -157,9 +172,8 @@ public class WindModel {
     int windParticleIndex = 0;
     float windBreadthGridDist = windBreadth / windBreadthParticleGrids;
     float windLengthGridDist = windLength / windLengthParticleGrids;
-    // Bottom vertex of wind (not fan) dimensions corresponding to wind source origin
-    float windSourceBottomX = windSource.x;
-    float windSourceBottomY = windSource.y - windBreadth / 2;
+
+    // Create wind particles
     for (int breadthIndex = 0; breadthIndex < windBreadthParticleGrids; breadthIndex++) {
       for (int lengthIndex = 0; lengthIndex < windLengthParticleGrids; lengthIndex++) {
         if (windParticleIndex >= numWindParticles) {
@@ -167,16 +181,56 @@ public class WindModel {
         }
 
         WindParticleModel windParticle = new WindParticleModel(
-          windType,
-          windParticleTexture,
-          windLengthGridDist,
-          windBreadthGridDist,
-          (windSide == WindSide.LEFT ? -1 : 1) * lengthIndex * windLengthGridDist,
-          windBreadthGridDist / 2 + breadthIndex * windBreadthGridDist - windBreadth / 2
+            windType,
+            windParticleTexture,
+            windLengthGridDist,
+            windBreadthGridDist,
+            (windSide == WindSide.LEFT ? -1 : 1) * lengthIndex * windLengthGridDist,
+            windBreadthGridDist / 2 + breadthIndex * windBreadthGridDist - windBreadth / 2
         );
+
         windParticles[windParticleIndex++] = windParticle;
       }
     }
+  }
+
+  /**
+   * Drawing and texture initialization logic
+   */
+  public void initDrawing() {
+    boolean shouldFlipX = windSide == WindSide.LEFT;
+    windTexture.flip(shouldFlipX, false);
+    windTexture.setRegion(0, 0, windLength / 2, windBreadth / 2);
+    windTexture.setRegionWidth((int) (windLength * drawScale.x));
+    windTexture.setRegionHeight((int) (windBreadth * drawScale.y));
+
+    int numVertices = windShape.getVertexCount();
+    float[] scaled = new float[numVertices * 2];
+    short[] tris = {0, 1, 3, 3, 2, 1};
+    Vector2 tempPoint = new Vector2();
+
+    // Weird, but polygon shape gets rotated about its origin, so it is not relative to the windSource origin: does not treat it as (0,0)
+    // Solution is to shift the reference point that was once the origin (in the default right, 0 degree orientation)
+    // Reference point is the average of the first and last point
+    windShape.getVertex(0, tempPoint);
+    float shiftX = tempPoint.x;
+    float shiftY = tempPoint.y;
+    windShape.getVertex(numVertices - 1, tempPoint);
+    shiftX += tempPoint.x;
+    shiftY += tempPoint.y;
+    shiftX /= 2;
+    shiftY /= 2; // shift is now the average of the first and last points
+
+    for (int ii = 0; ii < scaled.length; ii++) {
+      if (ii % 2 == 0) {
+        windShape.getVertex(ii / 2, tempPoint);
+        scaled[ii] = (tempPoint.x - shiftX) * drawScale.x;
+      } else {
+        scaled[ii] = (tempPoint.y - shiftY) * drawScale.y;
+      }
+    }
+
+    windPolyTexture = new PolygonRegion(windTexture, scaled, tris);
   }
 
   public FixtureDef getFixtureDef() {
@@ -195,7 +249,6 @@ public class WindModel {
   }
 
   /**
-   * // TODO: Can be refactored with binding drawing with wind region coordinates
    * Draws the wind container and particles
    */
   protected void draw(GameCanvas canvas, Vector2 drawScale) {
@@ -203,29 +256,21 @@ public class WindModel {
       return;
     }
 
-    boolean shouldFlipX = windSide == WindSide.LEFT;
-    windTexture.flip(shouldFlipX, false);
-    windTexture.setRegion(0, 0, windLength / 2, windBreadth / 2);
-
-    // TODO: Figure out asset rotation
-    // TODO: find how to set texture origin
     canvas.draw(
-      windTexture,
-      windColor,
-      0,
-      0,
-      windSource.x * drawScale.x,
-      (windSource.y - windBreadth / 2) * drawScale.y,
-      (shouldFlipX ? -1 : 1) * windLength * drawScale.x,
-      windBreadth * drawScale.y
+        windPolyTexture,
+        windColor,
+        windSource.x * drawScale.x,
+        windSource.y * drawScale.y,
+        (windSide == WindSide.LEFT ? -1 : 1) * windLength * drawScale.x,
+        (windSide == WindSide.LEFT ? -1 : 1) * windBreadth * drawScale.y
     );
 
     // Draw particles
     if (windParticles != null) {
-      for (int i = 0; i < windParticles.length; i++) {
-        windParticles[i].draw(
-          canvas,
-          drawScale
+      for (WindParticleModel windParticle : windParticles) {
+        windParticle.draw(
+            canvas,
+            drawScale
         );
       }
     }
@@ -249,15 +294,18 @@ public class WindModel {
   }
 
   /**
-   * Wrapper around wind particle fixture def that holds wind force behavior. Note that this is not concerned
-   * with when to apply the force and merely contains logic for what kind of wind force is applied.
+   * Wrapper around wind particle fixture def that holds wind force behavior. Note that this is not
+   * concerned with when to apply the force and merely contains logic for what kind of wind force is
+   * applied.
    */
   public class WindParticleModel {
+
     final private FixtureDef particleFixtureDef;
     final private PolygonShape particleShape;
     final private Color particleColor;
     /**
-     * Separate wind type and texture parameter sas different particles can potentially have different behaviors
+     * Separate wind type and texture parameter sas different particles can potentially have
+     * different behaviors
      */
     private WindType windType;
     private TextureRegion particleTexture;
@@ -267,7 +315,8 @@ public class WindModel {
      */
     private float posX, posY;
 
-    public WindParticleModel(WindType windType, TextureRegion particleTexture, float width, float height, float posX, float posY) {
+    public WindParticleModel(WindType windType, TextureRegion particleTexture, float width,
+        float height, float posX, float posY) {
       this.windType = windType;
       this.particleTexture = particleTexture;
       this.width = width;
@@ -275,14 +324,15 @@ public class WindModel {
       this.posX = posX;
       this.posY = posY;
 
-      particleColor = new Color((float) Math.random() * 0.5f, (float) Math.random() * 0.5f, (float) Math.random(), 0.05f);
+      particleColor = new Color((float) Math.random() * 0.5f, (float) Math.random() * 0.5f,
+          (float) Math.random(), 0.05f);
 
       particleShape = new PolygonShape();
       particleShape.setAsBox(
-        width / 2,
-        height / 2,
-        new Vector2(posX, posY),
-        (float) (windRotation / (Math.PI / 2))
+          width / 2,
+          height / 2,
+          new Vector2(posX, posY),
+          windRotation
       );
 
       particleFixtureDef = new FixtureDef();
@@ -297,36 +347,41 @@ public class WindModel {
      * @return wind force applied to the object at contact position
      */
     public Vector2 getForce(float x, float y) {
-      // TODO: Calculate difference between x, y and wind source + depending on wind type --> find force
       if (!isWindOn) {
         assert windForceCache.x == 0 && windForceCache.y == 0;
         return windForceCache;
       }
 
-      // TODO: Figure why forces are not accurate here
+      // Use force cache to temporarily store
       float normX = x - windSource.x;
       float normY = y - windSource.y;
-      float norm = (float) Math.sqrt(normX * normX + normY * normY);
-      normX /= norm;
-      normY /= norm;
+      windForceCache.set(normX, normY);
+      // Distance from wind source
+      float norm = MathUtil.getMagnitude(windForceCache);
+      float proximityRatio = Math.min(norm / windLength, 1);
 
-      // TODO: Temporarily set to pure directional force (will need to change if rotation exists)
+      // Set the wind direction
       windForceCache.set(
-        windSide == WindSide.LEFT ? -1 : windSide == WindSide.RIGHT ? 1 : 0,
-        0);
+          (float) Math.cos(windRotation),
+          (float) Math.sin(windRotation));
+
+      // Opposite force if left side
+      windForceCache.scl((windSide == WindSide.LEFT ? -1 : 1));
 
       switch (windType) {
         case Constant:
           windForceCache.scl(windStrength);
           break;
         case Exponential:
-          // TODO: Implement
-          // float decayRate = 0.5f;
-//        float decayScale = (float) Math.exp(-decayRate * norm / windLength);
-//        windForceCache.scl(windStrength * decayScale);
+          // TODO: Currently defaults to 0.5, could possibly set this in Tiled?
+          float decayRate = 0.5f;
+          float decayScale = (float) Math.exp(-decayRate * proximityRatio);
+          windForceCache.scl(windStrength * decayScale);
+          break;
         default:
-          // TODO: Implement
-//
+          // Natural wind physics
+          float dampingFactor = (float) Math.pow(1 - proximityRatio, 2);
+          windForceCache.scl(windStrength * windStrength * dampingFactor);
           break;
       }
 
@@ -342,21 +397,7 @@ public class WindModel {
         return;
       }
 
-      boolean shouldFlipX = windSide == WindSide.LEFT;
-      particleTexture.flip(shouldFlipX, false);
-      particleTexture.setRegion(0, 0, width / 2, height / 2);
-
-      // TODO: Figure out asset rotation (how to set texture origin)
-      canvas.draw(
-        particleTexture,
-        particleColor,
-        0,
-        0,
-        (windSource.x + posX) * drawScale.x,
-        (windSource.y + posY - height / 2) * drawScale.y,
-        (shouldFlipX ? -1 : 1) * width * drawScale.x,
-        height * drawScale.y
-      );
+      // TODO: Draw based on vertices of shape in the future (animation)
     }
   }
 }

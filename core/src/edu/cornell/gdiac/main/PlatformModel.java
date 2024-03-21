@@ -195,17 +195,19 @@ public class PlatformModel extends BoxObstacle {
    * @param x              x position of the tile (unscaled, just based on where it is in Tiled)
    * @param y              y position of the tile (unscaled, just based on where it is in Tiled)
    * @param directory      asset directory
-   * @param tilekey        the key to the texture that is associated with the tile
+   * @param tileKey        the key to the texture that is associated with the tile
    * @param tileProperties the properties of the tile as a JSON value
    */
   public void initializeAsTile(float x, float y, float tileSize, AssetDirectory directory,
-      String tilekey,
+      String tileKey,
       JsonValue tileProperties) {
     // Use the scale to convert pixel positions to box 2D positions
-    setPosition(x * (1 / drawScale.x), y * (1 / drawScale.y));
-    setDimension(tileSize * ((float) 1 / drawScale.x), tileSize * ((float) 1 / (drawScale.y)));
+    float pixelScaleX = 1 / drawScale.x;
+    float pixelScaleY = 1 / drawScale.y;
+    setPosition(x * pixelScaleX, y * pixelScaleY);
+    setDimension(tileSize * pixelScaleX, tileSize * pixelScaleY);
     setBodyType(BodyType.StaticBody);
-    TextureRegion textureRegion = new TextureRegion(directory.getEntry(tilekey, Texture.class));
+    TextureRegion textureRegion = new TextureRegion(directory.getEntry(tileKey, Texture.class));
     setTexture(textureRegion);
     Color debugColor = null;
     int debugOpacity = -1;
@@ -249,6 +251,7 @@ public class PlatformModel extends BoxObstacle {
    */
   public void draw(GameCanvas canvas) {
     // draw must be offset by 8 both ways, not really sure why right now
+    // TODO: Maybe something to do with tilesize being 16 => 16 /2
     if (region != null) {
       canvas.draw(
           texture, (getX()) * drawScale.x - 8, (getY() * drawScale.y) - 8);
