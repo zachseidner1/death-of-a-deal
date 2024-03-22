@@ -154,10 +154,10 @@ public class InputController {
             timerActive = !timerActive;
             return true;
           case Keys.N:
-            pastLevel = true;
+            nextLevel = true;
             return true;
           case Keys.P:
-            nextLevel = true;
+            pastLevel = true;
             return true;
         }
         return false;

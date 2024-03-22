@@ -408,7 +408,7 @@ public class GameController implements Screen {
     if (input.getTimerActive()) {
       timer -= dt;
       avatar.setFrozen(input.getFrozen());
-      if (!isFailure() && timer <= 1) {
+      if (!isFailure() && timer <= 0) {
         setFailure(true);
       }
 
@@ -454,7 +454,7 @@ public class GameController implements Screen {
       canvas.begin();
       String message = "";
       if (input.getTimerActive()) {
-        message = "Timer: " + (int) timer;
+        message = "Timer: " + (int) Math.ceil(timer);
       }
       canvas.drawText(message, displayFont, canvas.getWidth() / 2f - 380, canvas.getHeight() - 120);
       canvas.drawText("L" + levelNumber, displayFont, canvas.getWidth() / 1.75f,

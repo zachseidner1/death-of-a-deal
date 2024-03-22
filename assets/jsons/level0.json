@@ -313,7 +313,7 @@
                  "rotation":0,
                  "type":"Bounce",
                  "visible":true,
-                 "width":48,
+                 "width":64,
                  "x":160,
                  "y":448
                 }, 
