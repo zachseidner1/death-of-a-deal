@@ -76,6 +76,10 @@ public class LevelModel {
    */
   private PlayerModel avatar;
   /**
+   * Reference to the npc
+   */
+  private NPCModel npc;
+  /**
    * Reference to the bounce pad (for collision detection)
    */
   private BouncePlatformModel bouncePlatformModel;
@@ -91,6 +95,11 @@ public class LevelModel {
    * Whether or not the level is completed
    */
   private boolean complete;
+
+  /**
+   * Whether or not the level is failed
+   */
+  private boolean failure;
   /**
    * Time limit for the level
    */
@@ -152,6 +161,15 @@ public class LevelModel {
   }
 
   /**
+   * Returns a reference to the player avatar
+   *
+   * @return a reference to the player avatar
+   */
+  public NPCModel getNPC() {
+    return npc;
+  }
+
+  /**
    * Returns a reference to the exit door
    *
    * @return a reference to the exit door
@@ -200,6 +218,24 @@ public class LevelModel {
    */
   public void setComplete(boolean value) {
     complete = value;
+  }
+
+  /**
+   * Return level fail state to caller
+   *
+   * @return
+   */
+  public boolean getFailure() {
+    return failure;
+  }
+
+  /**
+   * Set the level to complete state or non-complete state
+   *
+   * @param value
+   */
+  public void setFailure(boolean value) {
+    failure = value;
   }
 
   /**
@@ -354,6 +390,12 @@ public class LevelModel {
           avatar.setDrawScale(scale);
           avatar.initialize(directory, objects, gSizeY);
           activate(avatar);
+          break;
+        case "npc":
+          npc = new NPCModel();
+          npc.setDrawScale(scale);
+          npc.initialize(directory, objects, gSizeY);
+          activate(npc);
           break;
         case "exit":
           goalDoor = new ExitModel();

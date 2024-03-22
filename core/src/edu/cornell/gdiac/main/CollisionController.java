@@ -49,13 +49,13 @@ public class CollisionController implements ContactListener {
     if (slopeAngle >= 0 && slopeAngle <= Math.PI) {
       // Slope is pointing down left
       v2Cache.set(
-        (float) -Math.cos(slopeAngle) * forceMagnitude,
-        (float) -Math.sin(slopeAngle) * forceMagnitude
+          (float) -Math.cos(slopeAngle) * forceMagnitude,
+          (float) -Math.sin(slopeAngle) * forceMagnitude
       );
     } else {
       // Slope is pointing down right
       v2Cache.set((float) Math.cos(slopeAngle) * forceMagnitude,
-        (float) Math.sin(slopeAngle) * forceMagnitude);
+          (float) Math.sin(slopeAngle) * forceMagnitude);
     }
   }
 
@@ -81,6 +81,7 @@ public class CollisionController implements ContactListener {
 
       PlayerModel avatar = level.getAvatar();
       BoxObstacle door = level.getExit();
+      NPCModel npc = level.getNPC();
 
       // Handle beginning of fixture sensor contact
       onBoxFixtureSensorContact(true, fix1, fix2);
@@ -90,17 +91,25 @@ public class CollisionController implements ContactListener {
 
       // See if we have landed on the ground
       if (!isWindContact &&
-        (fd2 instanceof PlayerModel.GroundSensor && bd1 != avatar && !fix1.isSensor()) ||
-        (fd1 instanceof PlayerModel.GroundSensor && bd2 != avatar && !fix2.isSensor())) {
+          (fd2 instanceof PlayerModel.GroundSensor && bd1 != avatar && !fix1.isSensor()) ||
+          (fd1 instanceof PlayerModel.GroundSensor && bd2 != avatar && !fix2.isSensor())) {
         avatar.setGrounded(true);
         sensorFixtures.add(avatar == bd1 ? fix2 : fix1);
       }
 
       // Check for win condition
-      if ((bd1 == avatar && bd2 == door) ||
-        (bd1 == door && bd2 == avatar)) {
+      if ((bd1 == avatar && bd2 == npc) ||
+          (bd1 == npc && bd2 == avatar)) {
         level.setComplete(true);
+        npc.setStop(true);
       }
+
+      // Check for lose condition
+      if ((bd1 == door && bd2 == npc) ||
+          (bd1 == npc && bd2 == door)) {
+        level.setFailure(true);
+      }
+
 
     } catch (Exception e) {
       e.printStackTrace();
@@ -111,7 +120,7 @@ public class CollisionController implements ContactListener {
    * Handles potential wind contact, returning whether we indeed had contact
    */
   private boolean handleWindContact(Contact contact, Fixture fix1, Fixture fix2, Obstacle bd2,
-                                    Obstacle bd1) {
+      Obstacle bd1) {
     boolean is1WindFixture = fix1.getUserData() instanceof WindParticleModel;
     boolean is2WindFixture = fix2.getUserData() instanceof WindParticleModel;
     WindParticleModel windParticle = null;
@@ -138,7 +147,7 @@ public class CollisionController implements ContactListener {
     }
 
     return is1WindFixture || is2WindFixture || fix1.getUserData() instanceof WindModel
-      || fix2.getUserData() instanceof WindModel;
+        || fix2.getUserData() instanceof WindModel;
   }
 
   /**
@@ -163,7 +172,7 @@ public class CollisionController implements ContactListener {
 
     PlayerModel avatar = level.getAvatar();
     if ((fd2 instanceof PlayerModel.GroundSensor && avatar != bd1) ||
-      (fd1 instanceof PlayerModel.GroundSensor && avatar != bd2)) {
+        (fd1 instanceof PlayerModel.GroundSensor && avatar != bd2)) {
       sensorFixtures.remove(avatar == bd1 ? fix2 : fix1);
       if (sensorFixtures.size == 0) {
         avatar.setGrounded(false);
@@ -227,8 +236,8 @@ public class CollisionController implements ContactListener {
         if (plyr.getIsFrozen()) {
           contact.setRestitution(c);
           bplt.setMaxSpeed(
-            Math.max(bplt.getDefaultMaxSpeed(),
-              Math.max(Math.abs(plyr.getVX()), Math.abs(plyr.getVY())))
+              Math.max(bplt.getDefaultMaxSpeed(),
+                  Math.max(Math.abs(plyr.getVX()), Math.abs(plyr.getVY())))
           );
         }
       }
@@ -243,8 +252,8 @@ public class CollisionController implements ContactListener {
         if (bd1 instanceof BreakablePlatformModel) {
           BreakablePlatformModel breakablePlatform = (BreakablePlatformModel) bd1;
           if ((MathUtil.getMagnitude(plyr.getLinearVelocity())
-            > breakablePlatform.getBreakMinVelocity() && plyr.getIsFrozen())
-            || breakablePlatform.isBroken()
+              > breakablePlatform.getBreakMinVelocity() && plyr.getIsFrozen())
+              || breakablePlatform.isBroken()
           ) {
             breakablePlatform.setBroken(true);
             contact.setEnabled(false);
@@ -255,8 +264,8 @@ public class CollisionController implements ContactListener {
         if (bd1 instanceof BreakablePlatformModel) {
           BreakablePlatformModel breakablePlatform = (BreakablePlatformModel) bd1;
           if ((MathUtil.getMagnitude(plyr.getLinearVelocity())
-            > breakablePlatform.getBreakMinVelocity() && plyr.getIsFrozen())
-            || breakablePlatform.isBroken()
+              > breakablePlatform.getBreakMinVelocity() && plyr.getIsFrozen())
+              || breakablePlatform.isBroken()
           ) {
             breakablePlatform.setBroken(true);
             contact.setEnabled(false);
@@ -309,7 +318,7 @@ public class CollisionController implements ContactListener {
       Obstacle bd2 = (Obstacle) body2.getUserData();
 
       if ((bd1.equals(plyr) && bd2 instanceof SlopeModel) || (bd2.equals(plyr)
-        && bd1 instanceof SlopeModel)) {
+          && bd1 instanceof SlopeModel)) {
         SlopeModel slope = (bd1 instanceof SlopeModel) ? (SlopeModel) bd1 : (SlopeModel) bd2;
 
         // Only add extra force when player is frozen
