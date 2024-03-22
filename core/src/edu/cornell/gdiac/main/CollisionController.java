@@ -100,7 +100,9 @@ public class CollisionController implements ContactListener {
       // Check for win condition
       if ((bd1 == avatar && bd2 == npc) ||
           (bd1 == npc && bd2 == avatar)) {
-        level.setComplete(true);
+        if (!level.getFailure()) {
+          level.setComplete(true);
+        }
         npc.setStop(true);
       }
 
@@ -108,6 +110,7 @@ public class CollisionController implements ContactListener {
       if ((bd1 == door && bd2 == npc) ||
           (bd1 == npc && bd2 == door)) {
         level.setFailure(true);
+        npc.setStop(true);
       }
 
 
