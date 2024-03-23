@@ -54,8 +54,6 @@ public class TiledJsonParser {
   public static TextureRegion windParticleTexture;
   public static float[] points;
 
-  // TODO: Add specific json fields (with custom logic) + other general types, and this will use type parameter to parse the tiled json
-
   /**
    * Parses json and initializes the obstacle's properties
    *
@@ -221,7 +219,6 @@ public class TiledJsonParser {
           break;
         case "sensorsizex":
           sensorSizeX = properties.getFloat("value");
-          System.out.println("sensorsizex");
           break;
         case "sensorsizey":
           Vector2 sensorCenter = new Vector2(0, -player.getHeight() / 2);
