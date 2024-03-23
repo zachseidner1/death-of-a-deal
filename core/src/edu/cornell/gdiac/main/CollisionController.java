@@ -224,12 +224,24 @@ public class CollisionController implements ContactListener {
       if (bd1 instanceof BouncePlatformModel) {
         BouncePlatformModel bplt = (BouncePlatformModel) bd1;
         float c = bplt.getCoefficient();
+        boolean vertical=bplt.isVertical();
+        if (vertical&&(Math.abs(plyr.getPosition().x-bplt.getPosition().x)-(plyr.getWidth()+bplt.getWidth())/2f)+.1f<0){
         if (plyr.getIsFrozen()) {
           contact.setRestitution(c);
           bplt.setMaxSpeed(
             Math.max(bplt.getDefaultMaxSpeed(),
               Math.max(Math.abs(plyr.getVX()), Math.abs(plyr.getVY())))
           );
+        }
+        }
+        else if (!vertical&&(Math.abs(plyr.getPosition().y-bplt.getPosition().y)-(plyr.getHeight()+bplt.getHeight())/2f)+.03f<0){
+          if (plyr.getIsFrozen()) {
+            contact.setRestitution(c);
+            bplt.setMaxSpeed(
+                Math.max(bplt.getDefaultMaxSpeed(),
+                    Math.max(Math.abs(plyr.getVX()), Math.abs(plyr.getVY())))
+            );
+          }
         }
       }
     }
