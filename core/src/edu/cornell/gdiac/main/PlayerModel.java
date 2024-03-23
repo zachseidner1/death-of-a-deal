@@ -388,12 +388,12 @@ public class PlayerModel extends CapsuleObstacle {
   }
 
   /**
-   * Sets sensor shape
-   *
-   * @param shape the shape to set the sensor shape to
+   * Sets sensor shape as box
    */
-  public void setSensorShape(PolygonShape shape) {
-    sensorShape = shape;
+  public void setSensorShape(float sensorSizeX, float sensorSizeY, Vector2 sensorCenter,
+      float angle) {
+    sensorShape = new PolygonShape();
+    sensorShape.setAsBox(sensorSizeX, sensorSizeY, sensorCenter, angle);
   }
 
   /**
@@ -499,6 +499,7 @@ public class PlayerModel extends CapsuleObstacle {
           break;
         case "sensorsizex":
           sensorSizeX = properties.getFloat("value");
+          break;
         case "sensorsizey":
           Vector2 sensorCenter = new Vector2(0, -getHeight() / 2);
           float sSizeY = properties.getFloat("value");
@@ -528,8 +529,10 @@ public class PlayerModel extends CapsuleObstacle {
           break;
         case "fallMultiplier":
           fallMultiplier = properties.getFloat("value");
+          break;
         case "lowJumpMultiplier":
           lowJumpMultiplier = properties.getFloat("value");
+          break;
         default:
           break;
       }

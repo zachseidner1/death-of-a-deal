@@ -64,11 +64,11 @@ public class FanModel extends PlatformModel {
     this.periodOnRatio = periodOnRatio;
   }
 
-  public void setWindParticleFixtures(Fixture[] windParticleFixtures){
-    this.windParticleFixtures = windParticleFixtures;
+  public void setWindParticleFixtures(int numWindParticles){
+    windParticleFixtures = new Fixture[numWindParticles];
   }
 
-  public void setFanSide(WindModel.WindSide windSide){
+  public void setFanSide(WindSide windSide){
     fanSide = windSide;
   }
 
@@ -357,7 +357,7 @@ public class FanModel extends PlatformModel {
 
   @Override
   public void draw(GameCanvas canvas) {
-    canvas.draw(region, Color.BLUE, 0, 0, (getX() - anchor.x) * drawScale.x,
+    canvas.draw(region, Color.BLUE, 0, 0, (getX()- anchor.x) * drawScale.x,
       (getY() - anchor.y) * drawScale.y, getAngle(), 1, 1);
 
     if (isFanActive) {

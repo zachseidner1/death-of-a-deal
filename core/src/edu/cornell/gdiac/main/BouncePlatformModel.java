@@ -19,11 +19,14 @@ public class BouncePlatformModel extends PlatformModel {
 
   private float defaultMaxSpeed;
 
+  private int offsetX;
+
   public BouncePlatformModel() {
     super();
     region = null;
     bounceCoefficient = 0.0f;
     maxSpeed = 0;
+    offsetX = 16;
   }
 
   public float getCoefficient() {
@@ -45,6 +48,8 @@ public class BouncePlatformModel extends PlatformModel {
   public float getDefaultMaxSpeed() {
     return defaultMaxSpeed;
   }
+
+  public void setOffsetX(int offset) { offsetX = offset; }
 
   public void initialize(AssetDirectory directory, JsonValue json, int gSizeY) {
     float x = json.getFloat("x") * (1 / drawScale.x);

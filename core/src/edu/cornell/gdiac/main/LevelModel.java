@@ -352,11 +352,14 @@ public class LevelModel {
     while (objects != null) {
       switch (objects.getString("name")) {
         case "player":
-          avatar = new PlayerModel();
-          makeObject(avatar, directory, objects, tiledHeight);
+          PlayerModel player = new PlayerModel();
+          makeObject(player, directory, objects, tiledHeight);
+          avatar = player;
+          break;
         case "exit":
-          goalDoor = new ExitModel();
-          makeObject(goalDoor, directory, objects, tiledHeight);
+          ExitModel exit = new ExitModel();
+          makeObject(exit, directory, objects, tiledHeight);
+          goalDoor = exit;
           break;
         case "slope":
           SlopeModel slope = new SlopeModel();
@@ -365,6 +368,7 @@ public class LevelModel {
         case "fan":
           FanModel fan = new FanModel();
           makeObject(fan, directory, objects, tiledHeight);
+          fan.setFanActive(true);
           break;
         case "bounce":
           BouncePlatformModel bounce = new BouncePlatformModel();
