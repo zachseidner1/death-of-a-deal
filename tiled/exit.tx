@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+ <object name="exit" type="Exit" width="32" height="48">
+  <properties>
+   <property name="bodytype" value="static"/>
+   <property name="debugcolor" value="yellow"/>
+   <property name="debugopacity" type="int" value="200"/>
+   <property name="density" type="float" value="0"/>
+   <property name="friction" type="float" value="0"/>
+   <property name="restitution" type="float" value="0"/>
+   <property name="texture" value="goal"/>
+  </properties>
+ </object>
+</template>
