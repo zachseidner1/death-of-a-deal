@@ -45,16 +45,9 @@ public class SlopeModel extends PolygonObstacle {
    * <p>The JSON value has been parsed and is part of a bigger level file. However, this JSON value
    * is limited to the platform subtree
    *
-   * @param directory the asset manager
    * @param json      the JSON subtree defining the platform
    */
-  public void initialize(AssetDirectory directory, JsonValue json, int gSizeY) {
-    setName(json.getString("name"));
-
-    float x = json.getFloat("x") * (1 / drawScale.x);
-    float y = (gSizeY - json.getFloat("y")) * (1 / drawScale.y);
-    setPosition(x, y);
-
+  public void initialize(JsonValue json) {
     float[] points = new float[10];
     JsonValue polygon = json.get("polygon").child();
     int index = 0;
@@ -70,43 +63,8 @@ public class SlopeModel extends PolygonObstacle {
 
     JsonValue properties = json.get("properties").child();
     while (properties != null) {
-      switch (properties.getString("name")) {
-        case "bodytype":
-          setBodyType(properties.getString("value").equals("static") ? BodyDef.BodyType.StaticBody
-              : BodyDef.BodyType.DynamicBody);
-          break;
-        case "density":
-          setDensity(properties.getFloat("value"));
-          break;
-        case "friction":
-          setFriction(properties.getFloat("value"));
-          break;
-        case "restitution":
-          setRestitution(properties.getFloat("value"));
-          break;
-        case "debugcolor":
-          try {
-            String cname = properties.getString("value").toUpperCase();
-            Field field = Class.forName("com.badlogic.gdx.graphics.Color").getField(cname);
-            debugColor = new Color((Color) field.get(null));
-          } catch (Exception e) {
-            debugColor = null; // Not defined
-          }
-          break;
-        case "debugopacity":
-          int opacity = properties.getInt("value");
-          setDebugColor(debugColor.mul(opacity / 255.0f));
-          break;
-        case "texture":
-          String key = properties.getString("value");
-          TextureRegion texture = new TextureRegion(directory.getEntry(key, Texture.class));
-          setTexture(texture);
-          break;
-        case "frozenimpulse":
-          this.frozenImpulse = properties.getFloat("value");
-          break;
-        default:
-          break;
+      if (properties.getString("name").equals("frozenImpulse")){
+        frozenImpulse = properties.getFloat("value");
       }
 
       properties = properties.next();

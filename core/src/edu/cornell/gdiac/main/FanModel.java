@@ -56,27 +56,6 @@ public class FanModel extends PlatformModel {
     wind = new WindModel();
   }
 
-  public void setPeriod(float period){
-    this.period = period;
-  }
-
-  public void setPeriodOnRatio(float periodOnRatio){
-    this.periodOnRatio = periodOnRatio;
-  }
-
-  public void setWindParticleFixtures(int numWindParticles){
-    windParticleFixtures = new Fixture[numWindParticles];
-  }
-
-  public void setFanSide(WindSide windSide){
-    fanSide = windSide;
-  }
-
-  public void setWind(WindModel wind){
-    this.wind = wind;
-  }
-
-
 
   /**
    * Initializes the fan platform via the given JSON value
@@ -88,21 +67,6 @@ public class FanModel extends PlatformModel {
    * @param json      the JSON subtree defining the platform
    */
   public void initialize(AssetDirectory directory, JsonValue json, int gSizeY) {
-    setName(json.getString("name"));
-
-    float scaleFactorX = 1 / drawScale.x;
-    float scaleFactorY = 1 / drawScale.y;
-
-    float width = json.getFloat("width") * scaleFactorX;
-    float height = json.getFloat("height") * scaleFactorY;
-    setDimension(width, height);
-
-    // Note: (x, y) is top-left most point
-    float x = json.getFloat("x") * scaleFactorX;
-    float y = (gSizeY - json.getFloat("y")) * scaleFactorY;
-    setPosition(x + width / 2, y - height / 2);
-
-    // TODO: Implement rotation
     float rotation = -1 * json.getFloat("rotation") / (float) (Math.PI / 2);
     setAngle(rotation);
 
@@ -117,19 +81,6 @@ public class FanModel extends PlatformModel {
     JsonValue properties = json.get("properties").child();
     while (properties != null) {
       switch (properties.getString("name")) {
-        case "bodytype":
-          setBodyType(properties.getString("value").equals("static") ? BodyDef.BodyType.StaticBody
-            : BodyDef.BodyType.DynamicBody);
-          break;
-        case "debugcolor":
-          try {
-            String cname = properties.getString("value").toUpperCase();
-            Field field = Class.forName("com.badlogic.gdx.graphics.Color").getField(cname);
-            debugColor = new Color((Color) field.get(null));
-          } catch (Exception e) {
-            debugColor = null; // Not defined
-          }
-          break;
         case "Type":
           String type = properties.getString("value").toUpperCase();
           switch (type) {
@@ -150,11 +101,11 @@ public class FanModel extends PlatformModel {
           switch (side) {
             case "LEFT":
               fanSide = WindSide.LEFT;
-              windSource.set(x, y - height / 2);
+              windSource.set(getX(), getY() - getHeight() / 2);
               break;
             default:
               fanSide = WindSide.RIGHT;
-              windSource.set(x + width, y - height / 2);
+              windSource.set(getX() + getWidth(), getY() - getHeight() / 2);
               break;
           }
           break;
@@ -162,10 +113,10 @@ public class FanModel extends PlatformModel {
           windStrength = properties.getFloat("value");
           break;
         case "WindBreadth":
-          windBreadth = properties.getFloat("value") * scaleFactorX;
+          windBreadth = properties.getFloat("value") * (1/drawScale.x);
           break;
         case "WindLength":
-          windLength = properties.getFloat("value") * scaleFactorY;
+          windLength = properties.getFloat("value") * (1/drawScale.y);
           break;
         case "NumWindParticles":
           numWindParticles = properties.getInt("value");

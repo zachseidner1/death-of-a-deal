@@ -19,14 +19,11 @@ public class BouncePlatformModel extends PlatformModel {
 
   private float defaultMaxSpeed;
 
-  private int offsetX;
-
   public BouncePlatformModel() {
     super();
     region = null;
     bounceCoefficient = 0.0f;
     maxSpeed = 0;
-    offsetX = 16;
   }
 
   public float getCoefficient() {
@@ -49,15 +46,14 @@ public class BouncePlatformModel extends PlatformModel {
     return defaultMaxSpeed;
   }
 
-  public void setOffsetX(int offset) { offsetX = offset; }
-
-  public void initialize(AssetDirectory directory, JsonValue json, int gSizeY) {
-    float x = json.getFloat("x") * (1 / drawScale.x);
-    float y = (gSizeY - json.getFloat("y")) * (1 / drawScale.y);
-
+  public void initialize(AssetDirectory directory, JsonValue json, int tHeight) {
+    int offset = 16;
+    if (json.getFloat("x") == 0.0f) {
+      offset = 0;
+    }
+    float x = (json.getFloat("x") + offset) * (1 / drawScale.x);
+    float y = (tHeight - json.getFloat("y") + 16) * (1 / drawScale.y);
     setPosition(x, y);
-    setDimension(json.getFloat("width") * (1 / drawScale.x),
-        json.getFloat("height") * (1 / drawScale.y));
     JsonValue properties = json.get("properties").child();
 
     String key = json.getString("gid");
@@ -67,32 +63,6 @@ public class BouncePlatformModel extends PlatformModel {
 
     while (properties != null) {
       switch (properties.getString("name")) {
-        case "bodytype":
-          setBodyType(properties.getString("value").equals("static") ? BodyDef.BodyType.StaticBody
-              : BodyDef.BodyType.DynamicBody);
-          break;
-        case "density":
-          setDensity(properties.getFloat("value"));
-          break;
-        case "friction":
-          setFriction(properties.getFloat("value"));
-          break;
-        case "restitution":
-          setRestitution(properties.getFloat("value"));
-          break;
-        case "debugcolor":
-          try {
-            String cname = properties.getString("value").toUpperCase();
-            Field field = Class.forName("com.badlogic.gdx.graphics.Color").getField(cname);
-            debugColor = new Color((Color) field.get(null));
-          } catch (Exception e) {
-            debugColor = null; // Not defined
-          }
-          break;
-        case "debugopacity":
-          int opacity = properties.getInt("value");
-          setDebugColor(debugColor.mul(opacity / 255.0f));
-          break;
         case "max_speed":
           setMaxSpeed(properties.getFloat("value"));
           defaultMaxSpeed = properties.getFloat("value");

@@ -371,100 +371,12 @@ public class PlayerModel extends CapsuleObstacle {
     return faceRight;
   }
 
-  /**
-   * Returns the frozen texture
-   */
-  public TextureRegion getFrozenTexture() {
-    return frozenTexture;
-  }
 
-  /**
-   * Sets the texture for frozen player
-   *
-   * @param texture the texture to set frozenTexture to
-   */
-  public void setFrozenTexture(TextureRegion texture) {
-    frozenTexture = texture;
-  }
-
-  /**
-   * Sets sensor shape as box
-   */
-  public void setSensorShape(float sensorSizeX, float sensorSizeY, Vector2 sensorCenter,
-      float angle) {
-    sensorShape = new PolygonShape();
-    sensorShape.setAsBox(sensorSizeX, sensorSizeY, sensorCenter, angle);
-  }
-
-  /**
-   * Sets sensor color
-   *
-   * @param color the color to set the sensor color to
-   */
-  public void setSensorColor(Color color){
-    sensorColor = color;
-  }
-
-  /**
-   * Sets fall multiplier
-   *
-   * @param value the value to set the fall multiplier to
-   */
-  public void setFallMultiplier(float value){
-    fallMultiplier = value;
-  }
-
-  /**
-   * Sets low jump multiplier
-   *
-   * @param value the value to set the low jump multiplier
-   */
-  public void setLowJumpMultiplier(float value){
-    lowJumpMultiplier = value;
-  }
-  /**
-   * Initializes the player via the given JSON value
-   * <p>
-   * The JSON value has been parsed and is part of a bigger level file.  However, this JSON value is
-   * limited to the player subtree
-   *
-   * @param directory the asset manager
-   * @param json      the JSON subtree defining the player
-   */
   public void initialize(AssetDirectory directory, JsonValue json, int gSizeY) {
-    setName(json.get("name").asString());
-
-    // Set position and dimension
-    float x = json.getFloat("x") * (1 / drawScale.x);
-    float y = (gSizeY - json.getFloat("y")) * (1 / drawScale.y);
-
-    setPosition(x, y);
-    float width = json.getFloat("width") * (1 / drawScale.x);
-    float height = json.getFloat("height") * (1 / drawScale.y);
-    setDimension(width, height);
-
+    frozenTexture = new TextureRegion(directory.getEntry("frozen", Texture.class));
     JsonValue properties = json.get("properties").child();
-    Color debugColor = null;
-    int debugOpacity = -1;
     while (properties != null) {
       switch (properties.getString("name")) {
-        case "bodytype":
-          setBodyType(
-              properties.get("value").asString().equals("static") ? BodyDef.BodyType.StaticBody
-                  : BodyDef.BodyType.DynamicBody);
-          break;
-        case "density":
-          setDensity(properties.getFloat("value"));
-          break;
-        case "friction":
-          setFriction(properties.getFloat("value"));
-          break;
-        case "restitution":
-          setRestitution(properties.getFloat("value"));
-          break;
-        case "force":
-          setForce(properties.getFloat("value"));
-          break;
         case "damping":
           setDamping(properties.getFloat("value"));
           break;
@@ -476,26 +388,6 @@ public class PlayerModel extends CapsuleObstacle {
           break;
         case "jumplimit":
           setJumpLimit(properties.getInt("value"));
-          break;
-        case "debugcolor":
-          try {
-            String cname = properties.getString("value").toUpperCase();
-            Field field = Class.forName("com.badlogic.gdx.graphics.Color").getField(cname);
-            debugColor = new Color((Color) field.get(null));
-          } catch (Exception e) {
-            debugColor = null;
-          }
-          setDebugColor(debugColor);
-          break;
-        case "debugopacity":
-          debugOpacity = properties.getInt("value");
-          setDebugColor(getDebugColor().mul(debugOpacity / 255.0f));
-          break;
-        case "texture":
-          String key = properties.getString("value");
-          TextureRegion texture = new TextureRegion(directory.getEntry(key, Texture.class));
-          frozenTexture = new TextureRegion(directory.getEntry("frozen", Texture.class));
-          setTexture(texture);
           break;
         case "sensorsizex":
           sensorSizeX = properties.getFloat("value");
@@ -535,11 +427,6 @@ public class PlayerModel extends CapsuleObstacle {
           break;
         default:
           break;
-      }
-
-      if (debugOpacity != -1 && debugColor != null) {
-        debugColor.mul(debugOpacity / 255f);
-        setDebugColor(debugColor);
       }
 
       properties = properties.next();

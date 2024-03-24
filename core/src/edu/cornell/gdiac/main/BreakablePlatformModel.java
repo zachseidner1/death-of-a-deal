@@ -64,43 +64,12 @@ public class BreakablePlatformModel extends PlatformModel {
     int debugOpacity = -1;
     while (properties != null) {
       switch (properties.getString("name")) {
-        case "bodytype":
-          setBodyType(
-              properties.getString("value").equals("static") ? BodyDef.BodyType.StaticBody
-                  : BodyDef.BodyType.DynamicBody);
-          break;
-        case "density":
-          setDensity(properties.getFloat("value"));
-          break;
-        case "restitution":
-          setRestitution(properties.getFloat("value"));
-          break;
-        case "friction":
-          setFriction(properties.getFloat("value"));
-          break;
-        case "debugcolor":
-          try {
-            String cname = properties.get("value").asString().toUpperCase();
-            Field field = Class.forName("com.badlogic.gdx.graphics.Color").getField(cname);
-            debugColor = new Color((Color) field.get(null));
-          } catch (Exception e) {
-            debugColor = null; // Not defined
-          }
-          break;
-        case "debugopacity":
-          debugOpacity = properties.getInt("value");
-          break;
         case "breakminvelocity":
           setBreakMinVelocity(properties.getFloat("value"));
           break;
         default:
           break;
       }
-      if (debugOpacity != -1 && debugColor != null) {
-        debugColor.mul(debugOpacity / 255f);
-        setDebugColor(debugColor);
-      }
-
       properties = properties.next();
     }
   }
