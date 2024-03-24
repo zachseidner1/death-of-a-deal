@@ -22,7 +22,7 @@ import edu.cornell.gdiac.physics.obstacle.CapsuleObstacle;
 import java.lang.reflect.Field;
 
 /**
- * Player avatar for the plaform game.
+ * NPC Model Avatar for the plaform game.
  * <p>
  * Note that the constructor does very little.  The true initialization happens by reading the JSON
  * value.
@@ -86,34 +86,6 @@ public class NPCModel extends CapsuleObstacle {
     setDensity(1);
   }
 
-  /**
-   * Returns left/right movement of this character.
-   * <p>
-   * This is the result of input times player force.
-   *
-   * @return left/right movement of this character.
-   */
-  public float getMovement() {
-    return movement;
-  }
-
-  /**
-   * Sets left/right movement of this character.
-   * <p>
-   * This is the result of input times player force.
-   *
-   * @param value left/right movement of this character.
-   */
-  public void setMovement(float value) {
-    movement = value / 10F;
-    // Change facing if appropriate
-    if (movement < 0) {
-      faceRight = false;
-    } else if (movement > 0) {
-      faceRight = true;
-    }
-  }
-
   public void setStop(boolean stop) {
     isStop = stop;
   }
@@ -138,24 +110,6 @@ public class NPCModel extends CapsuleObstacle {
    */
   public void setForce(float value) {
     force = value;
-  }
-
-  /**
-   * Returns how hard the brakes are applied to get a player to stop moving
-   *
-   * @return how hard the brakes are applied to get a player to stop moving
-   */
-  public float getDamping() {
-    return damping;
-  }
-
-  /**
-   * Sets how hard the brakes are applied to get a player to stop moving
-   *
-   * @param value how hard the brakes are applied to get a player to stop moving
-   */
-  public void setDamping(float value) {
-    damping = value;
   }
 
   /**
@@ -223,9 +177,6 @@ public class NPCModel extends CapsuleObstacle {
         case "force":
           setForce(properties.getFloat("value"));
           break;
-        case "damping":
-          setDamping(properties.getFloat("value"));
-          break;
         case "maxspeed":
           setMaxSpeed(properties.getFloat("value"));
           break;
@@ -283,21 +234,21 @@ public class NPCModel extends CapsuleObstacle {
    * <p>
    * This method should be called after the force attribute is set.
    */
-  public void applyForce() {
-    // The speed the player wants to be at, indicated by their movement
+  public void applyMovement() {
     float targetSpeed = maxspeed;
     if (isStop) {
       targetSpeed = 0;
     }
-
+    // OPTION 1: Implement movement with force
     float accelRate = 1.2F;
-
-    // We move the player based on how far they are from their target speed
     float speedDif = targetSpeed - (getVX());
     float movement = speedDif * accelRate;
     v2Cache.set(movement, 0);
 
     body.applyForce(v2Cache, getPosition(), true);
+
+    // OPTION 2: Implement movement with set VX
+//    setVX(targetSpeed);
   }
 
   /**

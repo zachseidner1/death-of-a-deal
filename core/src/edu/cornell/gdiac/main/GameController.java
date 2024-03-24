@@ -434,7 +434,7 @@ public class GameController implements Screen {
 
     avatar.setFrozen(input.getFrozen());
     avatar.applyForce();
-    npc.applyForce();
+    npc.applyMovement();
   }
 
   /**
