@@ -3,10 +3,8 @@ package edu.cornell.gdiac.main;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.assets.AssetDirectory;
-import java.lang.reflect.Field;
 
 public class BouncePlatformModel extends PlatformModel {
 

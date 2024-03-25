@@ -5,27 +5,17 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.badlogic.gdx.physics.box2d.Fixture;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.main.BouncePlatformModel;
 import edu.cornell.gdiac.main.BreakablePlatformModel;
-import edu.cornell.gdiac.main.ExitModel;
 import edu.cornell.gdiac.main.FanModel;
 import edu.cornell.gdiac.main.PlayerModel;
 import edu.cornell.gdiac.main.SlopeModel;
-import edu.cornell.gdiac.main.WindModel;
-import edu.cornell.gdiac.main.WindModel.WindSide;
-import edu.cornell.gdiac.main.WindModel.WindType;
 import edu.cornell.gdiac.physics.obstacle.BoxObstacle;
 import edu.cornell.gdiac.physics.obstacle.CapsuleObstacle;
 import edu.cornell.gdiac.physics.obstacle.SimpleObstacle;
 import java.lang.reflect.Field;
-import javax.sql.rowset.BaseRowSet;
-import org.w3c.dom.Text;
 
 /**
  * Class that provides utility functions for parsing Tiled json and populating obstacles
@@ -95,12 +85,11 @@ public class TiledJsonParser {
     float y = json.getFloat("y");
     setSimpleObstaclePosition(obstacle, x, y);
 
-    if (!type.equals("slope")){
-      float width = json.getFloat("width") * (1/drawScale.x);
-      float height = json.getFloat("height") * (1/drawScale.y);
+    if (!type.equals("slope")) {
+      float width = json.getFloat("width") * (1 / drawScale.x);
+      float height = json.getFloat("height") * (1 / drawScale.y);
       setSimpleObstacleDimension(obstacle, width, height);
     }
-
 
     // Loop through common properties of all objects and set obstacle fields
     JsonValue properties = json.get("properties").child();
@@ -180,35 +169,36 @@ public class TiledJsonParser {
     }
   }
 
-  public static void setSimpleObstaclePosition(SimpleObstacle obstacle, float x, float y){
+  public static void setSimpleObstaclePosition(SimpleObstacle obstacle, float x, float y) {
     int offsetx = 0;
     int offsety = 0;
-    if (type.equals("slope")){
+    if (type.equals("slope")) {
       // For now offset all slopes by -8 in x and 8 in y
       offsetx = -8;
       offsety = 8;
-    } else if (type.equals("bounce")){
+    } else if (type.equals("bounce")) {
       // For now offset all bounce platforms in x and y direction by 16
       // If x position is 0, only offset the y
       // I don't know why bounce platforms are acting this way, we will need to fix in future
-      if (x > 0){
+      if (x > 0) {
         offsetx = 16;
       }
       offsety = 16;
-    } else if (type.equals("breakable")){
+    } else if (type.equals("breakable")) {
       offsety = 16;
     }
-    x = (x + offsetx) * (1/drawScale.x);
-    y = ((tiledHeight - y) + offsety) * (1/drawScale.y);
-    obstacle.setPosition(x,y);
+    x = (x + offsetx) * (1 / drawScale.x);
+    y = ((tiledHeight - y) + offsety) * (1 / drawScale.y);
+    obstacle.setPosition(x, y);
   }
 
-  public static void setSimpleObstacleDimension(SimpleObstacle obstacle, float width, float height){
-    if (obstacle instanceof CapsuleObstacle){
-      ((CapsuleObstacle) obstacle).setDimension(width,height);
+  public static void setSimpleObstacleDimension(SimpleObstacle obstacle, float width,
+      float height) {
+    if (obstacle instanceof CapsuleObstacle) {
+      ((CapsuleObstacle) obstacle).setDimension(width, height);
     }
-    if (obstacle instanceof BoxObstacle){
-      ((BoxObstacle) obstacle).setDimension(width,height);
+    if (obstacle instanceof BoxObstacle) {
+      ((BoxObstacle) obstacle).setDimension(width, height);
     }
   }
 }

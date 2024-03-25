@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.utils.JsonValue;
@@ -12,13 +11,13 @@ import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.main.WindModel.WindParticleModel;
 import edu.cornell.gdiac.main.WindModel.WindSide;
 import edu.cornell.gdiac.main.WindModel.WindType;
-import java.lang.reflect.Field;
 
 /**
  * Contains simple state for whether the fan is applying wind force. Creates and owns ephemeral wind
  * models to be created when the fan is on.
  */
 public class FanModel extends PlatformModel {
+
   final private float DEFAULT_PERIOD = 10.0f;
   final private float DEFAULT_PERIOD_ON_RATIO = 1.0f;
   final private float DEFAULT_CURR_TIME = 0.0f;
@@ -115,10 +114,10 @@ public class FanModel extends PlatformModel {
           windStrength = properties.getFloat("value");
           break;
         case "WindBreadth":
-          windBreadth = properties.getFloat("value") * (1/drawScale.x);
+          windBreadth = properties.getFloat("value") * (1 / drawScale.x);
           break;
         case "WindLength":
-          windLength = properties.getFloat("value") * (1/drawScale.y);
+          windLength = properties.getFloat("value") * (1 / drawScale.y);
           break;
         case "NumWindParticles":
           numWindParticles = properties.getInt("value");
@@ -163,55 +162,56 @@ public class FanModel extends PlatformModel {
     // TODO: Figure out fan and wind rotation
     // Configure shape and configure wind fixture
     initializeWind(
-      windSource.x,
-      windSource.y,
-      windBreadth,
-      windLength,
-      windStrength,
-      fanRotation,
-      numWindParticles,
-      windLengthParticleGrids,
-      windBreadthParticleGrids,
-      fanSide,
-      windType,
-      windTexture,
-      windParticleTexture
+        windSource.x,
+        windSource.y,
+        windBreadth,
+        windLength,
+        windStrength,
+        fanRotation,
+        numWindParticles,
+        windLengthParticleGrids,
+        windBreadthParticleGrids,
+        fanSide,
+        windType,
+        windTexture,
+        windParticleTexture
     );
   }
 
   /**
-   * Initialize wind properties. Called whenever there should be a change in the behavior of the wind, as directed by this fan
+   * Initialize wind properties. Called whenever there should be a change in the behavior of the
+   * wind, as directed by this fan
    */
   public void initializeWind(
-    float windSourceX,
-    float windSourceY,
-    float windBreadth,
-    float windLength,
-    float windStrength,
-    float windRotation,
-    int numWindParticles,
-    int windLengthParticleGrids,
-    int windBreadthParticleGrids,
-    WindSide windSide,
-    WindType windType,
-    TextureRegion windTexture,
-    TextureRegion windParticleTexture
+      float windSourceX,
+      float windSourceY,
+      float windBreadth,
+      float windLength,
+      float windStrength,
+      float windRotation,
+      int numWindParticles,
+      int windLengthParticleGrids,
+      int windBreadthParticleGrids,
+      WindSide windSide,
+      WindType windType,
+      TextureRegion windTexture,
+      TextureRegion windParticleTexture
   ) {
 
     wind.initialize(
-      windSourceX,
-      windSourceY,
-      windBreadth,
-      windLength,
-      windStrength,
-      windRotation,
-      numWindParticles,
-      windLengthParticleGrids,
-      windBreadthParticleGrids,
-      windSide,
-      windType,
-      windTexture,
-      windParticleTexture
+        windSourceX,
+        windSourceY,
+        windBreadth,
+        windLength,
+        windStrength,
+        windRotation,
+        numWindParticles,
+        windLengthParticleGrids,
+        windBreadthParticleGrids,
+        windSide,
+        windType,
+        windTexture,
+        windParticleTexture
     );
   }
 
@@ -273,8 +273,8 @@ public class FanModel extends PlatformModel {
   }
 
   /**
-   * // TODO: Will likely need to figure out a way to abstract away wind as a temporary fixture that can be attached and destroyed in the existence of this model
-   * Set whether the fan is active
+   * // TODO: Will likely need to figure out a way to abstract away wind as a temporary fixture that
+   * can be attached and destroyed in the existence of this model Set whether the fan is active
    */
   public void setFanActive(boolean active) {
     isFanActive = active;
@@ -306,8 +306,8 @@ public class FanModel extends PlatformModel {
 
   @Override
   public void draw(GameCanvas canvas) {
-    canvas.draw(region, Color.BLUE, 0, 0, (getX()- anchor.x) * drawScale.x,
-      (getY() - anchor.y) * drawScale.y, getAngle(), 1, 1);
+    canvas.draw(region, Color.BLUE, 0, 0, (getX() - anchor.x) * drawScale.x,
+        (getY() - anchor.y) * drawScale.y, getAngle(), 1, 1);
 
     if (isFanActive) {
       // Draw wind texture

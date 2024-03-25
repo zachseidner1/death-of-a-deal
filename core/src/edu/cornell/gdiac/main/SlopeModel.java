@@ -1,14 +1,8 @@
 package edu.cornell.gdiac.main;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.utils.JsonValue;
-import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.physics.obstacle.PolygonObstacle;
-import java.lang.reflect.Field;
 
 public class SlopeModel extends PolygonObstacle {
 
@@ -30,11 +24,11 @@ public class SlopeModel extends PolygonObstacle {
     super(new float[]{0, 0, 1, 0, 1, 1, 0, 1}, 0, 0);
   }
 
-  public void setFrozenImpulse(float frozenImpulse){
+  public void setFrozenImpulse(float frozenImpulse) {
     this.frozenImpulse = frozenImpulse;
   }
 
-  public void initShapeAndBounds(float[] points){
+  public void initShapeAndBounds(float[] points) {
     initShapes(points);
     initBounds();
   }
@@ -45,7 +39,7 @@ public class SlopeModel extends PolygonObstacle {
    * <p>The JSON value has been parsed and is part of a bigger level file. However, this JSON value
    * is limited to the platform subtree
    *
-   * @param json      the JSON subtree defining the platform
+   * @param json the JSON subtree defining the platform
    */
   public void initialize(JsonValue json, int tHeight) {
     float[] points = new float[10];
@@ -63,7 +57,7 @@ public class SlopeModel extends PolygonObstacle {
 
     JsonValue properties = json.get("properties").child();
     while (properties != null) {
-      if (properties.getString("name").equals("frozenImpulse")){
+      if (properties.getString("name").equals("frozenImpulse")) {
         frozenImpulse = properties.getFloat("value");
       }
 
