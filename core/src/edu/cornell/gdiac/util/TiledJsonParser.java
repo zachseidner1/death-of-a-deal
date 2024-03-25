@@ -145,7 +145,7 @@ public class TiledJsonParser {
       case "slope":
         assert (obstacle instanceof SlopeModel);
         SlopeModel slope = (SlopeModel) obstacle;
-        slope.initialize(json, tiledHeight);
+        slope.initialize(json);
         break;
       case "bounce":
         assert (obstacle instanceof BouncePlatformModel);

@@ -41,7 +41,7 @@ public class SlopeModel extends PolygonObstacle {
    *
    * @param json the JSON subtree defining the platform
    */
-  public void initialize(JsonValue json, int tHeight) {
+  public void initialize(JsonValue json) {
     float[] points = new float[10];
     JsonValue polygon = json.get("polygon").child();
     int index = 0;
@@ -57,7 +57,7 @@ public class SlopeModel extends PolygonObstacle {
 
     JsonValue properties = json.get("properties").child();
     while (properties != null) {
-      if (properties.getString("name").equals("frozenImpulse")) {
+      if (properties.getString("name").equals("frozenimpulse")) {
         frozenImpulse = properties.getFloat("value");
       }
 
