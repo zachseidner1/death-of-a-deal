@@ -22,12 +22,9 @@ import java.lang.reflect.Field;
  */
 public class TiledJsonParser {
 
-  public static Color debugColor;
-  public static int debugOpacity;
-  public static Vector2 drawScale; // scale factor to convert to pixels : pixels / meter
-  public static Vector2 meterScale; // scale factor to convert to meters (physics units) :
-  public static int tiledHeight; // height of Tiled editor, used for mapping Tiled pixels to world (physics units)
-  public static String type; // Type of object being initialized
+  private static Vector2 drawScale; // scale factor to convert to pixels : pixels / meter
+  private static int tiledHeight; // height of Tiled editor, used for mapping Tiled pixels to world (physics units)
+  private static String type; // Type of object being initialized
 
   /**
    * Parses json and initializes the obstacle's properties
@@ -94,6 +91,7 @@ public class TiledJsonParser {
     // Loop through common properties of all objects and set obstacle fields
     JsonValue properties = json.get("properties").child();
     while (properties != null) {
+      Color debugColor;
       switch (properties.getString("name")) {
         case "bodytype":
         case "BodyType":
@@ -122,7 +120,7 @@ public class TiledJsonParser {
           obstacle.setDebugColor(debugColor);
           break;
         case "debugopacity":
-          debugOpacity = properties.getInt("value");
+          int debugOpacity = properties.getInt("value");
           obstacle.setDebugColor(obstacle.getDebugColor().mul(debugOpacity / 255.0f));
           break;
         case "texture":
