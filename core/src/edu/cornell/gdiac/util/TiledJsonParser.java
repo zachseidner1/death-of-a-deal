@@ -140,7 +140,7 @@ public class TiledJsonParser {
       case "player":
         assert (obstacle instanceof PlayerModel);
         PlayerModel player = (PlayerModel) obstacle;
-        player.initialize(directory, json);
+        player.initialize(directory, json, tHeight);
         break;
       case "slope":
         assert (obstacle instanceof SlopeModel);
