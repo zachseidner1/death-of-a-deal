@@ -3,10 +3,8 @@ package edu.cornell.gdiac.main;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.assets.AssetDirectory;
-import java.lang.reflect.Field;
 
 public class BouncePlatformModel extends PlatformModel {
 
@@ -50,15 +48,10 @@ public class BouncePlatformModel extends PlatformModel {
   public boolean isVertical(){return vertical;}
   public void setVertical(boolean verticalOrNot){vertical=verticalOrNot;}
 
-  public void initialize(AssetDirectory directory, JsonValue json, int gSizeY) {
-    float x = json.getFloat("x") * (1 / drawScale.x);
-    float y = (gSizeY - json.getFloat("y")) * (1 / drawScale.y);
-
-    setPosition(x, y);
-    setDimension(json.getFloat("width") * (1 / drawScale.x),
-        json.getFloat("height") * (1 / drawScale.y));
+  public void initialize(AssetDirectory directory, JsonValue json) {
     JsonValue properties = json.get("properties").child();
 
+    // Pretty sure we want to remove the code below to prevent code reuse
     String key = json.getString("gid");
     System.out.println("key = " + key);
     TextureRegion texture = new TextureRegion(directory.getEntry(key, Texture.class));
@@ -66,32 +59,6 @@ public class BouncePlatformModel extends PlatformModel {
 
     while (properties != null) {
       switch (properties.getString("name")) {
-        case "bodytype":
-          setBodyType(properties.getString("value").equals("static") ? BodyDef.BodyType.StaticBody
-              : BodyDef.BodyType.DynamicBody);
-          break;
-        case "density":
-          setDensity(properties.getFloat("value"));
-          break;
-        case "friction":
-          setFriction(properties.getFloat("value"));
-          break;
-        case "restitution":
-          setRestitution(properties.getFloat("value"));
-          break;
-        case "debugcolor":
-          try {
-            String cname = properties.getString("value").toUpperCase();
-            Field field = Class.forName("com.badlogic.gdx.graphics.Color").getField(cname);
-            debugColor = new Color((Color) field.get(null));
-          } catch (Exception e) {
-            debugColor = null; // Not defined
-          }
-          break;
-        case "debugopacity":
-          int opacity = properties.getInt("value");
-          setDebugColor(debugColor.mul(opacity / 255.0f));
-          break;
         case "max_speed":
           setMaxSpeed(properties.getFloat("value"));
           defaultMaxSpeed = properties.getFloat("value");
