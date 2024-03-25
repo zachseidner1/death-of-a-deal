@@ -364,8 +364,10 @@ public class LevelModel {
           break;
         case "fan":
           FanModel fan = new FanModel();
-          makeObject(fan, directory, objects, tiledHeight);
+          fan.initialize(directory, objects, tiledHeight);
           fan.setFanActive(true);
+          activate(fan);
+          fans.add(fan);
           break;
         case "bounce":
           BouncePlatformModel bounce = new BouncePlatformModel();
