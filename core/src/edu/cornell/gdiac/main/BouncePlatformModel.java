@@ -14,6 +14,7 @@ public class BouncePlatformModel extends PlatformModel {
    */
   private float bounceCoefficient;
   private float maxSpeed;
+  private boolean vertical;
 
   private float defaultMaxSpeed;
 
@@ -44,6 +45,9 @@ public class BouncePlatformModel extends PlatformModel {
     return defaultMaxSpeed;
   }
 
+  public boolean isVertical(){return vertical;}
+  public void setVertical(boolean verticalOrNot){vertical=verticalOrNot;}
+
   public void initialize(AssetDirectory directory, JsonValue json) {
     JsonValue properties = json.get("properties").child();
 
@@ -62,6 +66,8 @@ public class BouncePlatformModel extends PlatformModel {
         case "coefficient":
           setCoefficient(properties.getFloat("value"));
           break;
+        case "vertical":
+          setVertical(properties.getBoolean("value"));
         default:
           break;
       }

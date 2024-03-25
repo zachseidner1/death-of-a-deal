@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+ <object name="player" type="Player" width="16" height="30">
+  <properties>
+   <property name="bodytype" value="dynamic"/>
+   <property name="damping" type="float" value="10"/>
+   <property name="debugcolor" value="yellow"/>
+   <property name="fallMultiplier" type="float" value="1.1"/>
+   <property name="force" type="float" value="10"/>
+   <property name="friction" type="float" value="0"/>
+   <property name="jumplimit" type="int" value="30"/>
+   <property name="jumpvelocity" type="float" value="9"/>
+   <property name="lowJumpMultiplier" type="float" value="1.3"/>
+   <property name="maxspeed" type="float" value="6"/>
+   <property name="restitution" type="float" value="0"/>
+   <property name="sensorcolor" value="red"/>
+   <property name="sensorname" value="dudeGroundSensor"/>
+   <property name="sensoropacity" type="int" value="192"/>
+   <property name="sensorsizex" type="float" value="0.183"/>
+   <property name="sensorsizey" type="float" value="0.05"/>
+   <property name="texture" value="dude"/>
+  </properties>
+ </object>
+</template>
