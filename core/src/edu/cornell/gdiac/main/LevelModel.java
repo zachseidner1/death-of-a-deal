@@ -364,6 +364,7 @@ public class LevelModel {
           break;
         case "fan":
           FanModel fan = new FanModel();
+          fan.setDrawScale(scale);
           fan.initialize(directory, objects, tiledHeight);
           fan.setFanActive(true);
           activate(fan);
