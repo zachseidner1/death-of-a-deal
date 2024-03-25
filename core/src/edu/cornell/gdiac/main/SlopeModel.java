@@ -47,7 +47,7 @@ public class SlopeModel extends PolygonObstacle {
    *
    * @param json      the JSON subtree defining the platform
    */
-  public void initialize(JsonValue json) {
+  public void initialize(JsonValue json, int tHeight) {
     float[] points = new float[10];
     JsonValue polygon = json.get("polygon").child();
     int index = 0;

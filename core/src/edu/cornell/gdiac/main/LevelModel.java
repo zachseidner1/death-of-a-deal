@@ -352,14 +352,12 @@ public class LevelModel {
     while (objects != null) {
       switch (objects.getString("name")) {
         case "player":
-          PlayerModel player = new PlayerModel();
-          makeObject(player, directory, objects, tiledHeight);
-          avatar = player;
+          avatar = new PlayerModel();
+          makeObject(avatar, directory, objects, tiledHeight);
           break;
         case "exit":
-          ExitModel exit = new ExitModel();
-          makeObject(exit, directory, objects, tiledHeight);
-          goalDoor = exit;
+          goalDoor = new ExitModel();
+          makeObject(goalDoor, directory, objects, tiledHeight);
           break;
         case "slope":
           SlopeModel slope = new SlopeModel();

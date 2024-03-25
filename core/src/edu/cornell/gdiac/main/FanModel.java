@@ -66,9 +66,11 @@ public class FanModel extends PlatformModel {
    * @param directory the asset manager
    * @param json      the JSON subtree defining the platform
    */
-  public void initialize(AssetDirectory directory, JsonValue json, int gSizeY) {
+  public void initialize(AssetDirectory directory, JsonValue json) {
     float rotation = -1 * json.getFloat("rotation") / (float) (Math.PI / 2);
     setAngle(rotation);
+    // Fan offset: don't know why we have to offset this
+    setY(getY() - 0.8f);
 
     // Wind wrapper fields
     Vector2 windSource = new Vector2();
@@ -137,10 +139,6 @@ public class FanModel extends PlatformModel {
           break;
         case "Active":
           isFanActive = properties.getBoolean("value");
-          break;
-        case "DebugOpacity":
-          int opacity = properties.getInt("value");
-          setDebugColor(debugColor.mul(opacity / 255.0f));
           break;
         case "FanTexture":
           String key = properties.getString("value");

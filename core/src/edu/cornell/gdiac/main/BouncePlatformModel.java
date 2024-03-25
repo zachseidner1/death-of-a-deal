@@ -46,16 +46,10 @@ public class BouncePlatformModel extends PlatformModel {
     return defaultMaxSpeed;
   }
 
-  public void initialize(AssetDirectory directory, JsonValue json, int tHeight) {
-    int offset = 16;
-    if (json.getFloat("x") == 0.0f) {
-      offset = 0;
-    }
-    float x = (json.getFloat("x") + offset) * (1 / drawScale.x);
-    float y = (tHeight - json.getFloat("y") + 16) * (1 / drawScale.y);
-    setPosition(x, y);
+  public void initialize(AssetDirectory directory, JsonValue json) {
     JsonValue properties = json.get("properties").child();
 
+    // Pretty sure we want to remove the code below to prevent code reuse
     String key = json.getString("gid");
     System.out.println("key = " + key);
     TextureRegion texture = new TextureRegion(directory.getEntry(key, Texture.class));

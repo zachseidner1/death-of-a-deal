@@ -38,23 +38,6 @@ public class TiledJsonParser {
   public static Vector2 meterScale; // scale factor to convert to meters (physics units) :
   public static int tiledHeight; // height of Tiled editor, used for mapping Tiled pixels to world (physics units)
   public static String type; // Type of object being initialized
-  public static float sensorSizeX; // player sensor size x component for calculations
-  public static float sensorSizeY; // player sensor size y component for calculations
-  public static Color playerSensorColor; // player sensor color
-  public static Vector2 windSource;
-  public static float windBreadth;
-  public static float windLength;
-  public static float windStrength;
-  public static float fanRotation;
-  public static int numWindParticles;
-  public static int windLengthParticleGrids;
-  public static int windBreadthParticleGrids;
-  public static WindSide windSide;
-  public static WindType windType;
-  public static TextureRegion fanTexture;
-  public static TextureRegion windTexture;
-  public static TextureRegion windParticleTexture;
-  public static float[] points;
 
   /**
    * Parses json and initializes the obstacle's properties
@@ -108,8 +91,9 @@ public class TiledJsonParser {
     tiledHeight = tHeight;
     type = json.getString("name");
     obstacle.setName(type);
-    obstacle.setPosition(json.getFloat("x") * (1 / drawScale.x),
-        (tiledHeight - json.getFloat("y")) * (1 / drawScale.y));
+    float x = json.getFloat("x");
+    float y = json.getFloat("y");
+    setSimpleObstaclePosition(obstacle, x, y);
 
     if (!type.equals("slope")){
       float width = json.getFloat("width") * (1/drawScale.x);
@@ -117,11 +101,13 @@ public class TiledJsonParser {
       setSimpleObstacleDimension(obstacle, width, height);
     }
 
+
     // Loop through common properties of all objects and set obstacle fields
     JsonValue properties = json.get("properties").child();
     while (properties != null) {
       switch (properties.getString("name")) {
         case "bodytype":
+        case "BodyType":
           obstacle.setBodyType(
               properties.get("value").asString().equals("static") ? BodyDef.BodyType.StaticBody
                   : BodyDef.BodyType.DynamicBody);
@@ -162,40 +148,59 @@ public class TiledJsonParser {
       properties = properties.next();
     }
 
-    // Call object specific method for object-specific properties and set dimension
+    // Call object specific method for object-specific properties
     switch (json.getString("name")) {
       case "player":
         assert (obstacle instanceof PlayerModel);
         PlayerModel player = (PlayerModel) obstacle;
-        player.initialize(directory, json, tiledHeight);
+        player.initialize(directory, json);
         break;
       case "slope":
         assert (obstacle instanceof SlopeModel);
         SlopeModel slope = (SlopeModel) obstacle;
-        slope.initialize(json);
+        slope.initialize(json, tiledHeight);
         break;
       case "bounce":
         assert (obstacle instanceof BouncePlatformModel);
         BouncePlatformModel bounce = (BouncePlatformModel) obstacle;
-        bounce.initialize(directory, json, tiledHeight);
+        bounce.initialize(directory, json);
         break;
       case "breakable":
         assert (obstacle instanceof BreakablePlatformModel);
         BreakablePlatformModel breakable = (BreakablePlatformModel) obstacle;
-        breakable.initialize(directory, json, tiledHeight);
+        breakable.initialize(directory, json);
         break;
       case "fan":
         assert (obstacle instanceof FanModel);
         FanModel fan = (FanModel) obstacle;
-        fan.initialize(directory, json, tiledHeight);
-        break;
-      case "exit":
-        assert (obstacle instanceof ExitModel);
-        ExitModel exit = (ExitModel) obstacle;
+        fan.initialize(directory, json);
         break;
       default:
         break;
     }
+  }
+
+  public static void setSimpleObstaclePosition(SimpleObstacle obstacle, float x, float y){
+    int offsetx = 0;
+    int offsety = 0;
+    if (type.equals("slope")){
+      // For now offset all slopes by -8 in x and 8 in y
+      offsetx = -8;
+      offsety = 8;
+    } else if (type.equals("bounce")){
+      // For now offset all bounce platforms in x and y direction by 16
+      // If x position is 0, only offset the y
+      // I don't know why bounce platforms are acting this way, we will need to fix in future
+      if (x > 0){
+        offsetx = 16;
+      }
+      offsety = 16;
+    } else if (type.equals("breakable")){
+      offsety = 16;
+    }
+    x = (x + offsetx) * (1/drawScale.x);
+    y = ((tiledHeight - y) + offsety) * (1/drawScale.y);
+    obstacle.setPosition(x,y);
   }
 
   public static void setSimpleObstacleDimension(SimpleObstacle obstacle, float width, float height){

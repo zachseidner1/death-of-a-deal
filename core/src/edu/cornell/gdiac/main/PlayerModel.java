@@ -372,11 +372,13 @@ public class PlayerModel extends CapsuleObstacle {
   }
 
 
-  public void initialize(AssetDirectory directory, JsonValue json, int gSizeY) {
+  public void initialize(AssetDirectory directory, JsonValue json) {
     frozenTexture = new TextureRegion(directory.getEntry("frozen", Texture.class));
     JsonValue properties = json.get("properties").child();
     while (properties != null) {
       switch (properties.getString("name")) {
+        case "force":
+          setForce(properties.getFloat("value"));
         case "damping":
           setDamping(properties.getFloat("value"));
           break;

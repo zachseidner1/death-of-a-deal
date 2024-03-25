@@ -45,16 +45,8 @@ public class BreakablePlatformModel extends PlatformModel {
     broken = bool;
   }
 
-  public void initialize(AssetDirectory directory, JsonValue json, int gSizeY) {
-    setName(json.getString("name"));
-
-    float x = json.getFloat("x") * (1 / drawScale.x);
-    float y = (gSizeY - json.getFloat("y")) * (1 / drawScale.y);
-    setPosition(x, y);
-    float width = json.getFloat("width") * (1 / drawScale.x);
-    float height = json.getFloat("height") * (1 / drawScale.y);
-    setDimension(width, height);
-
+  public void initialize(AssetDirectory directory, JsonValue json) {
+    // Pretty sure we want to remove the code below to prevent code reuse
     String key = json.getString("gid");
     TextureRegion texture = new TextureRegion(directory.getEntry(key, Texture.class));
     setTexture(texture);
