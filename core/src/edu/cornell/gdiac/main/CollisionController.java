@@ -224,12 +224,27 @@ public class CollisionController implements ContactListener {
       if (bd1 instanceof BouncePlatformModel) {
         BouncePlatformModel bplt = (BouncePlatformModel) bd1;
         float c = bplt.getCoefficient();
+        // See if the platform is a vertical bounce platform
+        boolean vertical=bplt.isVertical();
+        // If yes, then it should only be bouncy when the player is on top/bottom
+        if (vertical&&(Math.abs(plyr.getPosition().x-bplt.getPosition().x)-(plyr.getWidth()+bplt.getWidth())/2f)+.1f<0){
         if (plyr.getIsFrozen()) {
           contact.setRestitution(c);
           bplt.setMaxSpeed(
             Math.max(bplt.getDefaultMaxSpeed(),
               Math.max(Math.abs(plyr.getVX()), Math.abs(plyr.getVY())))
           );
+        }
+        }
+        // If not, the player should only be bounced sideways.
+        else if (!vertical&&(Math.abs(plyr.getPosition().y-bplt.getPosition().y)-(plyr.getHeight()+bplt.getHeight())/2f)+.03f<0){
+          if (plyr.getIsFrozen()) {
+            contact.setRestitution(c);
+            bplt.setMaxSpeed(
+                Math.max(bplt.getDefaultMaxSpeed(),
+                    Math.max(Math.abs(plyr.getVX()), Math.abs(plyr.getVY())))
+            );
+          }
         }
       }
     }
