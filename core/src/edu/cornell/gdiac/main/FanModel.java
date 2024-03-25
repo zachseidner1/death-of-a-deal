@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.utils.JsonValue;
@@ -11,6 +12,8 @@ import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.main.WindModel.WindParticleModel;
 import edu.cornell.gdiac.main.WindModel.WindSide;
 import edu.cornell.gdiac.main.WindModel.WindType;
+import edu.cornell.gdiac.util.MathUtil;
+import java.lang.reflect.Field;
 
 /**
  * Contains simple state for whether the fan is applying wind force. Creates and owns ephemeral wind
@@ -55,7 +58,6 @@ public class FanModel extends PlatformModel {
     wind = new WindModel();
   }
 
-
   /**
    * Initializes the fan platform via the given JSON value
    *
@@ -65,14 +67,40 @@ public class FanModel extends PlatformModel {
    * @param directory the asset manager
    * @param json      the JSON subtree defining the platform
    */
-  public void initialize(AssetDirectory directory, JsonValue json) {
-    float rotation = -1 * json.getFloat("rotation") / (float) (Math.PI / 2);
-    setAngle(rotation);
-    // Fan offset: don't know why we have to offset this
-    setY(getY() - 0.8f);
+  public void initialize(AssetDirectory directory, JsonValue json, int gSizeY) {
+    setName(json.getString("name"));
+
+    float scaleFactorX = 1 / drawScale.x;
+    float scaleFactorY = 1 / drawScale.y;
+
+    fanRotation = (float) -Math.toRadians(json.getFloat("rotation"));
+    setAngle(fanRotation);
+
+    float width = json.getFloat("width") * scaleFactorX;
+    float height = json.getFloat("height") * scaleFactorY;
+    setDimension(width, height);
+
+    // TODO: Will likely abstract this away as a util function for compatible parsing of Tiled rotation
+    // Note: Tiled uses rotation about the top-left corner of the rectangle, while our impl uses the center.
+    // We perform some trig position calculations to address the difference in how rotation is treated.
+
+    // topLeft is top-left most point
+    float topLeftX = json.getFloat("x") * scaleFactorX;
+    float topLeftY = (gSizeY - json.getFloat("y")) * scaleFactorY;
+    Vector2 topLeft = new Vector2(topLeftX, topLeftY);
+
+    // center0 is center of rectangle with rotation 0
+    float centerX0 = topLeftX + width / 2;
+    float centerY0 = topLeftY - height / 2;
+    Vector2 center0 = new Vector2(centerX0, centerY0);
+
+    // Rotate center0 about top-left corner with fanRotation
+    Vector2 center = new Vector2();
+    MathUtil.rotateAroundPivot(topLeft, center0, center, fanRotation);
+    setPosition(center);
 
     // Wind wrapper fields
-    Vector2 windSource = new Vector2();
+    Vector2 windSource = getPosition();
     WindType windType = null;
     TextureRegion windTexture = null;
     TextureRegion windParticleTexture = null;
@@ -82,6 +110,19 @@ public class FanModel extends PlatformModel {
     JsonValue properties = json.get("properties").child();
     while (properties != null) {
       switch (properties.getString("name")) {
+        case "BodyType":
+          setBodyType(properties.getString("value").equals("static") ? BodyDef.BodyType.StaticBody
+            : BodyDef.BodyType.DynamicBody);
+          break;
+        case "DebugColor":
+          try {
+            String cname = properties.getString("value").toUpperCase();
+            Field field = Class.forName("com.badlogic.gdx.graphics.Color").getField(cname);
+            debugColor = new Color((Color) field.get(null));
+          } catch (Exception e) {
+            debugColor = null; // Not defined
+          }
+          break;
         case "Type":
           String type = properties.getString("value").toUpperCase();
           switch (type) {
@@ -102,11 +143,9 @@ public class FanModel extends PlatformModel {
           switch (side) {
             case "LEFT":
               fanSide = WindSide.LEFT;
-              windSource.set(getX(), getY() - getHeight() / 2);
               break;
             default:
               fanSide = WindSide.RIGHT;
-              windSource.set(getX() + getWidth(), getY() - getHeight() / 2);
               break;
           }
           break;
@@ -114,10 +153,10 @@ public class FanModel extends PlatformModel {
           windStrength = properties.getFloat("value");
           break;
         case "WindBreadth":
-          windBreadth = properties.getFloat("value") * (1 / drawScale.x);
+          windBreadth = properties.getFloat("value") * scaleFactorX;
           break;
         case "WindLength":
-          windLength = properties.getFloat("value") * (1 / drawScale.y);
+          windLength = properties.getFloat("value") * scaleFactorY;
           break;
         case "NumWindParticles":
           numWindParticles = properties.getInt("value");
@@ -139,6 +178,10 @@ public class FanModel extends PlatformModel {
         case "Active":
           isFanActive = properties.getBoolean("value");
           break;
+        case "DebugOpacity":
+          int opacity = properties.getInt("value");
+          setDebugColor(debugColor.mul(opacity / 255.0f));
+          break;
         case "FanTexture":
           String key = properties.getString("value");
           TextureRegion texture = new TextureRegion(directory.getEntry(key, Texture.class));
@@ -159,59 +202,22 @@ public class FanModel extends PlatformModel {
       properties = properties.next();
     }
 
-    // TODO: Figure out fan and wind rotation
     // Configure shape and configure wind fixture
-    initializeWind(
-        windSource.x,
-        windSource.y,
-        windBreadth,
-        windLength,
-        windStrength,
-        fanRotation,
-        numWindParticles,
-        windLengthParticleGrids,
-        windBreadthParticleGrids,
-        fanSide,
-        windType,
-        windTexture,
-        windParticleTexture
-    );
-  }
-
-  /**
-   * Initialize wind properties. Called whenever there should be a change in the behavior of the
-   * wind, as directed by this fan
-   */
-  public void initializeWind(
-      float windSourceX,
-      float windSourceY,
-      float windBreadth,
-      float windLength,
-      float windStrength,
-      float windRotation,
-      int numWindParticles,
-      int windLengthParticleGrids,
-      int windBreadthParticleGrids,
-      WindSide windSide,
-      WindType windType,
-      TextureRegion windTexture,
-      TextureRegion windParticleTexture
-  ) {
-
     wind.initialize(
-        windSourceX,
-        windSourceY,
-        windBreadth,
-        windLength,
-        windStrength,
-        windRotation,
-        numWindParticles,
-        windLengthParticleGrids,
-        windBreadthParticleGrids,
-        windSide,
-        windType,
-        windTexture,
-        windParticleTexture
+      windSource.x,
+      windSource.y,
+      windBreadth,
+      windLength,
+      windStrength,
+      fanRotation,
+      numWindParticles,
+      windLengthParticleGrids,
+      windBreadthParticleGrids,
+      fanSide,
+      windType,
+      windTexture,
+      windParticleTexture,
+      drawScale
     );
   }
 
@@ -219,7 +225,7 @@ public class FanModel extends PlatformModel {
   protected void createFixtures() {
     super.createFixtures();
 
-    if (wind == null) {
+    if (body == null || wind == null) {
       return;
     }
 
@@ -250,6 +256,10 @@ public class FanModel extends PlatformModel {
   @Override
   protected void releaseFixtures() {
     super.releaseFixtures();
+
+    if (body == null) {
+      return;
+    }
 
     // Destroy fixture
     if (windFixture != null) {
@@ -306,8 +316,18 @@ public class FanModel extends PlatformModel {
 
   @Override
   public void draw(GameCanvas canvas) {
-    canvas.draw(region, Color.BLUE, 0, 0, (getX() - anchor.x) * drawScale.x,
-        (getY() - anchor.y) * drawScale.y, getAngle(), 1, 1);
+    // Need to determine bottom left corner
+    canvas.draw(
+      region,
+      Color.BLUE,
+      getX() * drawScale.x,
+      getY() * drawScale.y,
+      0,
+      0,
+      fanRotation,
+      1,
+      1
+    );
 
     if (isFanActive) {
       // Draw wind texture
