@@ -320,7 +320,6 @@ public class LevelModel {
           }
           break;
         case "deco":
-          System.out.println("case deco");
           if (layer.get("data") != null) {
             makeDecoTiles(numTilesHorizontal, numTilesVertical, layer.get("data").asIntArray(),
                 tileWidth,
@@ -364,7 +363,6 @@ public class LevelModel {
 
   private void makeDecoTiles(int cols, int rows, int[] data, int tileWidth, int tileHeight,
       AssetDirectory directory) {
-    System.out.println("making deco tiles");
     for (int i = 0; i < data.length; i++) {
       if (data[i] != 0) {
         // i % numCols = how deep in x

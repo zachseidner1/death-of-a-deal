@@ -388,7 +388,7 @@
                         {
                          "name":"maxspeed",
                          "type":"float",
-                         "value":0.4
+                         "value":0.3
                         }, 
                         {
                          "name":"restitution",
@@ -409,8 +409,8 @@
                  "type":"Npc",
                  "visible":true,
                  "width":15,
-                 "x":220,
-                 "y":18
+                 "x":222.593697315523,
+                 "y":23.1873946310466
                 }, 
                 {
                  "height":0,

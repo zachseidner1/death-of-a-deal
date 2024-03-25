@@ -14,35 +14,23 @@ package edu.cornell.gdiac.main;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.physics.obstacle.CapsuleObstacle;
 import java.lang.reflect.Field;
 
 /**
- * NPC Model Avatar for the plaform game.
+ * NPC for the platform game.
  * <p>
  * Note that the constructor does very little.  The true initialization happens by reading the JSON
  * value.
  */
 public class NPCModel extends CapsuleObstacle {
-  // Physics constants
+
   /**
-   * Cache for internal force calculations
-   */
-  private final Vector2 v2Cache = new Vector2();
-  /**
-   * The factor to multiply by the input
-   */
-  private float force;
-  /**
-   * The amount to slow the character down
-   */
-  private float damping;
-  /**
-   * The maximum character speed
+   * The maximum npc speed
    */
   private float maxspeed;
 
@@ -70,7 +58,7 @@ public class NPCModel extends CapsuleObstacle {
   private Color color;
 
   private boolean isStop;
-
+  private Fixture bottomFixture; // Declare the bottom fixture.
 
   /**
    * Creates a new player with degenerate settings
@@ -84,32 +72,11 @@ public class NPCModel extends CapsuleObstacle {
     // Gameplay attributes
     color = Color.WHITE;
     setDensity(1);
+    setGravityScale(0.0f);
   }
 
   public void setStop(boolean stop) {
     isStop = stop;
-  }
-
-  /**
-   * Returns how much force to apply to get the player moving
-   * <p>
-   * Multiply this by the input to get the movement value.
-   *
-   * @return how much force to apply to get the player moving
-   */
-  public float getForce() {
-    return force;
-  }
-
-  /**
-   * Sets how much force to apply to get the player moving
-   * <p>
-   * Multiply this by the input to get the movement value.
-   *
-   * @param value how much force to apply to get the player moving
-   */
-  public void setForce(float value) {
-    force = value;
   }
 
   /**
@@ -133,6 +100,18 @@ public class NPCModel extends CapsuleObstacle {
   public void setMaxSpeed(float value) {
     maxspeed = value;
   }
+
+  @Override
+  protected void createFixtures() {
+    super.createFixtures();
+    if (body != null && !body.getFixtureList().isEmpty()) {
+      for (Fixture fixture : body.getFixtureList()) {
+        // set each fixture as a sensor to make it pass-through
+        fixture.setSensor(true);
+      }
+    }
+  }
+
 
   /**
    * Initializes the player via the given JSON value
@@ -164,18 +143,6 @@ public class NPCModel extends CapsuleObstacle {
           setBodyType(
               properties.get("value").asString().equals("static") ? BodyDef.BodyType.StaticBody
                   : BodyDef.BodyType.DynamicBody);
-          break;
-        case "density":
-          setDensity(properties.getFloat("value"));
-          break;
-        case "friction":
-          setFriction(properties.getFloat("value"));
-          break;
-        case "restitution":
-          setRestitution(properties.getFloat("value"));
-          break;
-        case "force":
-          setForce(properties.getFloat("value"));
           break;
         case "maxspeed":
           setMaxSpeed(properties.getFloat("value"));
@@ -225,30 +192,19 @@ public class NPCModel extends CapsuleObstacle {
 
       properties = properties.next();
     }
-
   }
 
 
   /**
-   * Applies the force to the body of this player
-   * <p>
-   * This method should be called after the force attribute is set.
+   * Applies the movement to the NPC
    */
   public void applyMovement() {
     float targetSpeed = maxspeed;
     if (isStop) {
       targetSpeed = 0;
     }
-    // OPTION 1: Implement movement with force
-    float accelRate = 1.2F;
-    float speedDif = targetSpeed - (getVX());
-    float movement = speedDif * accelRate;
-    v2Cache.set(movement, 0);
-
-    body.applyForce(v2Cache, getPosition(), true);
-
-    // OPTION 2: Implement movement with set VX
-//    setVX(targetSpeed);
+    setVX(targetSpeed);
+    setVY(0.0f);
   }
 
   /**
