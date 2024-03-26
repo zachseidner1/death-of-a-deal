@@ -12,6 +12,7 @@ import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.main.WindModel.WindParticleModel;
 import edu.cornell.gdiac.main.WindModel.WindSide;
 import edu.cornell.gdiac.main.WindModel.WindType;
+import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.MathUtil;
 import java.lang.reflect.Field;
 
@@ -50,12 +51,26 @@ public class FanModel extends PlatformModel {
   private Fixture windFixture;
   private Fixture[] windParticleFixtures;
 
+  /**
+   * Contains reference to FilmStrip object of fan
+   */
+  private FilmStrip fanFrames;
+
   public FanModel() {
     // Degenerate settings
     super();
 
     // Wind fixture creation
     wind = new WindModel();
+  }
+
+  public void setFanFrames(FilmStrip filmStrip) {
+    this.fanFrames = filmStrip;
+    setTexture(fanFrames);
+  }
+
+  public FilmStrip getFanFrames(){
+    return fanFrames;
   }
 
   /**

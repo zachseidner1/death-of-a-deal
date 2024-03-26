@@ -22,6 +22,7 @@ import com.badlogic.gdx.utils.ObjectSet;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.physics.obstacle.Obstacle;
 import edu.cornell.gdiac.physics.obstacle.SimpleObstacle;
+import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.PooledList;
 import edu.cornell.gdiac.util.TiledJsonParser;
 
@@ -101,6 +102,14 @@ public class LevelModel {
    * Air resistance scale to be applied to every obstacle in the level
    */
   private float airResistance = INITIAL_AIR_RESISTANCE;
+  /**
+   * FilmStrip for fan animation
+   */
+  private FilmStrip fanFilmStrip;
+  /**
+   * FilmStrip for player animation
+   */
+  private FilmStrip playerFilmStrip;
 
   /**
    * Creates a new LevelModel
