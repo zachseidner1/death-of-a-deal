@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.10.2" name="wood_tileset" tilewidth="16" tileheight="16" tilecount="9" columns="3">
- <image source="../../../../Downloads/wood_tileset.png" width="48" height="48"/>
+<tileset version="1.10" tiledversion="1.10.2" name="wood_tileset" tilewidth="16" tileheight="16" tilecount="1" columns="1">
+ <image source="../assets/textures/wood_tileset_2.png" width="16" height="16"/>
  <wangsets>
   <wangset name="wood" type="mixed" tile="-1">
    <wangcolor name="" color="#ff0000" tile="-1" probability="1"/>

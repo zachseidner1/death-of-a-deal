@@ -1,4 +1,12 @@
 { "compressionlevel":-1,
+ "editorsettings":
+    {
+     "export":
+        {
+         "format":"json",
+         "target":"jsons\/level1.json"
+        }
+    },
  "height":30,
  "infinite":false,
  "layers":[
@@ -51,13 +59,6 @@
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 5, 6, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 5, 6, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 6, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 6, 6, 6, 6, 6, 6, 6, 6, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -68,12 +69,19 @@
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 3, 3, 3, 3, 3, 3, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 6, 6, 6, 6, 6, 6, 6, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            8, 9, 9, 9, 9, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 6, 6, 6, 6, 6, 6, 6, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            12, 12, 12, 12, 12, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 6, 6, 6, 6, 6, 6, 6, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            12, 12, 12, 12, 12, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 6, 6, 6, 6, 6, 6, 6, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            12, 12, 12, 12, 12, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 6, 6, 6, 6, 6, 6, 6, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 6, 7, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 6, 7,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 6, 7, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 6, 7, 0, 0, 0, 0, 0, 0,
+            10, 11, 11, 11, 11, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 6, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            14, 14, 14, 14, 14, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            14, 14, 14, 14, 14, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            14, 14, 14, 14, 14, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
          "height":30,
          "id":1,
          "name":"level",
@@ -111,10 +119,126 @@
          "y":0
         }, 
         {
+         "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         "height":30,
+         "id":5,
+         "name":"pass",
+         "opacity":1,
+         "type":"tilelayer",
+         "visible":true,
+         "width":40,
+         "x":0,
+         "y":0
+        }, 
+        {
          "draworder":"topdown",
          "id":3,
          "name":"objects",
          "objects":[
+                {
+                 "height":0,
+                 "id":9,
+                 "name":"slope",
+                 "polygon":[
+                        {
+                         "x":0,
+                         "y":0
+                        }, 
+                        {
+                         "x":32,
+                         "y":-16
+                        }, 
+                        {
+                         "x":32,
+                         "y":0
+                        }],
+                 "properties":[
+                        {
+                         "name":"bodytype",
+                         "type":"string",
+                         "value":"static"
+                        }, 
+                        {
+                         "name":"debugcolor",
+                         "type":"string",
+                         "value":"yellow"
+                        }, 
+                        {
+                         "name":"debugopacity",
+                         "type":"int",
+                         "value":255
+                        }, 
+                        {
+                         "name":"denisty",
+                         "type":"float",
+                         "value":0
+                        }, 
+                        {
+                         "name":"friction",
+                         "type":"float",
+                         "value":0.01
+                        }, 
+                        {
+                         "name":"frozenimpulse",
+                         "type":"float",
+                         "value":0
+                        }, 
+                        {
+                         "name":"height",
+                         "type":"float",
+                         "value":0
+                        }, 
+                        {
+                         "name":"restitution",
+                         "type":"float",
+                         "value":0.1
+                        }, 
+                        {
+                         "name":"texture",
+                         "type":"string",
+                         "value":"earth"
+                        }, 
+                        {
+                         "name":"width",
+                         "type":"float",
+                         "value":0
+                        }],
+                 "rotation":0,
+                 "type":"Slope",
+                 "visible":true,
+                 "width":0,
+                 "x":224,
+                 "y":432
+                }, 
                 {
                  "height":48,
                  "id":6,
@@ -228,26 +352,6 @@
                          "value":"red"
                         }, 
                         {
-                         "name":"sensorname",
-                         "type":"string",
-                         "value":"dudeGroundSensor"
-                        }, 
-                        {
-                         "name":"sensoropacity",
-                         "type":"int",
-                         "value":192
-                        }, 
-                        {
-                         "name":"sensorsizex",
-                         "type":"float",
-                         "value":0.183
-                        }, 
-                        {
-                         "name":"sensorsizey",
-                         "type":"float",
-                         "value":0.05
-                        }, 
-                        {
                          "name":"texture",
                          "type":"string",
                          "value":"dude"
@@ -255,9 +359,234 @@
                  "rotation":0,
                  "type":"Player",
                  "visible":true,
-                 "width":16,
-                 "x":32,
+                 "width":15,
+                 "x":16,
                  "y":384
+                }, 
+                {
+                 "height":0,
+                 "id":24,
+                 "name":"slope",
+                 "polygon":[
+                        {
+                         "x":0,
+                         "y":0
+                        }, 
+                        {
+                         "x":0,
+                         "y":-32
+                        }, 
+                        {
+                         "x":112,
+                         "y":0
+                        }],
+                 "properties":[
+                        {
+                         "name":"bodytype",
+                         "type":"string",
+                         "value":"static"
+                        }, 
+                        {
+                         "name":"debugcolor",
+                         "type":"string",
+                         "value":"yellow"
+                        }, 
+                        {
+                         "name":"debugopacity",
+                         "type":"int",
+                         "value":255
+                        }, 
+                        {
+                         "name":"denisty",
+                         "type":"float",
+                         "value":0
+                        }, 
+                        {
+                         "name":"friction",
+                         "type":"float",
+                         "value":0.01
+                        }, 
+                        {
+                         "name":"frozenimpulse",
+                         "type":"float",
+                         "value":9
+                        }, 
+                        {
+                         "name":"height",
+                         "type":"float",
+                         "value":0
+                        }, 
+                        {
+                         "name":"restitution",
+                         "type":"float",
+                         "value":0.1
+                        }, 
+                        {
+                         "name":"texture",
+                         "type":"string",
+                         "value":"earth"
+                        }, 
+                        {
+                         "name":"width",
+                         "type":"float",
+                         "value":0
+                        }],
+                 "rotation":0,
+                 "type":"Slope",
+                 "visible":true,
+                 "width":0,
+                 "x":111.72757366505,
+                 "y":432.061039523315
+                }, 
+                {
+                 "height":0,
+                 "id":28,
+                 "name":"slope",
+                 "polygon":[
+                        {
+                         "x":0,
+                         "y":0
+                        }, 
+                        {
+                         "x":0,
+                         "y":-48
+                        }, 
+                        {
+                         "x":-96,
+                         "y":0
+                        }],
+                 "properties":[
+                        {
+                         "name":"bodytype",
+                         "type":"string",
+                         "value":"static"
+                        }, 
+                        {
+                         "name":"debugcolor",
+                         "type":"string",
+                         "value":"yellow"
+                        }, 
+                        {
+                         "name":"debugopacity",
+                         "type":"int",
+                         "value":255
+                        }, 
+                        {
+                         "name":"denisty",
+                         "type":"float",
+                         "value":0
+                        }, 
+                        {
+                         "name":"friction",
+                         "type":"float",
+                         "value":0.01
+                        }, 
+                        {
+                         "name":"frozenimpulse",
+                         "type":"float",
+                         "value":9
+                        }, 
+                        {
+                         "name":"height",
+                         "type":"float",
+                         "value":0
+                        }, 
+                        {
+                         "name":"restitution",
+                         "type":"float",
+                         "value":0.1
+                        }, 
+                        {
+                         "name":"texture",
+                         "type":"string",
+                         "value":"earth"
+                        }, 
+                        {
+                         "name":"width",
+                         "type":"float",
+                         "value":0
+                        }],
+                 "rotation":0,
+                 "type":"Slope",
+                 "visible":true,
+                 "width":0,
+                 "x":512,
+                 "y":288
+                }, 
+                {
+                 "height":0,
+                 "id":29,
+                 "name":"slope",
+                 "polygon":[
+                        {
+                         "x":0,
+                         "y":0
+                        }, 
+                        {
+                         "x":-32,
+                         "y":-16
+                        }, 
+                        {
+                         "x":-32,
+                         "y":0
+                        }],
+                 "properties":[
+                        {
+                         "name":"bodytype",
+                         "type":"string",
+                         "value":"static"
+                        }, 
+                        {
+                         "name":"debugcolor",
+                         "type":"string",
+                         "value":"yellow"
+                        }, 
+                        {
+                         "name":"debugopacity",
+                         "type":"int",
+                         "value":255
+                        }, 
+                        {
+                         "name":"denisty",
+                         "type":"float",
+                         "value":0
+                        }, 
+                        {
+                         "name":"friction",
+                         "type":"float",
+                         "value":0.01
+                        }, 
+                        {
+                         "name":"frozenimpulse",
+                         "type":"float",
+                         "value":-10
+                        }, 
+                        {
+                         "name":"height",
+                         "type":"float",
+                         "value":0
+                        }, 
+                        {
+                         "name":"restitution",
+                         "type":"float",
+                         "value":0.1
+                        }, 
+                        {
+                         "name":"texture",
+                         "type":"string",
+                         "value":"earth"
+                        }, 
+                        {
+                         "name":"width",
+                         "type":"float",
+                         "value":0
+                        }],
+                 "rotation":0,
+                 "type":"Slope",
+                 "visible":true,
+                 "width":0,
+                 "x":416,
+                 "y":288
                 }, 
                 {
                  "gid":1,
@@ -309,119 +638,17 @@
                          "name":"texture",
                          "type":"string",
                          "value":"earth"
-                        }, 
-                        {
-                         "name":"vertical",
-                         "type":"bool",
-                         "value":true
                         }],
                  "rotation":0,
                  "type":"Bounce",
                  "visible":true,
                  "width":48,
-                 "x":160,
-                 "y":448
+                 "x":112,
+                 "y":288
                 }, 
                 {
                  "height":80,
                  "id":33,
-                 "name":"fan",
-                 "properties":[
-                        {
-                         "name":"Active",
-                         "type":"bool",
-                         "value":true
-                        }, 
-                        {
-                         "name":"BodyType",
-                         "type":"string",
-                         "value":"static"
-                        }, 
-                        {
-                         "name":"DebugColor",
-                         "type":"string",
-                         "value":"yellow"
-                        }, 
-                        {
-                         "name":"DebugOpacity",
-                         "type":"int",
-                         "value":255
-                        }, 
-                        {
-                         "name":"FanTexture",
-                         "type":"string",
-                         "value":"1"
-                        }, 
-                        {
-                         "name":"NumWindParticles",
-                         "type":"int",
-                         "value":100
-                        }, 
-                        {
-                         "name":"Period",
-                         "type":"float",
-                         "value":0
-                        }, 
-                        {
-                         "name":"PeriodOnRatio",
-                         "type":"float",
-                         "value":1
-                        }, 
-                        {
-                         "name":"Side",
-                         "type":"string",
-                         "value":"right"
-                        }, 
-                        {
-                         "name":"Type",
-                         "type":"string",
-                         "value":"constant"
-                        }, 
-                        {
-                         "name":"WindBreadth",
-                         "type":"float",
-                         "value":70
-                        }, 
-                        {
-                         "name":"WindBreadthParticleGrids",
-                         "type":"int",
-                         "value":10
-                        }, 
-                        {
-                         "name":"WindLength",
-                         "type":"float",
-                         "value":140
-                        }, 
-                        {
-                         "name":"WindLengthParticleGrids",
-                         "type":"int",
-                         "value":10
-                        }, 
-                        {
-                         "name":"WindParticleTexture",
-                         "type":"string",
-                         "value":"1"
-                        }, 
-                        {
-                         "name":"WindStrength",
-                         "type":"float",
-                         "value":4
-                        }, 
-                        {
-                         "name":"WindTexture",
-                         "type":"string",
-                         "value":"1"
-                        }],
-                 "rotation":0,
-                 "type":"Fan",
-                 "visible":true,
-                 "width":16,
-                 "x":144,
-                 "y":224
-                }, 
-                {
-                 "height":80,
-                 "id":34,
                  "name":"fan",
                  "properties":[
                         {
@@ -472,7 +699,7 @@
                         {
                          "name":"Type",
                          "type":"string",
-                         "value":"constant"
+                         "value":"default"
                         }, 
                         {
                          "name":"WindBreadth",
@@ -487,7 +714,7 @@
                         {
                          "name":"WindLength",
                          "type":"float",
-                         "value":360
+                         "value":120
                         }, 
                         {
                          "name":"WindLengthParticleGrids",
@@ -502,86 +729,23 @@
                         {
                          "name":"WindStrength",
                          "type":"float",
-                         "value":6
+                         "value":10
                         }, 
                         {
                          "name":"WindTexture",
                          "type":"string",
                          "value":"1"
                         }],
-                 "rotation":0,
+                 "rotation":-40,
                  "type":"Fan",
                  "visible":true,
                  "width":16,
-                 "x":592,
-                 "y":96
+                 "x":368.956,
+                 "y":298.549
                 }, 
                 {
-                 "gid":1,
-                 "height":16,
-                 "id":35,
-                 "name":"bounce",
-                 "properties":[
-                        {
-                         "name":"bodytype",
-                         "type":"string",
-                         "value":"static"
-                        }, 
-                        {
-                         "name":"coefficient",
-                         "type":"string",
-                         "value":"1.5"
-                        }, 
-                        {
-                         "name":"debugcolor",
-                         "type":"string",
-                         "value":"yellow"
-                        }, 
-                        {
-                         "name":"debugopacity",
-                         "type":"int",
-                         "value":255
-                        }, 
-                        {
-                         "name":"denisty",
-                         "type":"float",
-                         "value":0
-                        }, 
-                        {
-                         "name":"friction",
-                         "type":"float",
-                         "value":0.01
-                        }, 
-                        {
-                         "name":"max_speed",
-                         "type":"string",
-                         "value":"17"
-                        }, 
-                        {
-                         "name":"restitution",
-                         "type":"float",
-                         "value":0
-                        }, 
-                        {
-                         "name":"texture",
-                         "type":"string",
-                         "value":"earth"
-                        }, 
-                        {
-                         "name":"vertical",
-                         "type":"bool",
-                         "value":true
-                        }],
-                 "rotation":0,
-                 "type":"Bounce",
-                 "visible":true,
-                 "width":96,
-                 "x":512,
-                 "y":400
-                }, 
-                {
-                 "height":80,
-                 "id":36,
+                 "height":100,
+                 "id":37,
                  "name":"fan",
                  "properties":[
                         {
@@ -632,7 +796,7 @@
                         {
                          "name":"Type",
                          "type":"string",
-                         "value":"constant"
+                         "value":"default"
                         }, 
                         {
                          "name":"WindBreadth",
@@ -647,7 +811,7 @@
                         {
                          "name":"WindLength",
                          "type":"float",
-                         "value":140
+                         "value":100
                         }, 
                         {
                          "name":"WindLengthParticleGrids",
@@ -662,234 +826,19 @@
                         {
                          "name":"WindStrength",
                          "type":"float",
-                         "value":3
+                         "value":5
                         }, 
                         {
                          "name":"WindTexture",
                          "type":"string",
                          "value":"1"
                         }],
-                 "rotation":0,
+                 "rotation":90,
                  "type":"Fan",
                  "visible":true,
                  "width":16,
-                 "x":480,
-                 "y":224
-                }, 
-                {
-                 "gid":1,
-                 "height":16,
-                 "id":37,
-                 "name":"breakable",
-                 "properties":[
-                        {
-                         "name":"bodytype",
-                         "type":"string",
-                         "value":"static"
-                        }, 
-                        {
-                         "name":"breakminvelocity",
-                         "type":"float",
-                         "value":6
-                        }, 
-                        {
-                         "name":"debugcolor",
-                         "type":"string",
-                         "value":"yellow"
-                        }, 
-                        {
-                         "name":"density",
-                         "type":"float",
-                         "value":0
-                        }, 
-                        {
-                         "name":"friction",
-                         "type":"float",
-                         "value":0
-                        }, 
-                        {
-                         "name":"restitution",
-                         "type":"float",
-                         "value":0
-                        }],
-                 "rotation":0,
-                 "type":"Breakable",
-                 "visible":true,
-                 "width":16,
-                 "x":224,
-                 "y":336
-                }, 
-                {
-                 "gid":1,
-                 "height":16,
-                 "id":38,
-                 "name":"breakable",
-                 "properties":[
-                        {
-                         "name":"bodytype",
-                         "type":"string",
-                         "value":"static"
-                        }, 
-                        {
-                         "name":"breakminvelocity",
-                         "type":"float",
-                         "value":6
-                        }, 
-                        {
-                         "name":"debugcolor",
-                         "type":"string",
-                         "value":"yellow"
-                        }, 
-                        {
-                         "name":"density",
-                         "type":"float",
-                         "value":0
-                        }, 
-                        {
-                         "name":"friction",
-                         "type":"float",
-                         "value":0
-                        }, 
-                        {
-                         "name":"restitution",
-                         "type":"float",
-                         "value":0
-                        }],
-                 "rotation":0,
-                 "type":"Breakable",
-                 "visible":true,
-                 "width":16,
-                 "x":208,
-                 "y":336
-                }, 
-                {
-                 "gid":1,
-                 "height":16,
-                 "id":39,
-                 "name":"breakable",
-                 "properties":[
-                        {
-                         "name":"bodytype",
-                         "type":"string",
-                         "value":"static"
-                        }, 
-                        {
-                         "name":"breakminvelocity",
-                         "type":"float",
-                         "value":6
-                        }, 
-                        {
-                         "name":"debugcolor",
-                         "type":"string",
-                         "value":"yellow"
-                        }, 
-                        {
-                         "name":"density",
-                         "type":"float",
-                         "value":0
-                        }, 
-                        {
-                         "name":"friction",
-                         "type":"float",
-                         "value":0
-                        }, 
-                        {
-                         "name":"restitution",
-                         "type":"float",
-                         "value":0
-                        }],
-                 "rotation":0,
-                 "type":"Breakable",
-                 "visible":true,
-                 "width":16,
-                 "x":192,
-                 "y":336
-                }, 
-                {
-                 "gid":1,
-                 "height":16,
-                 "id":40,
-                 "name":"breakable",
-                 "properties":[
-                        {
-                         "name":"bodytype",
-                         "type":"string",
-                         "value":"static"
-                        }, 
-                        {
-                         "name":"breakminvelocity",
-                         "type":"float",
-                         "value":6
-                        }, 
-                        {
-                         "name":"debugcolor",
-                         "type":"string",
-                         "value":"yellow"
-                        }, 
-                        {
-                         "name":"density",
-                         "type":"float",
-                         "value":0
-                        }, 
-                        {
-                         "name":"friction",
-                         "type":"float",
-                         "value":0
-                        }, 
-                        {
-                         "name":"restitution",
-                         "type":"float",
-                         "value":0
-                        }],
-                 "rotation":0,
-                 "type":"Breakable",
-                 "visible":true,
-                 "width":16,
-                 "x":176,
-                 "y":336
-                }, 
-                {
-                 "gid":1,
-                 "height":16,
-                 "id":41,
-                 "name":"breakable",
-                 "properties":[
-                        {
-                         "name":"bodytype",
-                         "type":"string",
-                         "value":"static"
-                        }, 
-                        {
-                         "name":"breakminvelocity",
-                         "type":"float",
-                         "value":6
-                        }, 
-                        {
-                         "name":"debugcolor",
-                         "type":"string",
-                         "value":"yellow"
-                        }, 
-                        {
-                         "name":"density",
-                         "type":"float",
-                         "value":0
-                        }, 
-                        {
-                         "name":"friction",
-                         "type":"float",
-                         "value":0
-                        }, 
-                        {
-                         "name":"restitution",
-                         "type":"float",
-                         "value":0
-                        }],
-                 "rotation":0,
-                 "type":"Breakable",
-                 "visible":true,
-                 "width":16,
-                 "x":160,
-                 "y":336
+                 "x":100.141725201445,
+                 "y":65.9603292303418
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -897,8 +846,8 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":5,
- "nextobjectid":42,
+ "nextlayerid":6,
+ "nextobjectid":38,
  "orientation":"orthogonal",
  "properties":[
         {
@@ -933,7 +882,7 @@
         {
          "columns":1,
          "firstgid":1,
-         "image":"..\/textures\/tile.png",
+         "image":"textures\/tile.png",
          "imageheight":16,
          "imagewidth":16,
          "margin":0,
@@ -945,11 +894,11 @@
         }, 
         {
          "firstgid":2,
-         "source":"..\/..\/tiled\/wood_tileset.tsx"
+         "source":"..\/tiled\/wood_tileset.tsx"
         }, 
         {
-         "firstgid":8,
-         "source":"..\/..\/tiled\/stonetileset.tsx"
+         "firstgid":10,
+         "source":"..\/tiled\/stonetileset.tsx"
         }],
  "tilewidth":16,
  "type":"map",

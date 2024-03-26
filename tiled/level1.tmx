@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="40" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="39">
+ <editorsettings>
+  <export target="../assets/jsons/level1.json" format="json"/>
+ </editorsettings>
  <properties>
   <property name="airresitance" type="float" value="1"/>
   <property name="gravity" type="float" value="-15"/>
@@ -11,7 +14,7 @@
   <image source="../assets/textures/tile.png" width="16" height="16"/>
  </tileset>
  <tileset firstgid="2" source="wood_tileset.tsx"/>
- <tileset firstgid="8" source="stonetileset.tsx"/>
+ <tileset firstgid="11" source="stonetileset.tsx"/>
  <layer id="2" name="deco" width="40" height="30">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -81,10 +84,10 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,6,7,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,6,7,0,0,0,0,0,0,
-8,9,9,9,9,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,6,7,0,0,0,0,0,0,0,0,0,0,0,
-12,12,12,12,12,13,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-12,12,12,12,12,13,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-12,12,12,12,12,13,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+11,12,12,12,12,13,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,6,7,0,0,0,0,0,0,0,0,0,0,0,
+15,15,15,15,15,16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+15,15,15,15,15,16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+15,15,15,15,15,16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
  <layer id="5" name="pass" width="40" height="30">
@@ -165,7 +168,7 @@
     <property name="texture" value="dude"/>
    </properties>
   </object>
-  <object id="38" name="npc" type="Npc" x="222.594" y="23.1874" width="15" height="30">
+  <object id="38" name="npc" type="Npc" x="464" y="16" width="16" height="32">
    <properties>
     <property name="bodytype" value="dynamic"/>
     <property name="damping" type="float" value="10"/>
@@ -235,6 +238,7 @@
     <property name="max_speed" value="17"/>
     <property name="restitution" type="float" value="0"/>
     <property name="texture" value="earth"/>
+    <property name="vertical" type="bool" value="true"/>
    </properties>
   </object>
  </objectgroup>

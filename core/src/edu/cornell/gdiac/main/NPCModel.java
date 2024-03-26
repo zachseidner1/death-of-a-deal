@@ -12,13 +12,9 @@
 package edu.cornell.gdiac.main;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.utils.JsonValue;
-import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.physics.obstacle.CapsuleObstacle;
 import java.lang.reflect.Field;
 
@@ -152,49 +148,14 @@ public class NPCModel extends CapsuleObstacle {
    * @param directory the asset manager
    * @param json      the JSON subtree defining the player
    */
-  public void initialize(AssetDirectory directory, JsonValue json, int gSizeY) {
+  public void initialize(JsonValue json) {
     setName(json.get("name").asString());
 
-    // Set position and dimension
-    float x = json.getFloat("x") * (1 / drawScale.x);
-    float y = (gSizeY - json.getFloat("y")) * (1 / drawScale.y);
-    setPosition(x, y);
-
-    float width = json.getFloat("width") * (1 / drawScale.x);
-    float height = json.getFloat("height") * (1 / drawScale.y);
-    setDimension(width, height);
-
     JsonValue properties = json.get("properties").child();
-    Color debugColor = null;
-    int debugOpacity = -1;
     while (properties != null) {
       switch (properties.getString("name")) {
-        case "bodytype":
-          setBodyType(
-              properties.get("value").asString().equals("static") ? BodyDef.BodyType.StaticBody
-                  : BodyDef.BodyType.DynamicBody);
-          break;
         case "defaultspeed":
           setdefaultSpeed(properties.getFloat("value"));
-          break;
-        case "debugcolor":
-          try {
-            String cname = properties.getString("value").toUpperCase();
-            Field field = Class.forName("com.badlogic.gdx.graphics.Color").getField(cname);
-            debugColor = new Color((Color) field.get(null));
-          } catch (Exception e) {
-            debugColor = null;
-          }
-          setDebugColor(debugColor);
-          break;
-        case "debugopacity":
-          debugOpacity = properties.getInt("value");
-          setDebugColor(getDebugColor().mul(debugOpacity / 255.0f));
-          break;
-        case "texture":
-          String key = properties.getString("value");
-          TextureRegion texture = new TextureRegion(directory.getEntry(key, Texture.class));
-          setTexture(texture);
           break;
         case "sensorcolor":
           try {
@@ -217,11 +178,6 @@ public class NPCModel extends CapsuleObstacle {
           break;
         default:
           break;
-      }
-
-      if (debugOpacity != -1 && debugColor != null) {
-        debugColor.mul(debugOpacity / 255f);
-        setDebugColor(debugColor);
       }
 
       properties = properties.next();
