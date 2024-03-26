@@ -397,10 +397,8 @@ public class LevelModel {
           break;
         case "npc":
           npc = new NPCModel();
-          npc.setDrawScale(scale);
-          npc.initialize(directory, objects, gSizeY);
+          makeObject(npc, directory, objects, tiledHeight);
           npc.setDistance(npc.getPosition(), goalDoor.getPosition());
-          activate(npc);
           break;
         case "exit":
           goalDoor = new ExitModel();
