@@ -21,6 +21,7 @@ import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.physics.obstacle.CapsuleObstacle;
 import edu.cornell.gdiac.physics.obstacle.Obstacle;
+import edu.cornell.gdiac.util.FilmStrip;
 import java.lang.reflect.Field;
 
 /**
@@ -127,6 +128,10 @@ public class PlayerModel extends CapsuleObstacle {
    * The multiplier gravity receives when the player is falling
    */
   private float fallMultiplier;
+  /**
+   * FilmStrip for player animation
+   */
+  private FilmStrip playerFrames;
 
   /**
    * Creates a new player with degenerate settings
@@ -353,6 +358,21 @@ public class PlayerModel extends CapsuleObstacle {
   }
 
   /**
+   * Sets FilmStrip for player animation
+   */
+  public void setPlayerFrames(FilmStrip filmStrip){
+    playerFrames = filmStrip;
+    setTexture(filmStrip);
+  }
+
+  /**
+   * Returns reference to player FilmStrip
+   */
+  public FilmStrip getPlayerFrames(){
+    return playerFrames;
+  }
+
+  /**
    * Initializes the player via the given JSON value
    * <p>
    * The JSON value has been parsed and is part of a bigger level file.  However, this JSON value is
@@ -363,7 +383,6 @@ public class PlayerModel extends CapsuleObstacle {
    */
   public void initialize(AssetDirectory directory, JsonValue json) {
     frozenTexture = new TextureRegion(directory.getEntry("frozen", Texture.class));
-
     JsonValue properties = json.get("properties").child();
     while (properties != null) {
       switch (properties.getString("name")) {
