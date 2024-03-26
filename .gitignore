@@ -116,7 +116,7 @@ Thumbs.db
 
 ## Builds
 /out
-desktop/out
+desktop/out/*
 
 ## Tiled
 **/tiled/**.tiled-session
