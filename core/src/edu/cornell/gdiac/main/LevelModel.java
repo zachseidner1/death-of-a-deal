@@ -400,8 +400,7 @@ public class LevelModel {
           npc = new NPCModel();
           npc.setDrawScale(scale);
           npc.initialize(directory, objects, gSizeY);
-          npcPosition = new Vector2(npc.getX(), npc.getY()); // Get exit position
-          npc.setDistance(npcPosition, exitPosition);
+          npc.setDistance(npc.getPosition(), goalDoor.getPosition());
           activate(npc);
           break;
         case "exit":
@@ -409,8 +408,6 @@ public class LevelModel {
           goalDoor.setDrawScale(scale);
           goalDoor.initialize(directory, objects, gSizeY);
           activate(goalDoor);
-          exitPosition = new Vector2(goalDoor.getX(), goalDoor.getY()); // Get exit position
-          //npc.setDistance(npcPosition, exitPosition);
           break;
         case "slope":
           SlopeModel slope = new SlopeModel();
