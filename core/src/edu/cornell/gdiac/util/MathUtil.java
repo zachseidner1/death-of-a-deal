@@ -18,7 +18,6 @@ public class MathUtil {
     assert src != null;
     assert dst != null;
 
-
     float xDiff = src.x - pivot.x;
     float yDiff = src.y - pivot.y;
     float x = (float) (xDiff * Math.cos(angle) - yDiff * Math.sin(angle) + pivot.x);

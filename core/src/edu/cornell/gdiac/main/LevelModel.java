@@ -78,6 +78,10 @@ public class LevelModel {
    */
   private PlayerModel avatar;
   /**
+   * Reference to the npc
+   */
+  private NPCModel npc;
+  /**
    * Reference to the bounce pad (for collision detection)
    */
   private BouncePlatformModel bouncePlatformModel;
@@ -93,6 +97,11 @@ public class LevelModel {
    * Whether or not the level is completed
    */
   private boolean complete;
+
+  /**
+   * Whether or not the level is failed
+   */
+  private boolean failure;
   /**
    * Time limit for the level
    */
@@ -101,6 +110,13 @@ public class LevelModel {
    * Air resistance scale to be applied to every obstacle in the level
    */
   private float airResistance = INITIAL_AIR_RESISTANCE;
+
+  /**
+   *
+   */
+  private Vector2 exitPosition = new Vector2(0.0f, 0.0f);
+
+  private Vector2 npcPosition = new Vector2(0.0f, 0.0f);
 
   /**
    * Creates a new LevelModel
@@ -154,6 +170,15 @@ public class LevelModel {
   }
 
   /**
+   * Returns a reference to the player avatar
+   *
+   * @return a reference to the player avatar
+   */
+  public NPCModel getNPC() {
+    return npc;
+  }
+
+  /**
    * Returns a reference to the exit door
    *
    * @return a reference to the exit door
@@ -202,6 +227,24 @@ public class LevelModel {
    */
   public void setComplete(boolean value) {
     complete = value;
+  }
+
+  /**
+   * Return level fail state to caller
+   *
+   * @return
+   */
+  public boolean getFailure() {
+    return failure;
+  }
+
+  /**
+   * Set the level to complete state or non-complete state
+   *
+   * @param value
+   */
+  public void setFailure(boolean value) {
+    failure = value;
   }
 
   /**
@@ -286,7 +329,6 @@ public class LevelModel {
           }
           break;
         case "deco":
-          System.out.println("case deco");
           if (layer.get("data") != null) {
             makeDecoTiles(numTilesHorizontal, numTilesVertical, layer.get("data").asIntArray(),
                 tileWidth,
@@ -330,7 +372,6 @@ public class LevelModel {
 
   private void makeDecoTiles(int cols, int rows, int[] data, int tileWidth, int tileHeight,
       AssetDirectory directory) {
-    System.out.println("making deco tiles");
     for (int i = 0; i < data.length; i++) {
       if (data[i] != 0) {
         // i % numCols = how deep in x
@@ -354,9 +395,17 @@ public class LevelModel {
           avatar = new PlayerModel();
           makeObject(avatar, directory, objects, tiledHeight);
           break;
+        case "npc":
+          npc = new NPCModel();
+          makeObject(npc, directory, objects, tiledHeight);
+          npcPosition = new Vector2(npc.getX(),
+              npc.getY());
+          break;
         case "exit":
           goalDoor = new ExitModel();
           makeObject(goalDoor, directory, objects, tiledHeight);
+          exitPosition = new Vector2(goalDoor.getX(),
+              goalDoor.getY());
           break;
         case "slope":
           SlopeModel slope = new SlopeModel();
@@ -380,7 +429,17 @@ public class LevelModel {
           break;
       }
       objects = objects.next();
+
+      // Once both npc and goalDoor is initialized send information to npc to setDistance
+      if (npc != null && goalDoor != null) {
+        // Included offset to account for width of the objects
+        float offset = (npc.getWidth() + goalDoor.getWidth()) / 2.0f;
+        npc.setDistance(npcPosition, exitPosition, offset);
+      }
+      
     }
+
+
   }
 
   public void dispose() {
