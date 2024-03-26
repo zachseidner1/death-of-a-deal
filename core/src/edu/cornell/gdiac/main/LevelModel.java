@@ -21,7 +21,9 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.ObjectSet;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.physics.obstacle.Obstacle;
+import edu.cornell.gdiac.physics.obstacle.SimpleObstacle;
 import edu.cornell.gdiac.util.PooledList;
+import edu.cornell.gdiac.util.TiledJsonParser;
 
 /**
  * Represents a single level in our game
@@ -386,15 +388,12 @@ public class LevelModel {
     }
   }
 
-  private void makeObjects(AssetDirectory directory, JsonValue objects, int gSizeY) {
+  private void makeObjects(AssetDirectory directory, JsonValue objects, int tiledHeight) {
     while (objects != null) {
-      String name = objects.getString("name");
-      switch (name) {
+      switch (objects.getString("name")) {
         case "player":
           avatar = new PlayerModel();
-          avatar.setDrawScale(scale);
-          avatar.initialize(directory, objects, gSizeY);
-          activate(avatar);
+          makeObject(avatar, directory, objects, tiledHeight);
           break;
         case "npc":
           npc = new NPCModel();
@@ -405,35 +404,27 @@ public class LevelModel {
           break;
         case "exit":
           goalDoor = new ExitModel();
-          goalDoor.setDrawScale(scale);
-          goalDoor.initialize(directory, objects, gSizeY);
-          activate(goalDoor);
+          makeObject(goalDoor, directory, objects, tiledHeight);
           break;
         case "slope":
           SlopeModel slope = new SlopeModel();
-          slope.setDrawScale(scale);
-          slope.initialize(directory, objects, gSizeY);
-          activate(slope);
+          makeObject(slope, directory, objects, tiledHeight);
           break;
         case "fan":
           FanModel fan = new FanModel();
           fan.setDrawScale(scale);
-          fan.initialize(directory, objects, gSizeY);
+          fan.initialize(directory, objects, tiledHeight);
+          fan.setFanActive(true);
           activate(fan);
           fans.add(fan);
           break;
         case "bounce":
-          BouncePlatformModel platform = new BouncePlatformModel();
-          platform.setDrawScale(scale);
-          platform.initialize(directory, objects, gSizeY);
-          activate(platform);
+          BouncePlatformModel bounce = new BouncePlatformModel();
+          makeObject(bounce, directory, objects, tiledHeight);
           break;
-        // Breakable platforms as game objects
         case "breakable":
           BreakablePlatformModel breakable = new BreakablePlatformModel();
-          breakable.setDrawScale(scale);
-          breakable.initialize(directory, objects, gSizeY);
-          activate(breakable);
+          makeObject(breakable, directory, objects, tiledHeight);
           break;
       }
       objects = objects.next();
@@ -536,5 +527,11 @@ public class LevelModel {
         }
       }
     }
+  }
+
+  public void makeObject(SimpleObstacle obstacle, AssetDirectory directory, JsonValue objects,
+      int tiledHeight) {
+    TiledJsonParser.initObjectFromJson(obstacle, directory, objects, scale, tiledHeight);
+    activate(obstacle);
   }
 }
