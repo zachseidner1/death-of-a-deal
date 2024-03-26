@@ -400,17 +400,15 @@ public class LevelModel {
           npc = new NPCModel();
           npc.setDrawScale(scale);
           npc.initialize(directory, objects, gSizeY);
-          npcPosition = new Vector2(npc.getX(), npc.getY()); // Get exit position
-          npc.setDistance(npcPosition, exitPosition);
-          activate(npc);
+          npcPosition = new Vector2(npc.getX(),
+              npc.getY());
           break;
         case "exit":
           goalDoor = new ExitModel();
           goalDoor.setDrawScale(scale);
           goalDoor.initialize(directory, objects, gSizeY);
-          activate(goalDoor);
-          exitPosition = new Vector2(goalDoor.getX(), goalDoor.getY()); // Get exit position
-          //npc.setDistance(npcPosition, exitPosition);
+          exitPosition = new Vector2(goalDoor.getX(),
+              goalDoor.getY());
           break;
         case "slope":
           SlopeModel slope = new SlopeModel();
@@ -440,6 +438,17 @@ public class LevelModel {
           break;
       }
       objects = objects.next();
+    }
+    // Ensure both NPC and Door have been initialized before calculating distance
+    if (npc != null && goalDoor != null) {
+
+      // Included offset to account for width of the objects
+      float offset = (npc.getWidth() + goalDoor.getWidth()) / 2.0f;
+      npc.setDistance(npcPosition, exitPosition, offset);
+
+      // Activated at the same time to ensure the timer works as intended
+      activate(npc);
+      activate(goalDoor);
     }
   }
 

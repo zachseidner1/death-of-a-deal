@@ -85,9 +85,10 @@ public class NPCModel extends CapsuleObstacle {
    *
    * @param npcLoc  The Vector2 location of the NPC.
    * @param doorLoc The Vector2 location of the door.
+   * @param offset  The float offset to account for object widths.
    */
-  public void setDistance(Vector2 npcLoc, Vector2 doorLoc) {
-    distanceToDoor = npcLoc.dst(doorLoc);
+  public void setDistance(Vector2 npcLoc, Vector2 doorLoc, float offset) {
+    distanceToDoor = npcLoc.dst(doorLoc) - offset;
   }
 
   /**
@@ -233,7 +234,7 @@ public class NPCModel extends CapsuleObstacle {
    */
   public void applyMovement() {
     float targetSpeed = distanceToDoor / timer;
-    
+
     if (targetSpeed == 0) {
       targetSpeed = defaultSpeed;
     }
