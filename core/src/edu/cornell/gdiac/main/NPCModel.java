@@ -14,6 +14,7 @@ package edu.cornell.gdiac.main;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.utils.JsonValue;
@@ -32,7 +33,7 @@ public class NPCModel extends CapsuleObstacle {
   /**
    * The maximum npc speed
    */
-  private float maxspeed;
+  private float defaultSpeed;
 
   /**
    * The current horizontal movement of the character.
@@ -57,6 +58,9 @@ public class NPCModel extends CapsuleObstacle {
    */
   private Color color;
 
+  private float distanceToDoor = 0.0f;
+
+  private int timer = 0;
   private boolean isStop;
   private Fixture bottomFixture; // Declare the bottom fixture.
 
@@ -75,8 +79,33 @@ public class NPCModel extends CapsuleObstacle {
     setGravityScale(0.0f);
   }
 
+  /**
+   * Sets the distance between an NPC and a door based on their locations. The distance is
+   * calculated using the Euclidean distance between the two points.
+   *
+   * @param npcLoc  The Vector2 location of the NPC.
+   * @param doorLoc The Vector2 location of the door.
+   */
+  public void setDistance(Vector2 npcLoc, Vector2 doorLoc) {
+    distanceToDoor = npcLoc.dst(doorLoc);
+  }
+
+  /**
+   * Sets the stop status for the NPC. When set to true, the NPC or character may stop moving.
+   *
+   * @param stop The boolean flag to set the stop status.
+   */
   public void setStop(boolean stop) {
     isStop = stop;
+  }
+
+  /**
+   * Sets a timer for time needed to reach the goal.
+   *
+   * @param time The time to set for the timer, in seconds.
+   */
+  public void setTimer(int time) {
+    timer = time;
   }
 
   /**
@@ -86,8 +115,8 @@ public class NPCModel extends CapsuleObstacle {
    *
    * @return the upper limit on player left-right movement.
    */
-  public float getMaxSpeed() {
-    return maxspeed;
+  public float getdefaultSpeed() {
+    return defaultSpeed;
   }
 
   /**
@@ -97,8 +126,8 @@ public class NPCModel extends CapsuleObstacle {
    *
    * @param value the upper limit on player left-right movement.
    */
-  public void setMaxSpeed(float value) {
-    maxspeed = value;
+  public void setdefaultSpeed(float value) {
+    defaultSpeed = value;
   }
 
   @Override
@@ -144,8 +173,8 @@ public class NPCModel extends CapsuleObstacle {
               properties.get("value").asString().equals("static") ? BodyDef.BodyType.StaticBody
                   : BodyDef.BodyType.DynamicBody);
           break;
-        case "maxspeed":
-          setMaxSpeed(properties.getFloat("value"));
+        case "defaultspeed":
+          setdefaultSpeed(properties.getFloat("value"));
           break;
         case "debugcolor":
           try {
@@ -181,6 +210,10 @@ public class NPCModel extends CapsuleObstacle {
             sensorColor.mul(opacity / 255.0f);
           }
           break;
+        case "timer":
+          int time = properties.getInt("value");
+          setTimer(time);
+          break;
         default:
           break;
       }
@@ -199,7 +232,12 @@ public class NPCModel extends CapsuleObstacle {
    * Applies the movement to the NPC
    */
   public void applyMovement() {
-    float targetSpeed = maxspeed;
+    float targetSpeed = distanceToDoor / timer;
+    
+    if (targetSpeed == 0) {
+      targetSpeed = defaultSpeed;
+    }
+
     if (isStop) {
       targetSpeed = 0;
     }

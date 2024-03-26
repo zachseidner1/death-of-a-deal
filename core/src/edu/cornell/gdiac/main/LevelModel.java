@@ -110,6 +110,13 @@ public class LevelModel {
   private float airResistance = INITIAL_AIR_RESISTANCE;
 
   /**
+   *
+   */
+  private Vector2 exitPosition = new Vector2(0.0f, 0.0f);
+
+  private Vector2 npcPosition = new Vector2(0.0f, 0.0f);
+
+  /**
    * Creates a new LevelModel
    *
    * <p>The level is empty and there is no active physics world. You must read the JSON file to
@@ -393,6 +400,8 @@ public class LevelModel {
           npc = new NPCModel();
           npc.setDrawScale(scale);
           npc.initialize(directory, objects, gSizeY);
+          npcPosition = new Vector2(npc.getX(), npc.getY()); // Get exit position
+          npc.setDistance(npcPosition, exitPosition);
           activate(npc);
           break;
         case "exit":
@@ -400,6 +409,8 @@ public class LevelModel {
           goalDoor.setDrawScale(scale);
           goalDoor.initialize(directory, objects, gSizeY);
           activate(goalDoor);
+          exitPosition = new Vector2(goalDoor.getX(), goalDoor.getY()); // Get exit position
+          //npc.setDistance(npcPosition, exitPosition);
           break;
         case "slope":
           SlopeModel slope = new SlopeModel();

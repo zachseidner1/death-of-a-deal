@@ -408,7 +408,7 @@
                         {
                          "name":"timer",
                          "type":"int",
-                         "value":15
+                         "value":2
                         }],
                  "rotation":0,
                  "type":"Npc",
