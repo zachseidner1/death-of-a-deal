@@ -398,11 +398,14 @@ public class LevelModel {
         case "npc":
           npc = new NPCModel();
           makeObject(npc, directory, objects, tiledHeight);
-          npc.setDistance(npc.getPosition(), goalDoor.getPosition());
+          npcPosition = new Vector2(npc.getX(),
+              npc.getY());
           break;
         case "exit":
           goalDoor = new ExitModel();
           makeObject(goalDoor, directory, objects, tiledHeight);
+          exitPosition = new Vector2(goalDoor.getX(),
+              goalDoor.getY());
           break;
         case "slope":
           SlopeModel slope = new SlopeModel();
@@ -426,7 +429,17 @@ public class LevelModel {
           break;
       }
       objects = objects.next();
+
+      // Once both npc and goalDoor is initialized send information to npc to setDistance
+      if (npc != null && goalDoor != null) {
+        // Included offset to account for width of the objects
+        float offset = (npc.getWidth() + goalDoor.getWidth()) / 2.0f;
+        npc.setDistance(npcPosition, exitPosition, offset);
+      }
+      
     }
+
+
   }
 
   public void dispose() {
