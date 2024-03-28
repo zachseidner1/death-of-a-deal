@@ -12,10 +12,11 @@ public class Animator {
   public static FanModel fan;
 
   public static void create(SimpleObstacle obstacle, AssetDirectory directory, String key, int rows,
-      int cols, int size, int x, int y, int width, int height, int frame){
+      int cols, int frame){
     // get texture from directory and call FilmStrip constructor
     Texture sheet = directory.getEntry(key, Texture.class);
-    frames = new FilmStrip(sheet, rows, cols, size, x, y, width, height);
+    frames = new FilmStrip(sheet, rows, cols);
+    frames.setFrame(frame);
 
     switch (obstacle.getName()){
       case "player":
@@ -36,24 +37,26 @@ public class Animator {
       case "player":
         player = (PlayerModel) obstacle;
         frames = player.getPlayerFrames();
-        setNextFrame();
+        player.setPlayerFrames(setNextFrame());
         break;
       case "fan":
         fan = (FanModel) obstacle;
         frames = fan.getFanFrames();
-        setNextFrame();
+        fan.setFanFrames(setNextFrame());
         break;
       default:
         break;
     }
   }
 
-  public static void setNextFrame(){
+  public static FilmStrip setNextFrame(){
+    assert frames != null;
     int nextFrame = frames.getFrame() + 1;
-    if (nextFrame > frames.getSize()){
-      frames.setFrame(1);
-    } else {
-      frames.setFrame(nextFrame);
+    if (nextFrame >= frames.getSize()) {
+      nextFrame = 1;
+      frames = frames.copy();
     }
+    frames.setFrame(nextFrame);
+    return frames;
   }
 }

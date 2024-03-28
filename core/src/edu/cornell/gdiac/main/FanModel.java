@@ -333,15 +333,12 @@ public class FanModel extends PlatformModel {
   public void draw(GameCanvas canvas) {
     // Need to determine bottom left corner
     canvas.draw(
-      region,
-      Color.BLUE,
+      texture,
+      Color.WHITE,
+      0,0,
       getX() * drawScale.x,
       getY() * drawScale.y,
-      0,
-      0,
-      fanRotation,
-      1,
-      1
+      fanRotation, 1,1
     );
 
     if (isFanActive) {
