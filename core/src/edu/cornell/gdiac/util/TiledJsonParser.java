@@ -10,6 +10,7 @@ import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.main.BouncePlatformModel;
 import edu.cornell.gdiac.main.BreakablePlatformModel;
 import edu.cornell.gdiac.main.FanModel;
+import edu.cornell.gdiac.main.NPCModel;
 import edu.cornell.gdiac.main.PlayerModel;
 import edu.cornell.gdiac.main.SlopeModel;
 import edu.cornell.gdiac.physics.obstacle.BoxObstacle;
@@ -162,6 +163,10 @@ public class TiledJsonParser {
         FanModel fan = (FanModel) obstacle;
         fan.initialize(directory, json);
         break;
+      case "npc":
+        assert (obstacle instanceof NPCModel);
+        NPCModel npc = (NPCModel) obstacle;
+        npc.initialize(json);
       default:
         break;
     }

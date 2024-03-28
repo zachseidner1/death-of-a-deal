@@ -127,7 +127,7 @@ public class FanModel extends PlatformModel {
       switch (properties.getString("name")) {
         case "BodyType":
           setBodyType(properties.getString("value").equals("static") ? BodyDef.BodyType.StaticBody
-            : BodyDef.BodyType.DynamicBody);
+              : BodyDef.BodyType.DynamicBody);
           break;
         case "DebugColor":
           try {
@@ -219,20 +219,20 @@ public class FanModel extends PlatformModel {
 
     // Configure shape and configure wind fixture
     wind.initialize(
-      windSource.x,
-      windSource.y,
-      windBreadth,
-      windLength,
-      windStrength,
-      fanRotation,
-      numWindParticles,
-      windLengthParticleGrids,
-      windBreadthParticleGrids,
-      fanSide,
-      windType,
-      windTexture,
-      windParticleTexture,
-      drawScale
+        windSource.x,
+        windSource.y,
+        windBreadth,
+        windLength,
+        windStrength,
+        fanRotation,
+        numWindParticles,
+        windLengthParticleGrids,
+        windBreadthParticleGrids,
+        fanSide,
+        windType,
+        windTexture,
+        windParticleTexture,
+        drawScale
     );
   }
 

@@ -202,6 +202,7 @@ public class GameController implements Screen {
       countdown = EXIT_COUNT;
     }
     failed = value;
+    level.setFailure(value);
   }
 
   /**
@@ -369,10 +370,12 @@ public class GameController implements Screen {
   public void update(float dt) {
     // Check if the game has completed (if player touches the objective)
     setComplete(level.getComplete());
+    setFailure(level.getFailure());
 
     // Process actions in object model
     InputController input = InputController.getInstance();
     PlayerModel avatar = level.getAvatar();
+    NPCModel npc = level.getNPC();
 
     // Horizontal movement
     avatar.setMovement(InputController.getInstance().getHorizontal() * avatar.getForce());
@@ -432,6 +435,7 @@ public class GameController implements Screen {
 
     avatar.setFrozen(input.getFrozen());
     avatar.applyForce();
+    npc.applyMovement();
   }
 
   /**
