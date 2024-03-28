@@ -22,6 +22,7 @@ import com.badlogic.gdx.utils.ObjectSet;
 import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.physics.obstacle.Obstacle;
 import edu.cornell.gdiac.physics.obstacle.SimpleObstacle;
+import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.PooledList;
 import edu.cornell.gdiac.util.TiledJsonParser;
 
@@ -110,6 +111,14 @@ public class LevelModel {
    * Air resistance scale to be applied to every obstacle in the level
    */
   private float airResistance = INITIAL_AIR_RESISTANCE;
+  /**
+   * FilmStrip for fan animation
+   */
+  private FilmStrip fanFilmStrip;
+  /**
+   * FilmStrip for player animation
+   */
+  private FilmStrip playerFilmStrip;
 
   /**
    *
@@ -394,6 +403,7 @@ public class LevelModel {
         case "player":
           avatar = new PlayerModel();
           makeObject(avatar, directory, objects, tiledHeight);
+          createFrames(avatar, directory, "dude_sheet",4,4, 1);
           break;
         case "npc":
           npc = new NPCModel();
@@ -415,6 +425,7 @@ public class LevelModel {
           FanModel fan = new FanModel();
           fan.setDrawScale(scale);
           fan.initialize(directory, objects, tiledHeight);
+          createFrames(fan, directory, "fans",1,4, 1);
           fan.setFanActive(true);
           activate(fan);
           fans.add(fan);
@@ -426,6 +437,8 @@ public class LevelModel {
         case "breakable":
           BreakablePlatformModel breakable = new BreakablePlatformModel();
           makeObject(breakable, directory, objects, tiledHeight);
+          break;
+        default:
           break;
       }
       objects = objects.next();
@@ -544,5 +557,24 @@ public class LevelModel {
       int tiledHeight) {
     TiledJsonParser.initObjectFromJson(obstacle, directory, objects, scale, tiledHeight);
     activate(obstacle);
+  }
+
+
+public void createFrames(SimpleObstacle obstacle, AssetDirectory directory, String key, int rows,
+    int cols, int frame) {
+    Animator.create(obstacle, directory, key, rows, cols, frame);
+  }
+
+public void nextFrame(SimpleObstacle obstacle) {
+    Animator.getTextureRegion(obstacle);
+  }
+
+public void animateObjects() {
+    if (avatar.getPlayerFrames() != null){
+      nextFrame(avatar);
+    }
+    for (FanModel fan : fans){
+      nextFrame(fan);
+    }
   }
 }

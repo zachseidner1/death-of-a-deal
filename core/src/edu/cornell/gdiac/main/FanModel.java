@@ -12,6 +12,7 @@ import edu.cornell.gdiac.assets.AssetDirectory;
 import edu.cornell.gdiac.main.WindModel.WindParticleModel;
 import edu.cornell.gdiac.main.WindModel.WindSide;
 import edu.cornell.gdiac.main.WindModel.WindType;
+import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.MathUtil;
 import java.lang.reflect.Field;
 
@@ -50,12 +51,26 @@ public class FanModel extends PlatformModel {
   private Fixture windFixture;
   private Fixture[] windParticleFixtures;
 
+  /**
+   * Contains reference to FilmStrip object of fan
+   */
+  private FilmStrip fanFrames;
+
   public FanModel() {
     // Degenerate settings
     super();
 
     // Wind fixture creation
     wind = new WindModel();
+  }
+
+  public void setFanFrames(FilmStrip filmStrip) {
+    this.fanFrames = filmStrip;
+    setTexture(fanFrames);
+  }
+
+  public FilmStrip getFanFrames(){
+    return fanFrames;
   }
 
   /**
@@ -317,16 +332,15 @@ public class FanModel extends PlatformModel {
   @Override
   public void draw(GameCanvas canvas) {
     // Need to determine bottom left corner
+    float offsetX = (getWidth() * drawScale.x)/2;
+    float offsetY = (getHeight() * drawScale.y)/2;
     canvas.draw(
-        region,
-        Color.BLUE,
-        getX() * drawScale.x,
-        getY() * drawScale.y,
-        0,
-        0,
-        fanRotation,
-        1,
-        1
+      texture,
+      Color.WHITE,
+      0,0,
+        (getX() * drawScale.x) - offsetX,
+        (getY() * drawScale.y) - offsetY,
+      fanRotation, 1,1
     );
 
     if (isFanActive) {

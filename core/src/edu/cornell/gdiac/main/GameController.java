@@ -431,6 +431,7 @@ public class GameController implements Screen {
     level.getFans().forEach((fanModel) -> {
       fanModel.update(WORLD_STEP);
     });
+    level.animateObjects();
 
     avatar.setFrozen(input.getFrozen());
     avatar.applyForce();

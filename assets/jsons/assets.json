@@ -8,6 +8,10 @@
     "dude": "textures/dude.png",
     "frozen": "textures/frozen.png",
     "goal": "textures/goaldoor.png",
+    "ships": "textures/ships.png",
+    "fans" : "textures/fan_sheet4.png",
+    "dude_sheet" : "textures/dude_sheet.png",
+
     "1": { "file": "textures/tile.png"           , "wrapU":  "repeated", "wrapV":  "repeated"},
     "2" :{ "file":  "textures/wood_tileset_1.png", "wrapU":  "repeated", "wrapV":  "repeated"},
     "3" :{ "file":  "textures/wood_tileset_2.png", "wrapU":  "repeated", "wrapV":  "repeated"},
