@@ -332,12 +332,14 @@ public class FanModel extends PlatformModel {
   @Override
   public void draw(GameCanvas canvas) {
     // Need to determine bottom left corner
+    float offsetX = (getWidth() * drawScale.x)/2;
+    float offsetY = (getHeight() * drawScale.y)/2;
     canvas.draw(
       texture,
       Color.WHITE,
       0,0,
-      getX() * drawScale.x,
-      getY() * drawScale.y,
+        (getX() * drawScale.x) - offsetX,
+        (getY() * drawScale.y) - offsetY,
       fanRotation, 1,1
     );
 

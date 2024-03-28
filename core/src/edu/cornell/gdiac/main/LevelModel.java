@@ -376,7 +376,7 @@ public class LevelModel {
           FanModel fan = new FanModel();
           fan.setDrawScale(scale);
           fan.initialize(directory, objects, tiledHeight);
-          createFrames(fan, directory, "fans",4,4, 1);
+          createFrames(fan, directory, "fans",1,4, 1);
           fan.setFanActive(true);
           activate(fan);
           fans.add(fan);
